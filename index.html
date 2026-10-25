@@ -397,8 +397,8 @@
 
     <!-- JAVASCRIPT APP LOGIC -->
     <script>
-        // GLOBAL APP STATE
-        const state = {
+        // GLOBAL APP STATE WITH LOCALSTORAGE PERSISTENCE
+        let state = {
             isRegistrationOpen: false,
             targetSlotId: null,
             prizePoolText: "₹30,000 + trophies",
@@ -413,8 +413,30 @@
             }))
         };
 
+        // LOAD SAVED STATE ON STARTUP
+        function loadState() {
+            const saved = localStorage.getItem('akz_guild_war_state');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    state.isRegistrationOpen = parsed.isRegistrationOpen ?? false;
+                    state.prizePoolText = parsed.prizePoolText ?? "₹30,000 + trophies";
+                    if (parsed.slots && Array.isArray(parsed.slots)) {
+                        state.slots = parsed.slots;
+                    }
+                } catch (e) {
+                    console.error("Failed to load saved state", e);
+                }
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('akz_guild_war_state', JSON.stringify(state));
+        }
+
         // DOM LOAD INITIALIZATION
         window.onload = function () {
+            loadState();
             renderSlotsGrid();
             renderAdminSlots();
             updateUIState();
@@ -478,6 +500,10 @@
             const lobbyRegisterText = document.getElementById('lobby-register-text');
             const heroBtnText = document.getElementById('hero-btn-text');
 
+            const toggleThumb = document.getElementById('admin-status-toggle-thumb');
+            const toggleBtn = document.getElementById('admin-status-toggle-btn');
+            const toggleText = document.getElementById('admin-status-text');
+
             if (state.isRegistrationOpen) {
                 statusDot.className = "w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse";
                 statusBadge.innerText = "Registration open";
@@ -485,6 +511,13 @@
                 lobbySubtext.innerText = "Move fast – window is live";
                 lobbyRegisterText.innerText = "Claim a slot now";
                 heroBtnText.innerText = "Register Guild / Claim Slot";
+
+                if (toggleBtn && toggleThumb && toggleText) {
+                    toggleBtn.className = "w-12 h-6 bg-brand-orange rounded-full p-1 transition duration-200 ease-in-out relative";
+                    toggleThumb.className = "w-4 h-4 bg-white rounded-full transition transform translate-x-6";
+                    toggleText.innerText = "OPEN";
+                    toggleText.className = "text-xs font-mono-code font-bold text-green-400";
+                }
             } else {
                 statusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
                 statusBadge.innerText = "Registration closed";
@@ -492,9 +525,20 @@
                 lobbySubtext.innerText = "Setup pending – watch this space";
                 lobbyRegisterText.innerText = "Register when open";
                 heroBtnText.innerText = "Register Guild";
+
+                if (toggleBtn && toggleThumb && toggleText) {
+                    toggleBtn.className = "w-12 h-6 bg-zinc-700 rounded-full p-1 transition duration-200 ease-in-out relative";
+                    toggleThumb.className = "w-4 h-4 bg-white rounded-full transition transform translate-x-0";
+                    toggleText.innerText = "CLOSED";
+                    toggleText.className = "text-xs font-mono-code font-bold text-red-400";
+                }
             }
 
             document.getElementById('prize-pool-display').innerText = state.prizePoolText;
+            const prizeInput = document.getElementById('admin-prize-input');
+            if (prizeInput) {
+                prizeInput.value = state.prizePoolText;
+            }
         }
 
         // TOAST NOTIFICATION SYSTEM
@@ -529,7 +573,6 @@
                 return;
             }
 
-            // Find first available slot
             const availableSlot = state.slots.find(s => !s.claimed);
             if (!availableSlot) {
                 showToast("All 12 slots are already claimed!", "error");
@@ -593,6 +636,9 @@
                 targetSlot.uid = uid;
                 targetSlot.discord = discord;
 
+                // Save to localStorage
+                saveState();
+
                 // Reset inputs
                 document.getElementById('claim-guild-vuid').value = '';
                 document.getElementById('claim-uid').value = '';
@@ -610,6 +656,7 @@
         // ADMIN CONTROL ROOM LOGIC
         function openAdminModal() {
             document.getElementById('modal-admin').classList.remove('hidden');
+            updateUIState();
         }
 
         function closeAdminModal() {
@@ -629,6 +676,8 @@
                 if ((user === 'admin' || user === 'admin@admin') && pass === 'admin@akz') {
                     document.getElementById('admin-view-login').classList.add('hidden');
                     document.getElementById('admin-view-dashboard').classList.remove('hidden');
+                    updateUIState();
+                    renderAdminSlots();
                     showToast("Welcome back", "success");
                 } else {
                     showToast("Invalid email or password", "error");
@@ -643,22 +692,9 @@
 
         function toggleRegistrationStatus() {
             state.isRegistrationOpen = !state.isRegistrationOpen;
-            const thumb = document.getElementById('admin-status-toggle-thumb');
-            const btn = document.getElementById('admin-status-toggle-btn');
-            const text = document.getElementById('admin-status-text');
-
-            if (state.isRegistrationOpen) {
-                btn.className = "w-12 h-6 bg-brand-orange rounded-full p-1 transition duration-200 ease-in-out relative";
-                thumb.className = "w-4 h-4 bg-white rounded-full transition transform translate-x-6";
-                text.innerText = "OPEN";
-                text.className = "text-xs font-mono-code font-bold text-green-400";
-            } else {
-                btn.className = "w-12 h-6 bg-zinc-700 rounded-full p-1 transition duration-200 ease-in-out relative";
-                thumb.className = "w-4 h-4 bg-white rounded-full transition transform translate-x-0";
-                text.innerText = "CLOSED";
-                text.className = "text-xs font-mono-code font-bold text-red-400";
-            }
+            saveState();
             renderSlotsGrid();
+            renderAdminSlots();
             updateUIState();
         }
 
@@ -667,6 +703,7 @@
             btn.innerHTML = `<span>Saving...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
             
             state.prizePoolText = document.getElementById('admin-prize-input').value;
+            saveState();
 
             setTimeout(() => {
                 btn.innerHTML = `<span>Save schedule</span> <i class="fa-solid fa-check"></i>`;
@@ -677,6 +714,7 @@
 
         function renderAdminSlots() {
             const container = document.getElementById('admin-slots-list');
+            if (!container) return;
             container.innerHTML = '';
 
             state.slots.forEach(slot => {
@@ -714,6 +752,7 @@
                 slot.guildVUID = '';
                 slot.uid = '';
                 slot.discord = '';
+                saveState();
                 renderSlotsGrid();
                 renderAdminSlots();
                 updateUIState();
