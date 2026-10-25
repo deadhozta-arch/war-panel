@@ -332,7 +332,7 @@
         </div>
     </div>
 
-    <!-- CLAIM SLOT MODAL (GUILD ID 5 to 10 digits) -->
+    <!-- CLAIM SLOT MODAL -->
     <div id="modal-claim" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl">
             <button onclick="closeClaimModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
@@ -388,19 +388,19 @@
                 <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Tournament Name (TR Name)</label>
                     <input type="text" id="create-tr-name" placeholder="e.g. AKZ Pro League Finals" required
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-sm text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Registration Open</label>
                         <input type="datetime-local" id="create-reg-open" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Registration Close</label>
                         <input type="datetime-local" id="create-reg-close" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                 </div>
 
@@ -408,17 +408,17 @@
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Password Time</label>
                         <input type="datetime-local" id="create-schedule" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Room ID</label>
                         <input type="text" id="create-room-id" placeholder="8492019" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Room Password</label>
                         <input type="text" id="create-room-pass" placeholder="akz2026" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                 </div>
 
@@ -556,7 +556,7 @@
     </div>
 
 
-    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & ATOMIC TRANSACTION -->
+    <!-- FIREBASE LIVE REAL-TIME APP LOGIC -->
     <script>
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-dropdown');
@@ -910,6 +910,7 @@
             });
         }
 
+        // RENDER REGISTERED GUILDS LIST WITH USER ACCOUNT, DISCORD, & ACTION BUTTON NEAR REGISTERED
         function renderRegisteredGuildsList() {
             const container = document.getElementById('registered-guilds-list-container');
             if (!container) return;
@@ -924,12 +925,18 @@
                     card.innerHTML = `
                         <div class="flex justify-between items-center text-xs font-mono-code">
                             <span class="text-brand-textMuted font-bold">SLOT #${slotNum}</span>
-                            <span class="text-brand-orange font-bold uppercase">REGISTERED</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="showToast('Slot #${slotNum} details verified', 'success')" class="bg-brand-orange/20 hover:bg-brand-orange/30 text-brand-orange px-2.5 py-0.5 rounded text-[10px] font-bold border border-brand-orange/40 transition">
+                                    <i class="fa-solid fa-circle-check"></i> Verified
+                                </button>
+                                <span class="text-brand-orange font-bold uppercase">REGISTERED</span>
+                            </div>
                         </div>
-                        <div class="py-2">
+                        <div class="py-2 space-y-1">
                             <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code truncate">${escapeHtml(slot.guildName)}</div>
                             <div class="text-xs font-mono-code text-brand-textMuted">Guild ID: ${escapeHtml(slot.guildId || '-')}</div>
-                            <div class="text-xs font-mono-code text-brand-textMuted">Owner: ${escapeHtml(slot.bookedBy || '-')}</div>
+                            <div class="text-xs font-mono-code text-brand-textMuted">User Account: <span class="text-white font-bold">${escapeHtml(slot.bookedBy || '-')}</span></div>
+                            <div class="text-xs font-mono-code text-brand-textMuted">Discord: <span class="text-white">${escapeHtml(slot.discord || '-')}</span></div>
                         </div>
                         <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
                             <span>Total Points:</span>
@@ -1177,7 +1184,7 @@
             const btn = document.getElementById('btn-claim-submit');
             if (btn) btn.innerHTML = `<span>Booking Slot...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
-            const { runTransaction, doc } = window.firebaseModules;
+            const { runTransaction } = window.firebaseModules;
 
             try {
                 await runTransaction(window.db, async (transaction) => {
@@ -1189,7 +1196,6 @@
                     const data = docSnap.data();
                     let currentSlots = Array.isArray(data.slots) ? data.slots : getInitialSlots();
 
-                    // Check duplicate guild name or ID
                     const normalizedGuildName = guildName.toLowerCase();
                     const existingDuplicate = currentSlots.some(s => 
                         s.claimed && (
@@ -1202,7 +1208,6 @@
                         throw new Error("This Guild Name or Guild ID is already registered!");
                     }
 
-                    // Find first available slot atomically
                     const nextOpenIndex = currentSlots.findIndex(s => !s.claimed);
                     if (nextOpenIndex === -1) {
                         throw new Error("All 15 tournament slots are fully booked!");
