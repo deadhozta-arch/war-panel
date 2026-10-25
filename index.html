@@ -75,7 +75,7 @@
 <body class="min-h-screen flex flex-col justify-between selection:bg-brand-orange selection:text-white">
 
     <!-- TOP TOAST NOTIFICATION CONTAINER -->
-    <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none transition-all duration-300">
+    <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-[80] flex flex-col items-center gap-2 pointer-events-none transition-all duration-300">
         <!-- Dynamic Toasts insert here -->
     </div>
 
@@ -194,7 +194,7 @@
                 <div>
                     <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">02 // THE LOBBY</div>
                     <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">THE LOBBY.</h2>
-                    <p class="text-brand-textMuted text-sm mt-1">One shared roster for both maps. Registration closes fast when all 12 slots are filled.</p>
+                    <p class="text-brand-textMuted text-sm mt-1">Registered guilds roster for both maps.</p>
                 </div>
 
                 <div class="flex items-center gap-4 text-xs font-mono-code">
@@ -203,19 +203,13 @@
                         <span id="reg-status-badge" class="text-brand-textMuted font-bold uppercase">Registration closed</span>
                     </div>
                     <span class="text-brand-border">|</span>
-                    <span id="claimed-count-text" class="text-brand-orange font-bold">0/12 claimed</span>
+                    <span id="claimed-count-text" class="text-brand-orange font-bold">0 registered</span>
                 </div>
             </div>
 
-            <!-- Slots Grid Meta Header -->
-            <div class="flex justify-between items-center text-xs font-mono-code text-brand-orange pt-2">
-                <span class="font-bold">12 TOTAL SLOTS</span>
-                <span id="lobby-subtext-notice" class="text-brand-textMuted">Setup pending – watch this space</span>
-            </div>
-
-            <!-- 12 Slots Cards Grid -->
-            <div id="slots-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Javascript will inject 12 slot cards dynamically -->
+            <!-- Dynamic Registered Guilds Container -->
+            <div id="registered-guilds-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Javascript will inject registered guild cards dynamically here -->
             </div>
 
             <div class="pt-2">
@@ -261,7 +255,7 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. LOCK YOUR GUILD IN / SLOT CLAIM MODAL (DIRECT REGISTRATION) -->
+    <!-- 1. LOCK YOUR GUILD IN / REGISTRATION MODAL -->
     <div id="modal-claim" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl">
             <button onclick="closeClaimModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
@@ -269,12 +263,12 @@
             </button>
 
             <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold flex justify-between items-center">
-                <span id="claim-modal-slot-title">SLOT CLAIM // REGISTRATION WINDOW</span>
+                <span>GUILD REGISTRATION WINDOW</span>
             </div>
 
             <div>
                 <h3 class="text-2xl sm:text-3xl font-black tracking-tight">Lock your guild in.</h3>
-                <p class="text-brand-textMuted text-xs mt-1">Direct registration. Have your IDs ready before you submit.</p>
+                <p class="text-brand-textMuted text-xs mt-1">Enter your unique guild details below.</p>
             </div>
 
             <form onsubmit="handleClaimSubmit(event)" class="space-y-4">
@@ -285,8 +279,8 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-mono-code text-brand-textMuted">Guild UID (8 to 10 digits)</label>
-                    <input type="text" id="claim-guild-uid" placeholder="e.g. 301294829" required pattern="\d{8,10}" maxlength="10" title="Guild UID must be between 8 and 10 digits"
+                    <label class="block text-xs font-mono-code text-brand-textMuted">Guild ID (8 to 10 digits)</label>
+                    <input type="text" id="claim-guild-id" placeholder="e.g. 301294829" required pattern="\d{8,10}" maxlength="10" title="Guild ID must be between 8 and 10 digits"
                         class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand-orange transition font-mono-code">
                 </div>
 
@@ -297,7 +291,7 @@
                 </div>
 
                 <button type="submit" id="btn-claim-submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
-                    <span>Claim available slot</span>
+                    <span>Submit Registration</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </form>
@@ -373,20 +367,9 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                        <div class="space-y-1">
-                            <label class="block text-xs font-mono-code text-brand-textMuted">Open date & time</label>
-                            <input type="datetime-local" id="admin-open-time" class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-brand-orange font-mono-code">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-xs font-mono-code text-brand-textMuted">Close date & time</label>
-                            <input type="datetime-local" id="admin-close-time" class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-brand-orange font-mono-code">
-                        </div>
-                    </div>
-
                     <div class="flex items-center gap-3 pt-1">
                         <button onclick="saveAdminSettings()" id="btn-save-schedule" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
-                            <span>Save schedule</span> <i class="fa-solid fa-check"></i>
+                            <span>Save settings</span> <i class="fa-solid fa-check"></i>
                         </button>
                         <button onclick="openClearAllModal()" class="bg-zinc-800 hover:bg-red-900/60 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
                             <span>Clear all registrations</span> <i class="fa-solid fa-trash-can"></i>
@@ -394,11 +377,11 @@
                     </div>
                 </div>
 
-                <!-- Admin Roster / Slot Management -->
+                <!-- Admin Roster Management -->
                 <div class="space-y-3 pt-2">
-                    <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold">LOBBY SLOT MANAGEMENT (12 SLOTS)</h4>
-                    <div id="admin-slots-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-                        <!-- Dynamic slot items injected by JS -->
+                    <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold">REGISTERED GUILDS LIST</h4>
+                    <div id="admin-guilds-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <!-- Dynamic guild items injected by JS -->
                     </div>
                 </div>
             </div>
@@ -406,14 +389,14 @@
     </div>
 
     <!-- 3. CLEAR ALL REGISTRATIONS CONFIRMATION POP-UP -->
-    <div id="modal-clear-all" class="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-custom hidden">
+    <div id="modal-clear-all" class="fixed inset-0 z-[70] flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-red-500/40 w-full max-w-sm rounded-xl p-6 space-y-5 relative shadow-2xl">
             <div class="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-lg">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <div class="space-y-1">
                 <h3 class="text-lg font-black uppercase text-white">Clear All Registrations?</h3>
-                <p class="text-brand-textMuted text-xs">This will remove all registered guilds from all 12 slots and cannot be undone.</p>
+                <p class="text-brand-textMuted text-xs">This will remove all registered guilds and cannot be undone.</p>
             </div>
             <div class="flex items-center gap-3 pt-2">
                 <button onclick="closeClearAllModal()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2.5 rounded text-xs transition">
@@ -432,40 +415,41 @@
         // GLOBAL APP STATE WITH LOCALSTORAGE PERSISTENCE
         let state = {
             isRegistrationOpen: false,
-            targetSlotId: null,
             prizePoolText: "₹30,000 + trophies",
-            slots: Array.from({ length: 12 }, (_, i) => ({
-                id: i + 1,
-                claimed: false,
-                guildName: '',
-                guildUID: '',
-                discord: '',
-                points: null
-            }))
+            guilds: [] // Dynamic list of registered guilds
         };
 
         let isAdminLoggedIn = false;
 
         // LOAD SAVED STATE & LOGIN STATUS ON STARTUP
         function loadState() {
-            const saved = localStorage.getItem('akz_guild_war_state');
+            const saved = localStorage.getItem('akz_guild_war_state_v2');
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
                     state.isRegistrationOpen = parsed.isRegistrationOpen ?? false;
                     state.prizePoolText = parsed.prizePoolText ?? "₹30,000 + trophies";
-                    if (parsed.slots && Array.isArray(parsed.slots)) {
-                        state.slots = parsed.slots.map(s => ({
-                            id: s.id,
-                            claimed: s.claimed,
-                            guildName: s.guildName || '',
-                            guildUID: s.guildUID || s.guildVUID || '',
-                            discord: s.discord || '',
-                            points: s.points ?? null
-                        }));
-                    }
+                    state.guilds = Array.isArray(parsed.guilds) ? parsed.guilds : [];
                 } catch (e) {
                     console.error("Failed to load saved state", e);
+                }
+            } else {
+                // Backward compatibility check for older slot data
+                const oldSaved = localStorage.getItem('akz_guild_war_state');
+                if (oldSaved) {
+                    try {
+                        const parsedOld = JSON.parse(oldSaved);
+                        state.isRegistrationOpen = parsedOld.isRegistrationOpen ?? false;
+                        state.prizePoolText = parsedOld.prizePoolText ?? "₹30,000 + trophies";
+                        if (Array.isArray(parsedOld.slots)) {
+                            state.guilds = parsedOld.slots.filter(s => s.claimed).map(s => ({
+                                guildName: s.guildName || '',
+                                guildId: s.guildId || s.guildUID || s.guildVUID || '',
+                                discord: s.discord || '',
+                                points: s.points ?? null
+                            }));
+                        }
+                    } catch (e) {}
                 }
             }
 
@@ -476,15 +460,15 @@
         }
 
         function saveState() {
-            localStorage.setItem('akz_guild_war_state', JSON.stringify(state));
+            localStorage.setItem('akz_guild_war_state_v2', JSON.stringify(state));
         }
 
         // LISTEN FOR STORAGE CHANGES ACROSS TABS (LIVE SYNC)
         window.addEventListener('storage', function(e) {
-            if (e.key === 'akz_guild_war_state') {
+            if (e.key === 'akz_guild_war_state_v2') {
                 loadState();
-                renderSlotsGrid();
-                renderAdminSlots();
+                renderGuildsGrid();
+                renderAdminGuilds();
                 updateUIState();
             }
         });
@@ -493,64 +477,55 @@
         window.onload = function () {
             window.scrollTo(0, 0);
             loadState();
-            renderSlotsGrid();
-            renderAdminSlots();
+            renderGuildsGrid();
+            renderAdminGuilds();
             updateUIState();
         };
 
-        // RENDER 12 SLOTS IN LOBBY
-        function renderSlotsGrid() {
-            const container = document.getElementById('slots-grid');
+        // RENDER REGISTERED GUILDS DYNAMICALLY
+        function renderGuildsGrid() {
+            const container = document.getElementById('registered-guilds-container');
             if (!container) return;
             container.innerHTML = '';
 
-            state.slots.forEach(slot => {
-                const slotNum = String(slot.id).padStart(2, '0');
-                const card = document.createElement('div');
-                card.className = `bg-brand-card border border-brand-border p-5 rounded-xl space-y-3 flex flex-col justify-between transition ${
-                    slot.claimed ? 'border-brand-orange/40 bg-brand-card' : ''
-                }`;
+            if (state.guilds.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-8 text-center text-xs font-mono-code text-brand-textMuted border border-brand-border/60 rounded-xl bg-brand-card">
+                        NO GUILDS REGISTERED YET. ${state.isRegistrationOpen ? 'BE THE FIRST TO REGISTER!' : 'REGISTRATION IS CLOSED.'}
+                    </div>
+                `;
+                return;
+            }
 
-                if (slot.claimed) {
-                    card.innerHTML = `
-                        <div class="flex justify-between items-center text-xs font-mono-code">
-                            <span class="text-brand-textMuted font-bold">SLOT ${slotNum}</span>
-                            <span class="text-brand-orange font-bold">CLAIMED</span>
-                        </div>
-                        <div class="py-2">
-                            <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code">${escapeHtml(slot.guildName)}</div>
-                            <div class="text-xs font-mono-code text-brand-textMuted">Guild UID: ${escapeHtml(slot.guildUID || '-')}</div>
-                        </div>
-                        <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
-                            <span>Points:</span>
-                            <span class="text-white">${slot.points !== null ? slot.points : '-'}</span>
-                        </div>
-                    `;
-                } else {
-                    card.innerHTML = `
-                        <div class="flex justify-between items-center text-xs font-mono-code">
-                            <span class="text-brand-textMuted font-bold">SLOT ${slotNum}</span>
-                        </div>
-                        <div class="py-4 space-y-1">
-                            <div class="font-extrabold text-xs tracking-wider uppercase text-brand-textMuted font-mono-code">AWAITING REGISTRATION</div>
-                            <div class="text-xs font-mono-code text-brand-textMuted/60">Points: -</div>
-                        </div>
-                        <div class="border-t border-brand-border/40 pt-2 text-xs font-mono-code text-brand-textMuted">
-                            ${state.isRegistrationOpen ? 
-                                `<button onclick="handleSlotClaimClick(${slot.id})" class="text-brand-orange hover:underline font-bold">Claim slot &rarr;</button>` : 
-                                `<span>Ready for a guild</span>`}
-                        </div>
-                    `;
-                }
+            state.guilds.forEach((guild, index) => {
+                const guildNum = String(index + 1).padStart(2, '0');
+                const card = document.createElement('div');
+                card.className = "bg-brand-card border border-brand-orange/40 p-5 rounded-xl space-y-3 flex flex-col justify-between transition";
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-xs font-mono-code">
+                        <span class="text-brand-textMuted font-bold">ROSTER #${guildNum}</span>
+                        <span class="text-brand-orange font-bold">REGISTERED</span>
+                    </div>
+                    <div class="py-2">
+                        <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code">${escapeHtml(guild.guildName)}</div>
+                        <div class="text-xs font-mono-code text-brand-textMuted">Guild ID: ${escapeHtml(guild.guildId || '-')}</div>
+                        <div class="text-xs font-mono-code text-brand-textMuted">Discord: ${escapeHtml(guild.discord || '-')}</div>
+                    </div>
+                    <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
+                        <span>Points:</span>
+                        <span class="text-white">${guild.points !== null ? guild.points : '-'}</span>
+                    </div>
+                `;
                 container.appendChild(card);
             });
         }
 
         // UPDATE UI DEPENDING ON REGISTRATION STATE
         function updateUIState() {
-            const claimedCount = state.slots.filter(s => s.claimed).length;
+            const registeredCount = state.guilds.length;
             const countText = document.getElementById('claimed-count-text');
-            if (countText) countText.innerText = `${claimedCount}/12 claimed`;
+            if (countText) countText.innerText = `${registeredCount} registered`;
             
             const statusDot = document.getElementById('reg-status-dot');
             const statusBadge = document.getElementById('reg-status-badge');
@@ -568,9 +543,9 @@
                     statusBadge.innerText = "Registration open";
                     statusBadge.className = "text-green-400 font-bold uppercase";
                 }
-                if (lobbySubtext) lobbySubtext.innerText = "Move fast – window is live";
-                if (lobbyRegisterText) lobbyRegisterText.innerText = "Claim a slot now";
-                if (heroBtnText) heroBtnText.innerText = "Register Guild / Claim Slot";
+                if (lobbySubtext) lobbySubtext.innerText = "Window is live";
+                if (lobbyRegisterText) lobbyRegisterText.innerText = "Register your guild now";
+                if (heroBtnText) heroBtnText.innerText = "Register Guild";
 
                 if (toggleBtn && toggleThumb && toggleText) {
                     toggleBtn.className = "w-12 h-6 bg-brand-orange rounded-full p-1 transition duration-200 ease-in-out relative";
@@ -638,38 +613,10 @@
                 showToast("Registration is currently closed", "error");
                 return;
             }
-
-            const availableSlot = state.slots.find(s => !s.claimed);
-            if (!availableSlot) {
-                showToast("All 12 slots are already claimed!", "error");
-                return;
-            }
-
-            openClaimModal(availableSlot.id);
+            openClaimModal();
         }
 
-        function handleSlotClaimClick(slotId) {
-            loadState(); // Sync latest state across tabs
-            if (!state.isRegistrationOpen) {
-                showToast("Registration is currently closed", "error");
-                return;
-            }
-
-            const slotCheck = state.slots.find(s => s.id === slotId);
-            if (slotCheck && slotCheck.claimed) {
-                showToast(`Slot ${String(slotId).padStart(2, '0')} was just claimed by another user!`, "error");
-                renderSlotsGrid();
-                return;
-            }
-
-            openClaimModal(slotId);
-        }
-
-        function openClaimModal(slotId = null) {
-            state.targetSlotId = slotId;
-            const slotTitle = slotId ? `SLOT ${String(slotId).padStart(2, '0')} CLAIM // REGISTRATION` : `SLOT CLAIM // REGISTRATION WINDOW`;
-            const titleEl = document.getElementById('claim-modal-slot-title');
-            if (titleEl) titleEl.innerText = slotTitle;
+        function openClaimModal() {
             const modal = document.getElementById('modal-claim');
             if (modal) modal.classList.remove('hidden');
         }
@@ -677,13 +624,12 @@
         function closeClaimModal() {
             const modal = document.getElementById('modal-claim');
             if (modal) modal.classList.add('hidden');
-            state.targetSlotId = null;
         }
 
         function handleClaimSubmit(e) {
             e.preventDefault();
             
-            // CRITICAL CONCURRENCY LOCK: Re-read fresh state from localStorage before finalizing
+            // Re-read fresh state from localStorage before finalizing
             loadState();
 
             if (!state.isRegistrationOpen) {
@@ -693,82 +639,57 @@
             }
 
             const guildName = document.getElementById('claim-guild-name').value.trim();
-            const guildUID = document.getElementById('claim-guild-uid').value.trim();
+            const guildId = document.getElementById('claim-guild-id').value.trim();
             const discord = document.getElementById('claim-discord').value.trim();
 
-            if (!/^\d{8,10}$/.test(guildUID)) {
-                showToast("Guild UID must be between 8 and 10 digits", "error");
+            if (!/^\d{8,10}$/.test(guildId)) {
+                showToast("Guild ID must be between 8 and 10 digits", "error");
                 return;
             }
 
-            // DUPLICATE CHECK: Prevent duplicate Guild Name, Guild UID, or Discord Username
+            // STRICT DUPLICATE CHECK: Prevent duplicate Guild Name, Guild ID, or Discord Username
             const normalizedGuildName = guildName.toLowerCase();
             const normalizedDiscord = discord.toLowerCase();
             
-            const existingDuplicate = state.slots.find(s => 
-                s.claimed && (
-                    s.guildName.trim().toLowerCase() === normalizedGuildName || 
-                    s.guildUID.trim() === guildUID ||
-                    s.discord.trim().toLowerCase() === normalizedDiscord
-                )
+            const existingDuplicate = state.guilds.find(g => 
+                g.guildName.trim().toLowerCase() === normalizedGuildName || 
+                g.guildId.trim() === guildId ||
+                g.discord.trim().toLowerCase() === normalizedDiscord
             );
 
             if (existingDuplicate) {
-                showToast("Error: This Guild Name, Guild UID, or Discord Username is already registered!", "error");
-                return;
-            }
-
-            const targetSlot = state.targetSlotId 
-                ? state.slots.find(s => s.id === state.targetSlotId) 
-                : state.slots.find(s => !s.claimed);
-
-            // RACE CONDITION SAFETY LOCK: Prevent crash or overwrite if another tab took the slot
-            if (!targetSlot || targetSlot.claimed) {
-                closeClaimModal();
-                renderSlotsGrid();
-                showToast("Conflict: That slot was just claimed in another tab. Please select an available slot.", "error");
+                showToast("Error: This Guild Name, Guild ID, or Discord Username is already registered!", "error");
                 return;
             }
 
             const btn = document.getElementById('btn-claim-submit');
-            if (btn) btn.innerHTML = `<span>Claiming...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+            if (btn) btn.innerHTML = `<span>Registering...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
             setTimeout(() => {
-                if (btn) btn.innerHTML = `<span>Claim available slot</span> <i class="fa-solid fa-arrow-right"></i>`;
+                if (btn) btn.innerHTML = `<span>Submit Registration</span> <i class="fa-solid fa-arrow-right"></i>`;
                 
                 loadState();
-                const freshTargetSlot = state.slots.find(s => s.id === targetSlot.id);
-                if (freshTargetSlot.claimed) {
-                    closeClaimModal();
-                    renderSlotsGrid();
-                    showToast("Conflict: That slot was just claimed in another tab.", "error");
-                    return;
-                }
-
-                freshTargetSlot.claimed = true;
-                freshTargetSlot.guildName = guildName;
-                freshTargetSlot.guildUID = guildUID;
-                freshTargetSlot.discord = discord;
-
-                // CHECK IF ALL 12 SLOTS ARE NOW FILLED -> AUTO-CLOSE REGISTRATION
-                const claimedCount = state.slots.filter(s => s.claimed).length;
-                if (claimedCount >= 12) {
-                    state.isRegistrationOpen = false;
-                    showToast("Slot 12 filled! Registration has automatically closed.", "success");
-                } else {
-                    showToast(`Slot ${String(freshTargetSlot.id).padStart(2, '0')} confirmed`, "success");
-                }
+                
+                // Add new guild to the dynamic list
+                state.guilds.push({
+                    guildName: guildName,
+                    guildId: guildId,
+                    discord: discord,
+                    points: null
+                });
 
                 saveState();
 
                 document.getElementById('claim-guild-name').value = '';
-                document.getElementById('claim-guild-uid').value = '';
+                document.getElementById('claim-guild-id').value = '';
                 document.getElementById('claim-discord').value = '';
 
                 closeClaimModal();
-                renderSlotsGrid();
-                renderAdminSlots();
+                renderGuildsGrid();
+                renderAdminGuilds();
                 updateUIState();
+
+                showToast(`Successfully registered ${guildName}!`, "success");
             }, 300);
         }
 
@@ -784,7 +705,7 @@
             if (isAdminLoggedIn) {
                 if (loginView) loginView.classList.add('hidden');
                 if (dashView) dashView.classList.remove('hidden');
-                renderAdminSlots();
+                renderAdminGuilds();
             } else {
                 if (loginView) loginView.classList.remove('hidden');
                 if (dashView) dashView.classList.add('hidden');
@@ -817,7 +738,7 @@
                     if (dashView) dashView.classList.remove('hidden');
                     
                     updateUIState();
-                    renderAdminSlots();
+                    renderAdminGuilds();
                     showToast("Welcome back", "success");
                 } else {
                     showToast("Invalid email or password", "error");
@@ -840,8 +761,8 @@
         function toggleRegistrationStatus() {
             state.isRegistrationOpen = !state.isRegistrationOpen;
             saveState();
-            renderSlotsGrid();
-            renderAdminSlots();
+            renderGuildsGrid();
+            renderAdminGuilds();
             updateUIState();
         }
 
@@ -854,9 +775,9 @@
             saveState();
 
             setTimeout(() => {
-                if (btn) btn.innerHTML = `<span>Save schedule</span> <i class="fa-solid fa-check"></i>`;
+                if (btn) btn.innerHTML = `<span>Save settings</span> <i class="fa-solid fa-check"></i>`;
                 updateUIState();
-                showToast("Tournament schedule updated", "success");
+                showToast("Tournament settings updated", "success");
             }, 600);
         }
 
@@ -871,65 +792,51 @@
         }
 
         function confirmClearAllRegistrations() {
-            state.slots.forEach(slot => {
-                slot.claimed = false;
-                slot.guildName = '';
-                slot.guildUID = '';
-                slot.discord = '';
-                slot.points = null;
-            });
+            state.guilds = [];
             saveState();
-            renderSlotsGrid();
-            renderAdminSlots();
+            renderGuildsGrid();
+            renderAdminGuilds();
             updateUIState();
             closeClearAllModal();
-            showToast("All slot registrations cleared", "success");
+            showToast("All registrations cleared", "success");
         }
 
-        function renderAdminSlots() {
-            const container = document.getElementById('admin-slots-list');
+        function renderAdminGuilds() {
+            const container = document.getElementById('admin-guilds-list');
             if (!container) return;
             container.innerHTML = '';
 
-            state.slots.forEach(slot => {
+            if (state.guilds.length === 0) {
+                container.innerHTML = `<div class="text-xs font-mono-code text-brand-textMuted p-2">No registrations found.</div>`;
+                return;
+            }
+
+            state.guilds.forEach((guild, index) => {
                 const item = document.createElement('div');
                 item.className = "flex items-center justify-between text-xs font-mono-code bg-brand-card p-2.5 rounded border border-brand-border/60";
                 
-                const slotNum = String(slot.id).padStart(2, '0');
-                if (slot.claimed) {
-                    item.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <span class="text-brand-orange font-bold">Slot ${slotNum}</span>
-                            <span class="text-white font-bold">${escapeHtml(slot.guildName)}</span>
-                            <span class="text-brand-textMuted">GUID: ${escapeHtml(slot.guildUID)} | Discord: ${escapeHtml(slot.discord)}</span>
-                        </div>
-                        <button onclick="clearSlotRegistration(${slot.id})" class="text-red-400 hover:underline">Clear registration</button>
-                    `;
-                } else {
-                    item.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <span class="text-brand-textMuted font-bold">Slot ${slotNum}</span>
-                            <span class="text-brand-textMuted">Available</span>
-                        </div>
-                        <span class="text-brand-textMuted/60">Ready for a guild</span>
-                    `;
-                }
+                const guildNum = String(index + 1).padStart(2, '0');
+                item.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <span class="text-brand-orange font-bold">#${guildNum}</span>
+                        <span class="text-white font-bold">${escapeHtml(guild.guildName)}</span>
+                        <span class="text-brand-textMuted">ID: ${escapeHtml(guild.guildId)} | Discord: ${escapeHtml(guild.discord)}</span>
+                    </div>
+                    <button onclick="removeGuildRegistration(${index})" class="text-red-400 hover:underline">Remove</button>
+                `;
                 container.appendChild(item);
             });
         }
 
-        function clearSlotRegistration(slotId) {
-            const slot = state.slots.find(s => s.id === slotId);
-            if (slot && slot.claimed) {
-                slot.claimed = false;
-                slot.guildName = '';
-                slot.guildUID = '';
-                slot.discord = '';
+        function removeGuildRegistration(index) {
+            if (index >= 0 && index < state.guilds.length) {
+                const removedName = state.guilds[index].guildName;
+                state.guilds.splice(index, 1);
                 saveState();
-                renderSlotsGrid();
-                renderAdminSlots();
+                renderGuildsGrid();
+                renderAdminGuilds();
                 updateUIState();
-                showToast(`Slot ${slotId} registration cleared`, "success");
+                showToast(`Removed registration for ${removedName}`, "success");
             }
         }
 
