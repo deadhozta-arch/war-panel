@@ -273,13 +273,19 @@
 
             <form onsubmit="handleClaimSubmit(event)" class="space-y-4">
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-mono-code text-brand-textMuted">Guild VUID / Name</label>
-                    <input type="text" id="claim-guild-vuid" placeholder="e.g. 8842-AKZ or Team AKZ" required
+                    <label class="block text-xs font-mono-code text-brand-textMuted">Guild Name</label>
+                    <input type="text" id="claim-guild-name" placeholder="e.g. Team AKZ" required
                         class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand-orange transition">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-mono-code text-brand-textMuted">UID ID</label>
+                    <label class="block text-xs font-mono-code text-brand-textMuted">Guild UID (8 to 10 digits)</label>
+                    <input type="text" id="claim-guild-uid" placeholder="e.g. 301294829" required pattern="\d{8,10}" maxlength="10" title="Guild UID must be between 8 and 10 digits"
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand-orange transition font-mono-code">
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-mono-code text-brand-textMuted">Player In-Game UID</label>
                     <input type="text" id="claim-uid" placeholder="In-game UID" required
                         class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand-orange transition">
                 </div>
@@ -378,9 +384,14 @@
                         </div>
                     </div>
 
-                    <button onclick="saveAdminSettings()" id="btn-save-schedule" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
-                        <span>Save schedule</span> <i class="fa-solid fa-check"></i>
-                    </button>
+                    <div class="flex items-center gap-3 pt-1">
+                        <button onclick="saveAdminSettings()" id="btn-save-schedule" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
+                            <span>Save schedule</span> <i class="fa-solid fa-check"></i>
+                        </button>
+                        <button onclick="clearAllRegistrations()" class="bg-zinc-800 hover:bg-red-900/60 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
+                            <span>Clear all registrations</span> <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Admin Roster / Slot Management -->
@@ -406,7 +417,7 @@
                 id: i + 1,
                 claimed: false,
                 guildName: '',
-                guildVUID: '',
+                guildUID: '',
                 uid: '',
                 discord: '',
                 points: null
@@ -422,7 +433,10 @@
                     state.isRegistrationOpen = parsed.isRegistrationOpen ?? false;
                     state.prizePoolText = parsed.prizePoolText ?? "₹30,000 + trophies";
                     if (parsed.slots && Array.isArray(parsed.slots)) {
-                        state.slots = parsed.slots;
+                        state.slots = parsed.slots.map(s => ({
+                            ...s,
+                            guildUID: s.guildUID || s.guildVUID || ''
+                        }));
                     }
                 } catch (e) {
                     console.error("Failed to load saved state", e);
@@ -462,7 +476,7 @@
                         </div>
                         <div class="py-2">
                             <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code">${escapeHtml(slot.guildName)}</div>
-                            <div class="text-xs font-mono-code text-brand-textMuted">${escapeHtml(slot.guildVUID)}</div>
+                            <div class="text-xs font-mono-code text-brand-textMuted">Guild UID: ${escapeHtml(slot.guildUID || '-')}</div>
                         </div>
                         <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
                             <span>Points:</span>
@@ -611,9 +625,16 @@
                 return;
             }
 
-            const guildVUID = document.getElementById('claim-guild-vuid').value.trim();
+            const guildName = document.getElementById('claim-guild-name').value.trim();
+            const guildUID = document.getElementById('claim-guild-uid').value.trim();
             const uid = document.getElementById('claim-uid').value.trim();
             const discord = document.getElementById('claim-discord').value.trim();
+
+            // Validate Guild UID length (8 to 10 digits)
+            if (!/^\d{8,10}$/.test(guildUID)) {
+                showToast("Guild UID must be between 8 and 10 digits", "error");
+                return;
+            }
 
             const targetSlot = state.targetSlotId 
                 ? state.slots.find(s => s.id === state.targetSlotId) 
@@ -631,8 +652,8 @@
                 btn.innerHTML = `<span>Claim available slot</span> <i class="fa-solid fa-arrow-right"></i>`;
                 
                 targetSlot.claimed = true;
-                targetSlot.guildName = guildVUID;
-                targetSlot.guildVUID = guildVUID;
+                targetSlot.guildName = guildName;
+                targetSlot.guildUID = guildUID;
                 targetSlot.uid = uid;
                 targetSlot.discord = discord;
 
@@ -640,7 +661,8 @@
                 saveState();
 
                 // Reset inputs
-                document.getElementById('claim-guild-vuid').value = '';
+                document.getElementById('claim-guild-name').value = '';
+                document.getElementById('claim-guild-uid').value = '';
                 document.getElementById('claim-uid').value = '';
                 document.getElementById('claim-discord').value = '';
 
@@ -712,6 +734,24 @@
             }, 600);
         }
 
+        function clearAllRegistrations() {
+            if (confirm("Are you sure you want to clear all registered slots? This cannot be undone.")) {
+                state.slots.forEach(slot => {
+                    slot.claimed = false;
+                    slot.guildName = '';
+                    slot.guildUID = '';
+                    slot.uid = '';
+                    slot.discord = '';
+                    slot.points = null;
+                });
+                saveState();
+                renderSlotsGrid();
+                renderAdminSlots();
+                updateUIState();
+                showToast("All slot registrations cleared", "success");
+            }
+        }
+
         function renderAdminSlots() {
             const container = document.getElementById('admin-slots-list');
             if (!container) return;
@@ -727,7 +767,7 @@
                         <div class="flex items-center gap-4">
                             <span class="text-brand-orange font-bold">Slot ${slotNum}</span>
                             <span class="text-white font-bold">${escapeHtml(slot.guildName)}</span>
-                            <span class="text-brand-textMuted">${escapeHtml(slot.guildVUID)} - ${escapeHtml(slot.uid)}</span>
+                            <span class="text-brand-textMuted">GUID: ${escapeHtml(slot.guildUID)} | UID: ${escapeHtml(slot.uid)}</span>
                         </div>
                         <button onclick="clearSlotRegistration(${slot.id})" class="text-red-400 hover:underline">Clear registration</button>
                     `;
@@ -749,7 +789,7 @@
             if (slot && slot.claimed) {
                 slot.claimed = false;
                 slot.guildName = '';
-                slot.guildVUID = '';
+                slot.guildUID = '';
                 slot.uid = '';
                 slot.discord = '';
                 saveState();
