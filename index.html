@@ -115,6 +115,7 @@
                 <a href="#overview" class="hover:text-white transition">Overview</a>
                 <a href="#created-rooms-section" class="hover:text-white transition text-brand-orange">Created Rooms</a>
                 <a href="#lobby" class="hover:text-white transition">Lobby</a>
+                <a href="#leaderboard-section" class="hover:text-white transition text-brand-orange">Leaderboard</a>
                 
                 <div id="auth-nav-container" class="flex items-center gap-2 pl-2 border-l border-brand-border"></div>
 
@@ -199,11 +200,26 @@
             <div id="created-rooms-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
+        <!-- SECTION: LEADERBOARD & STANDINGS -->
+        <section id="leaderboard-section" class="space-y-6 border-t border-brand-border/60 pt-12">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">02 // STANDINGS</div>
+                    <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">LEADERBOARD.</h2>
+                    <p class="text-brand-textMuted text-sm mt-1">Official match standings & rankings (Published by Admin).</p>
+                </div>
+            </div>
+
+            <div id="public-leaderboard-container" class="bg-brand-card border border-brand-border rounded-xl overflow-hidden p-6">
+                <!-- Published Leaderboard Table injected here -->
+            </div>
+        </section>
+
         <!-- SECTION 02: THE LOBBY -->
         <section id="lobby" class="space-y-6 border-t border-brand-border/60 pt-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">02 // THE LOBBY</div>
+                    <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">03 // THE LOBBY</div>
                     <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">TOURNAMENT SLOTS.</h2>
                     <p class="text-brand-textMuted text-sm mt-1">Select an available slot to register your guild.</p>
                 </div>
@@ -223,7 +239,7 @@
 
         <!-- SECTION 03: PLAY FOR THE TOP -->
         <section class="space-y-6 border-t border-brand-border/60 pt-12 pb-8">
-            <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">03 // PLAY FOR THE TOP</div>
+            <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">04 // PLAY FOR THE TOP</div>
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 <div class="lg:col-span-8 space-y-4">
@@ -362,12 +378,12 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-mono-code text-brand-textMuted">Registration Open (Date & Time)</label>
+                        <label class="block text-xs font-mono-code text-brand-textMuted">Registration Open</label>
                         <input type="datetime-local" id="create-reg-open" required
                             class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-mono-code text-brand-textMuted">Registration Close (Date & Time)</label>
+                        <label class="block text-xs font-mono-code text-brand-textMuted">Registration Close</label>
                         <input type="datetime-local" id="create-reg-close" required
                             class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
@@ -375,7 +391,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-mono-code text-brand-textMuted">Password Time (Date & Time)</label>
+                        <label class="block text-xs font-mono-code text-brand-textMuted">Password Time</label>
                         <input type="datetime-local" id="create-schedule" required
                             class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
@@ -398,35 +414,35 @@
         </div>
     </div>
 
-    <!-- ADMIN CONTROL ROOM MODAL -->
+    <!-- WIDER & PROFESSIONAL ADMIN CONTROL ROOM MODAL -->
     <div id="modal-admin" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
-        <div class="bg-brand-card border border-brand-border w-full max-w-2xl rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="bg-brand-card border border-brand-border w-full max-w-4xl rounded-2xl p-6 sm:p-10 space-y-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
             <button onclick="closeAdminModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
-                <i class="fa-solid fa-xmark text-lg"></i>
+                <i class="fa-solid fa-xmark text-xl"></i>
             </button>
 
             <!-- Admin Login View -->
-            <div id="admin-view-login" class="space-y-6">
+            <div id="admin-view-login" class="space-y-6 max-w-md mx-auto py-10">
                 <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">ADMIN ACCESS</div>
                 <div>
-                    <h3 class="text-2xl sm:text-3xl font-black tracking-tight">Admin control room.</h3>
-                    <p class="text-brand-textMuted text-xs mt-1">Sign in to manage rooms & tournaments.</p>
+                    <h3 class="text-3xl font-black tracking-tight">Admin control room.</h3>
+                    <p class="text-brand-textMuted text-xs mt-1">Sign in to manage rooms & points.</p>
                 </div>
 
                 <form onsubmit="handleAdminLoginSubmit(event)" class="space-y-4">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Email or username</label>
                         <input type="text" id="admin-user" placeholder="admin or admin@admin" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-sm text-white focus:outline-none focus:border-brand-orange transition">
                     </div>
 
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Password</label>
                         <input type="password" id="admin-pass" placeholder="••••••••" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-sm text-white focus:outline-none focus:border-brand-orange transition">
                     </div>
 
-                    <button type="submit" id="btn-admin-login" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
+                    <button type="submit" id="btn-admin-login" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3.5 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
                         <span>Admin Login</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
@@ -434,21 +450,19 @@
             </div>
 
             <!-- Admin Control Console View -->
-            <div id="admin-view-dashboard" class="space-y-6 hidden">
-                <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">COMMAND CONSOLE</div>
-                
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div id="admin-view-dashboard" class="space-y-8 hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-border pb-4 gap-4">
                     <div>
-                        <h3 class="text-2xl sm:text-3xl font-black tracking-tight">Admin control room</h3>
-                        <p class="text-brand-textMuted text-xs mt-1">Manage tournaments & rooms</p>
+                        <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">COMMAND CONSOLE</div>
+                        <h3 class="text-3xl font-black tracking-tight mt-1">Tournament Management Hub</h3>
                     </div>
                     <button onclick="adminLogout()" class="text-xs font-mono-code text-red-400 hover:underline">Log out</button>
                 </div>
 
-                <!-- Global Settings & Popup Trigger -->
-                <div class="bg-brand-bg border border-brand-border p-4 rounded-lg space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="space-y-1">
+                <!-- Global Settings & Actions -->
+                <div class="bg-brand-bg border border-brand-border p-6 rounded-xl space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
                             <span class="block text-xs font-mono-code text-brand-textMuted">Registration status</span>
                             <div class="flex items-center gap-3 pt-1">
                                 <button type="button" onclick="toggleRegistrationStatus()" id="admin-status-toggle-btn" 
@@ -459,36 +473,44 @@
                             </div>
                         </div>
 
-                        <div class="space-y-1">
+                        <div class="space-y-2">
                             <label class="block text-xs font-mono-code text-brand-textMuted">Prize pool announcement</label>
                             <input type="text" id="admin-prize-input" value="₹30,000 + trophies" 
-                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-brand-orange font-bold font-mono-code focus:outline-none focus:border-brand-orange">
+                                class="w-full bg-brand-card border border-brand-border rounded px-3.5 py-2.5 text-xs text-brand-orange font-bold font-mono-code focus:outline-none focus:border-brand-orange">
                         </div>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-3 pt-2">
-                        <button onclick="openCreateRoomModal()" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2.5 rounded transition flex items-center gap-2">
+                        <button onclick="openCreateRoomModal()" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition flex items-center gap-2 shadow-lg shadow-brand-orange/20">
                             <span>+ Create Tournament Room</span>
                         </button>
-                        <button onclick="saveAdminGlobalSettings()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold font-mono-code px-4 py-2.5 rounded transition">
-                            Save Global Settings
+                        <button onclick="saveAdminGlobalSettings()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition">
+                            Save Settings
                         </button>
-                        <button onclick="openClearAllModal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold font-mono-code px-4 py-2.5 rounded transition flex items-center gap-2">
+                        <button onclick="publishLeaderboard()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition flex items-center gap-2">
+                            <span>Publish Leaderboard Announcement</span> <i class="fa-solid fa-bullhorn"></i>
+                        </button>
+                        <button onclick="openClearAllModal()" class="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition flex items-center gap-2 ml-auto">
                             <span>Remove All / Clear All</span> <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Manage Created Rooms & ID/Pass Editing -->
-                <div class="space-y-3 pt-2">
-                    <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold">MANAGE CREATED ROOMS (EDIT ID & PASS)</h4>
-                    <div id="admin-rooms-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                <!-- Manage Created Rooms -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold tracking-wider">MANAGE CREATED ROOMS (EDIT ID & PASS)</h4>
+                    <div id="admin-rooms-list" class="space-y-2 max-h-50 overflow-y-auto pr-1"></div>
                 </div>
 
-                <!-- Admin Slots Management -->
-                <div class="space-y-3 pt-2">
-                    <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold">SLOTS MANAGEMENT (1 TO 12)</h4>
-                    <div id="admin-slots-list" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                <!-- Slots & Match Points Management -->
+                <div class="space-y-4 pt-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold tracking-wider">SLOTS & MATCH POINTS MANAGEMENT (MATCH 1 & MATCH 2)</h4>
+                        <button onclick="calculateStandings()" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2.5 rounded-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-calculator"></i> Calculate Standings & Totals
+                        </button>
+                    </div>
+                    <div id="admin-slots-list" class="space-y-3 max-h-96 overflow-y-auto pr-2"></div>
                 </div>
             </div>
         </div>
@@ -516,7 +538,7 @@
     </div>
 
 
-    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & AUTOMATION -->
+    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & LEADERBOARD -->
     <script>
         function getInitialSlots() {
             let slots = [];
@@ -527,7 +549,10 @@
                     guildName: "",
                     guildId: "",
                     discord: "",
-                    points: null
+                    match1: 0,
+                    match2: 0,
+                    totalPoints: 0,
+                    rank: "-"
                 });
             }
             return slots;
@@ -538,7 +563,8 @@
             prizePoolText: "₹30,000 + trophies",
             tournaments: [],
             slots: getInitialSlots(),
-            users: []
+            users: [],
+            leaderboardPublished: false
         };
 
         let currentUser = localStorage.getItem('akz_current_user') || null;
@@ -560,7 +586,6 @@
 
             renderAuthNav();
 
-            // AUTOMATION TICKER: Check time every second for auto open/close and password reveals
             setInterval(() => {
                 checkAutomatedSchedule();
             }, 1000);
@@ -593,7 +618,6 @@
                 updateUIState();
             }
 
-            // Also re-render created rooms every second so passwords auto-reveal the exact second password time arrives
             renderCreatedRooms();
         }
 
@@ -607,6 +631,7 @@
                     state.prizePoolText = data.prizePoolText ?? "₹30,000 + trophies";
                     state.tournaments = Array.isArray(data.tournaments) ? data.tournaments : [];
                     state.users = Array.isArray(data.users) ? data.users : [];
+                    state.leaderboardPublished = data.leaderboardPublished ?? false;
                     
                     if (Array.isArray(data.slots) && data.slots.length === 12) {
                         state.slots = data.slots;
@@ -618,6 +643,7 @@
                 }
                 renderSlotsGrid();
                 renderCreatedRooms();
+                renderPublicLeaderboard();
                 renderAdminSlots();
                 renderAdminRooms();
                 updateUIState();
@@ -635,7 +661,8 @@
                     prizePoolText: state.prizePoolText,
                     tournaments: state.tournaments,
                     slots: state.slots,
-                    users: state.users
+                    users: state.users,
+                    leaderboardPublished: state.leaderboardPublished
                 });
             } catch (e) {
                 console.error("Error saving to Firestore: ", e);
@@ -835,6 +862,69 @@
             });
         }
 
+        // RENDER PUBLIC PUBLISHED LEADERBOARD
+        function renderPublicLeaderboard() {
+            const container = document.getElementById('public-leaderboard-container');
+            if (!container) return;
+
+            if (!state.leaderboardPublished) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-xs font-mono-code text-brand-textMuted">
+                        OFFICIAL LEADERBOARD HAS NOT BEEN PUBLISHED YET BY ADMIN. CHECK BACK LATER!
+                    </div>
+                `;
+                return;
+            }
+
+            const claimedSlots = state.slots.filter(s => s.claimed);
+            if (claimedSlots.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-xs font-mono-code text-brand-textMuted">
+                        NO GUILDS REGISTERED IN SLOTS YET.
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by totalPoints descending
+            let sorted = [...claimedSlots].sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
+
+            let html = `
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left font-mono-code text-xs">
+                        <thead>
+                            <tr class="border-b border-brand-border text-brand-textMuted">
+                                <th class="py-3 px-4">RANK</th>
+                                <th class="py-3 px-4">GUILD NAME</th>
+                                <th class="py-3 px-4">MATCH 1</th>
+                                <th class="py-3 px-4">MATCH 2</th>
+                                <th class="py-3 px-4 text-brand-orange">TOTAL POINTS</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-brand-border/40">
+            `;
+
+            sorted.forEach((slot, index) => {
+                let rankBadge = `#${index + 1}`;
+                if (index === 0) rankBadge = `<span class="text-amber-400 font-bold"><i class="fa-solid fa-crown"></i> 1ST</span>`;
+                else if (index === 1) rankBadge = `<span class="text-zinc-300 font-bold">2ND</span>`;
+                else if (index === 2) rankBadge = `<span class="text-amber-600 font-bold">3RD</span>`;
+
+                html += `
+                    <tr class="hover:bg-brand-hover/50 transition">
+                        <td class="py-3.5 px-4 font-bold text-white">${rankBadge}</td>
+                        <td class="py-3.5 px-4 font-extrabold uppercase text-white">${escapeHtml(slot.guildName)}</td>
+                        <td class="py-3.5 px-4 text-brand-textMuted">${slot.match1 || 0}</td>
+                        <td class="py-3.5 px-4 text-brand-textMuted">${slot.match2 || 0}</td>
+                        <td class="py-3.5 px-4 font-black text-brand-orange text-sm">${slot.totalPoints || 0}</td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+
         function copyToClipboard(text, label) {
             navigator.clipboard.writeText(text).then(() => {
                 showToast(`${label} copied to clipboard!`, "success");
@@ -865,8 +955,8 @@
                             <div class="text-xs font-mono-code text-brand-textMuted">Owner: ${escapeHtml(slot.bookedBy || '-')}</div>
                         </div>
                         <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
-                            <span>Points:</span>
-                            <span class="text-white">${slot.points !== null ? slot.points : '-'}</span>
+                            <span>Total Points:</span>
+                            <span class="text-brand-orange font-bold">${slot.totalPoints || 0}</span>
                         </div>
                     `;
                 } else {
@@ -1068,7 +1158,10 @@
                 guildName: guildName,
                 guildId: guildId,
                 discord: discord,
-                points: null
+                match1: 0,
+                match2: 0,
+                totalPoints: 0,
+                rank: "-"
             };
 
             await saveStateToFirebase();
@@ -1084,7 +1177,7 @@
             showToast(`Successfully registered ${guildName}! Room ID unlocked.`, "success");
         }
 
-        // ADMIN CONTROLS & POPUPS
+        // ADMIN CONTROLS & POINTS CALCULATION
         function openAdminModal() {
             const adminModal = document.getElementById('modal-admin');
             if (adminModal) adminModal.classList.remove('hidden');
@@ -1202,19 +1295,19 @@
 
             state.tournaments.forEach((tr, index) => {
                 const item = document.createElement('div');
-                item.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono-code bg-brand-card p-3 rounded border border-brand-border/60";
+                item.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono-code bg-brand-card p-3 rounded-xl border border-brand-border/60";
                 item.innerHTML = `
                     <div class="space-y-1">
                         <div class="text-brand-orange font-bold">${escapeHtml(tr.trName)}</div>
                         <div class="flex items-center gap-2">
                             <span>ID:</span>
-                            <input type="text" id="edit-id-${index}" value="${escapeHtml(tr.roomId)}" class="bg-brand-bg border border-brand-border rounded px-2 py-1 text-xs text-white w-28">
+                            <input type="text" id="edit-id-${index}" value="${escapeHtml(tr.roomId)}" class="bg-brand-bg border border-brand-border rounded px-2.5 py-1.5 text-xs text-white w-28 font-mono-code">
                             <span>Pass:</span>
-                            <input type="text" id="edit-pass-${index}" value="${escapeHtml(tr.roomPass)}" class="bg-brand-bg border border-brand-border rounded px-2 py-1 text-xs text-white w-28">
+                            <input type="text" id="edit-pass-${index}" value="${escapeHtml(tr.roomPass)}" class="bg-brand-bg border border-brand-border rounded px-2.5 py-1.5 text-xs text-white w-28 font-mono-code">
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="updateRoomCredentials(${index})" class="bg-brand-orange text-white px-3 py-1 rounded font-bold">Save</button>
+                        <button onclick="updateRoomCredentials(${index})" class="bg-brand-orange text-white px-3 py-1.5 rounded font-bold">Save</button>
                         <button onclick="removeTournamentRoom(${index})" class="text-red-400 hover:underline">Delete</button>
                     </div>
                 `;
@@ -1245,6 +1338,89 @@
             }
         }
 
+        function renderAdminSlots() {
+            const container = document.getElementById('admin-slots-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            state.slots.forEach((slot, index) => {
+                const item = document.createElement('div');
+                item.className = "flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-mono-code bg-brand-card p-3.5 rounded-xl border border-brand-border/60";
+                
+                const slotNum = String(index + 1).padStart(2, '0');
+                if (slot.claimed) {
+                    item.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="text-brand-orange font-bold">#${slotNum}</span>
+                            <span class="text-white font-bold uppercase">${escapeHtml(slot.guildName)}</span>
+                            <span class="text-brand-textMuted">(${escapeHtml(slot.bookedBy)})</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-brand-textMuted">M1:</span>
+                                <input type="number" id="m1-${index}" value="${slot.match1 || 0}" class="bg-brand-bg border border-brand-border rounded px-2 py-1 text-xs text-white w-16 text-center font-mono-code">
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-brand-textMuted">M2:</span>
+                                <input type="number" id="m2-${index}" value="${slot.match2 || 0}" class="bg-brand-bg border border-brand-border rounded px-2 py-1 text-xs text-white w-16 text-center font-mono-code">
+                            </div>
+                            <button onclick="saveMatchPoints(${index})" class="bg-zinc-800 hover:bg-zinc-700 text-brand-orange px-3 py-1 rounded font-bold">Set</button>
+                            <button onclick="removeSlotRegistration(${index})" class="text-red-400 hover:underline ml-2">Free</button>
+                        </div>
+                    `;
+                } else {
+                    item.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="text-brand-textMuted font-bold">#${slotNum}</span>
+                            <span class="text-brand-textMuted italic">Available / Unclaimed Slot</span>
+                        </div>
+                        <span class="text-zinc-600">--</span>
+                    `;
+                }
+                container.appendChild(item);
+            });
+        }
+
+        async function saveMatchPoints(index) {
+            const m1 = parseInt(document.getElementById(`m1-${index}`).value) || 0;
+            const m2 = parseInt(document.getElementById(`m2-${index}`).value) || 0;
+
+            state.slots[index].match1 = m1;
+            state.slots[index].match2 = m2;
+            state.slots[index].totalPoints = m1 + m2;
+
+            await saveStateToFirebase();
+            showToast(`Saved points for slot #${index + 1}`, "success");
+        }
+
+        // AUTO CALCULATE STANDINGS BUTTON
+        async function calculateStandings() {
+            // Read all input values live before calculating
+            state.slots.forEach((slot, index) => {
+                if (slot.claimed) {
+                    const m1Input = document.getElementById(`m1-${index}`);
+                    const m2Input = document.getElementById(`m2-${index}`);
+                    if (m1Input && m2Input) {
+                        slot.match1 = parseInt(m1Input.value) || 0;
+                        slot.match2 = parseInt(m2Input.value) || 0;
+                    }
+                    slot.totalPoints = (slot.match1 || 0) + (slot.match2 || 0);
+                }
+            });
+
+            await saveStateToFirebase();
+            renderAdminSlots();
+            showToast("Successfully calculated total points and rankings!", "success");
+        }
+
+        // PUBLISH LEADERBOARD ANNOUNCEMENT
+        async function publishLeaderboard() {
+            state.leaderboardPublished = true;
+            await saveStateToFirebase();
+            renderPublicLeaderboard();
+            showToast("Leaderboard published successfully to the website!", "success");
+        }
+
         function openClearAllModal() {
             document.getElementById('modal-clear-all').classList.remove('hidden');
         }
@@ -1256,44 +1432,14 @@
         async function confirmRemoveAllData() {
             state.slots = getInitialSlots();
             state.tournaments = [];
+            state.leaderboardPublished = false;
             await saveStateToFirebase();
             closeClearAllModal();
             renderCreatedRooms();
+            renderPublicLeaderboard();
             renderAdminSlots();
             renderAdminRooms();
             showToast("All data and rooms removed successfully", "success");
-        }
-
-        function renderAdminSlots() {
-            const container = document.getElementById('admin-slots-list');
-            if (!container) return;
-            container.innerHTML = '';
-
-            state.slots.forEach((slot, index) => {
-                const item = document.createElement('div');
-                item.className = "flex items-center justify-between text-xs font-mono-code bg-brand-card p-2.5 rounded border border-brand-border/60";
-                
-                const slotNum = String(index + 1).padStart(2, '0');
-                if (slot.claimed) {
-                    item.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <span class="text-brand-orange font-bold">SLOT #${slotNum}</span>
-                            <span class="text-white font-bold">${escapeHtml(slot.guildName)}</span>
-                            <span class="text-brand-textMuted">User: ${escapeHtml(slot.bookedBy)}</span>
-                        </div>
-                        <button onclick="removeSlotRegistration(${index})" class="text-red-400 hover:underline">Free Slot</button>
-                    `;
-                } else {
-                    item.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <span class="text-brand-textMuted font-bold">SLOT #${slotNum}</span>
-                            <span class="text-brand-textMuted italic">Available / Unclaimed</span>
-                        </div>
-                        <span class="text-zinc-600">--</span>
-                    `;
-                }
-                container.appendChild(item);
-            });
         }
 
         async function removeSlotRegistration(index) {
@@ -1305,10 +1451,14 @@
                     guildName: "",
                     guildId: "",
                     discord: "",
-                    points: null
+                    match1: 0,
+                    match2: 0,
+                    totalPoints: 0,
+                    rank: "-"
                 };
                 await saveStateToFirebase();
                 renderCreatedRooms();
+                renderAdminSlots();
                 showToast(`Freed slot #${String(index + 1).padStart(2, '0')} (${freedName})`, "success");
             }
         }
