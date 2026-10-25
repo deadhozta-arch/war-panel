@@ -107,36 +107,43 @@
 
     <!-- RESPONSIVE NAVIGATION BAR -->
     <header class="border-b border-brand-border bg-brand-bg/95 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3 sm:gap-6 overflow-hidden">
-                <div id="auth-nav-container" class="flex items-center gap-2 pr-2 sm:pr-4 border-r border-brand-border shrink-0"></div>
-                <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex items-center gap-2 sm:gap-3 text-sm sm:text-xl font-extrabold tracking-wider hover:opacity-90 transition shrink-0">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+            
+            <!-- Left: Logo & Title -->
+            <div class="flex items-center gap-2 sm:gap-4 overflow-hidden">
+                <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex items-center gap-2 text-xs sm:text-lg font-extrabold tracking-wider hover:opacity-95 transition shrink-0">
                     <img src="akshay.png" alt="Akshay AKZ Logo" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-brand-orange object-cover shadow-md shadow-brand-orange/30">
-                    <span class="tracking-widest hidden xs:inline sm:inline">AKZ / GUILD WAR</span>
+                    <span class="tracking-wider uppercase truncate">AKZ / GUILD WAR</span>
                 </a>
             </div>
 
+            <!-- Desktop Nav Links -->
             <nav class="hidden md:flex items-center gap-6 text-xs sm:text-sm font-semibold tracking-wide text-brand-textMuted">
                 <a href="#overview" class="hover:text-white transition">Overview</a>
                 <a href="#created-rooms-section" class="hover:text-white transition text-brand-orange">Created Rooms</a>
                 <a href="#registration" class="hover:text-white transition">Registration</a>
                 <a href="#leaderboard-section" class="hover:text-white transition text-brand-orange">Leaderboard</a>
-                
-                <button onclick="openAdminModal()" class="text-brand-orange hover:text-white border border-brand-orange/40 hover:border-brand-orange px-3.5 py-1.5 rounded transition flex items-center gap-1.5 font-mono-code text-xs">
-                    <i class="fa-solid font-mono text-xs">🔒</i> Admin
-                </button>
             </nav>
 
-            <div class="flex md:hidden items-center gap-2">
-                <button onclick="openAdminModal()" class="text-brand-orange border border-brand-orange/40 px-2.5 py-1 rounded text-xs font-mono-code">
-                    <i class="fa-solid fa-lock"></i> Admin
+            <!-- Right: Auth State & Admin & Hamburger -->
+            <div class="flex items-center gap-2 shrink-0">
+                <div id="auth-nav-container" class="flex items-center gap-2 text-xs"></div>
+                
+                <button onclick="openAdminModal()" class="hidden sm:flex text-brand-orange hover:text-white border border-brand-orange/40 hover:border-brand-orange px-3 py-1.5 rounded transition items-center gap-1.5 font-mono-code text-xs">
+                    <i class="fa-solid fa-lock text-xs"></i> Admin
                 </button>
-                <button onclick="toggleMobileMenu()" class="text-white p-2 focus:outline-none">
+
+                <!-- Mobile Admin & Hamburger Menu Toggle -->
+                <button onclick="openAdminModal()" class="md:hidden text-brand-orange border border-brand-orange/40 px-2 py-1 rounded text-xs font-mono-code">
+                    <i class="fa-solid fa-lock"></i>
+                </button>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-white p-1.5 focus:outline-none">
                     <i id="mobile-menu-icon" class="fa-solid fa-bars text-lg"></i>
                 </button>
             </div>
         </div>
 
+        <!-- Mobile Dropdown Menu -->
         <div id="mobile-dropdown" class="md:hidden bg-brand-card border-b border-brand-border px-4 py-4 space-y-3 hidden font-mono-code text-xs">
             <a href="#overview" onclick="toggleMobileMenu()" class="block py-2 text-brand-textMuted hover:text-white border-b border-brand-border/40">Overview</a>
             <a href="#created-rooms-section" onclick="toggleMobileMenu()" class="block py-2 text-brand-orange border-b border-brand-border/40">Created Rooms</a>
@@ -301,7 +308,7 @@
             </div>
 
             <div>
-                <h3 class="text-2xl sm:text-3xl font-black tracking-tight">Welcome back</h3>
+                <h3 id="auth-modal-heading" class="text-2xl sm:text-3xl font-black tracking-tight">Welcome back</h3>
                 <p id="auth-modal-sub" class="text-brand-textMuted text-xs mt-1">Sign in to book slots and view match details.</p>
             </div>
 
@@ -706,16 +713,16 @@
 
             if (currentUser) {
                 container.innerHTML = `
-                    <div class="flex items-center gap-2 sm:gap-3 text-xs font-mono-code">
-                        <span class="text-brand-orange font-bold flex items-center gap-1.5 truncate max-w-[100px] sm:max-w-none"><i class="fa-solid fa-user"></i> ${escapeHtml(currentUser)}</span>
+                    <div class="flex items-center gap-1.5 sm:gap-3 text-xs font-mono-code">
+                        <span class="text-brand-orange font-bold flex items-center gap-1 truncate max-w-[80px] sm:max-w-none"><i class="fa-solid fa-user"></i> ${escapeHtml(currentUser)}</span>
                         <button onclick="handleLogout()" class="text-red-400 hover:underline shrink-0">Logout</button>
                     </div>
                 `;
             } else {
                 container.innerHTML = `
-                    <div class="flex items-center gap-1.5 sm:gap-2">
-                        <button onclick="openAuthModal('login')" class="bg-brand-card hover:bg-brand-border text-white px-2.5 sm:px-3 py-1.5 rounded transition text-xs font-mono-code border border-brand-border">Login</button>
-                        <button onclick="openAuthModal('register')" class="bg-brand-orange hover:bg-brand-orangeHover text-white px-2.5 sm:px-3 py-1.5 rounded transition text-xs font-mono-code font-bold">Register</button>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="openAuthModal('login')" class="bg-brand-card hover:bg-brand-border text-white px-2.5 py-1 rounded transition text-xs font-mono-code border border-brand-border">Login</button>
+                        <button onclick="openAuthModal('register')" class="bg-brand-orange hover:bg-brand-orangeHover text-white px-2.5 py-1 rounded transition text-xs font-mono-code font-bold">Register</button>
                     </div>
                 `;
             }
@@ -910,7 +917,6 @@
             });
         }
 
-        // RENDER REGISTERED GUILDS LIST WITH USER ACCOUNT, DISCORD, & ACTION BUTTON NEAR REGISTERED
         function renderRegisteredGuildsList() {
             const container = document.getElementById('registered-guilds-list-container');
             if (!container) return;
@@ -926,9 +932,9 @@
                         <div class="flex justify-between items-center text-xs font-mono-code">
                             <span class="text-brand-textMuted font-bold">SLOT #${slotNum}</span>
                             <div class="flex items-center gap-2">
-                                <button onclick="showToast('Slot #${slotNum} details verified', 'success')" class="bg-brand-orange/20 hover:bg-brand-orange/30 text-brand-orange px-2.5 py-0.5 rounded text-[10px] font-bold border border-brand-orange/40 transition">
+                                <span class="bg-brand-orange/20 text-brand-orange px-2.5 py-0.5 rounded text-[10px] font-bold border border-brand-orange/40">
                                     <i class="fa-solid fa-circle-check"></i> Verified
-                                </button>
+                                </span>
                                 <span class="text-brand-orange font-bold uppercase">REGISTERED</span>
                             </div>
                         </div>
@@ -1162,7 +1168,6 @@
             document.getElementById('modal-claim').classList.add('hidden');
         }
 
-        // ATOMIC TRANSACTION SUBMISSION FOR RACE CONDITION (DUPLICATE MULTI-DEVICE PROTECTION)
         async function handleClaimSubmit(e) {
             e.preventDefault();
 
@@ -1242,7 +1247,6 @@
             }
         }
 
-        // ADMIN CONTROLS & POINTS CALCULATION
         function openAdminModal() {
             const adminModal = document.getElementById('modal-admin');
             if (adminModal) adminModal.classList.remove('hidden');
@@ -1401,27 +1405,6 @@
                 renderAdminRooms();
                 showToast("Tournament room deleted", "success");
             }
-        }
-
-        function openClearAllModal() {
-            document.getElementById('modal-clear-all').classList.remove('hidden');
-        }
-
-        function closeClearAllModal() {
-            document.getElementById('modal-clear-all').classList.add('hidden');
-        }
-
-        async function confirmRemoveAllData() {
-            state.slots = getInitialSlots();
-            state.tournaments = [];
-            state.leaderboardPublished = false;
-            await saveStateToFirebase();
-            closeClearAllModal();
-            renderCreatedRooms();
-            renderPublicLeaderboard();
-            renderAdminSlots();
-            renderAdminRooms();
-            showToast("All data and rooms removed successfully", "success");
         }
 
         function renderAdminSlots() {
