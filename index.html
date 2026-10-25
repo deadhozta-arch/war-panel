@@ -171,10 +171,16 @@
                     <div class="flex justify-between items-center">
                         <span>BERMUDA + PURGATORY</span>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span id="widget-timer-info">60 MIN / REGISTRATION WINDOW</span>
+                    <div class="flex flex-col gap-1 border-t border-brand-border/40 pt-2">
+                        <span class="text-brand-orange font-bold">REGISTRATION WINDOW:</span>
+                        <span id="widget-reg-open-display" class="text-white">OPENS: OCT 28, 2026 // 5:00 PM</span>
+                        <span id="widget-reg-close-display" class="text-white">CLOSES: OCT 30, 2026 // 6:00 PM</span>
                     </div>
-                    <div class="flex items-center gap-2 text-white pt-2">
+                    <div class="flex justify-between items-center border-t border-brand-border/40 pt-2">
+                        <span class="text-brand-textMuted">TOURNAMENT SCHEDULE:</span>
+                        <span id="widget-schedule-display" class="text-white">OCT 30, 2026 // 6:30 PM</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-white pt-2 border-t border-brand-border/40">
                         <i class="fa-solid fa-user-ninja text-brand-orange"></i>
                         <span>HOSTED BY AKSHAY AKZ</span>
                     </div>
@@ -370,10 +376,10 @@
 
                 <!-- Admin Global Controls -->
                 <div class="bg-brand-bg border border-brand-border p-4 rounded-lg space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-1">
-                            <span class="text-xs font-mono-code text-brand-textMuted">Registration status</span>
-                            <div class="flex items-center gap-3">
+                            <span class="block text-xs font-mono-code text-brand-textMuted">Registration status override</span>
+                            <div class="flex items-center gap-3 pt-1">
                                 <button type="button" onclick="toggleRegistrationStatus()" id="admin-status-toggle-btn" 
                                     class="w-12 h-6 bg-zinc-700 rounded-full p-1 transition duration-200 ease-in-out relative">
                                     <div id="admin-status-toggle-thumb" class="w-4 h-4 bg-white rounded-full transition transform translate-x-0"></div>
@@ -382,14 +388,33 @@
                             </div>
                         </div>
 
-                        <div class="flex-1 max-w-xs space-y-1">
+                        <div class="space-y-1">
                             <label class="block text-xs font-mono-code text-brand-textMuted">Prize pool announcement</label>
                             <input type="text" id="admin-prize-input" value="₹30,000 + trophies" 
                                 class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-brand-orange font-bold font-mono-code focus:outline-none focus:border-brand-orange">
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-3 pt-1">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="block text-xs font-mono-code text-brand-textMuted">Registration Opens Date/Time</label>
+                            <input type="text" id="admin-reg-open-input" value="OCT 28, 2026 // 5:00 PM" 
+                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-brand-orange font-bold font-mono-code focus:outline-none focus:border-brand-orange">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-xs font-mono-code text-brand-textMuted">Registration Closes Date/Time</label>
+                            <input type="text" id="admin-reg-close-input" value="OCT 30, 2026 // 6:00 PM" 
+                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-brand-orange font-bold font-mono-code focus:outline-none focus:border-brand-orange">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 pt-1">
+                        <label class="block text-xs font-mono-code text-brand-textMuted">Tournament Match Schedule</label>
+                        <input type="text" id="admin-schedule-input" value="OCT 30, 2026 // 6:30 PM" 
+                            class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-brand-orange font-bold font-mono-code focus:outline-none focus:border-brand-orange">
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-2">
                         <button onclick="saveAdminSettings()" id="btn-save-schedule" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
                             <span>Save settings</span> <i class="fa-solid fa-check"></i>
                         </button>
@@ -432,9 +457,8 @@
     </div>
 
 
-    <!-- FIREBASE LIVE REAL-TIME APP LOGIC (12 FIXED SLOTS) -->
+    <!-- FIREBASE LIVE REAL-TIME APP LOGIC -->
     <script>
-        // Initialize 12 empty slots
         function getInitialSlots() {
             let slots = [];
             for (let i = 0; i < 12; i++) {
@@ -452,12 +476,14 @@
         let state = {
             isRegistrationOpen: false,
             prizePoolText: "₹30,000 + trophies",
+            regOpenText: "OCT 28, 2026 // 5:00 PM",
+            regCloseText: "OCT 30, 2026 // 6:00 PM",
+            scheduleText: "OCT 30, 2026 // 6:30 PM",
             slots: getInitialSlots()
         };
 
         let isAdminLoggedIn = false;
 
-        // FETCH DATA LIVE FROM FIREBASE ON LOAD & SETUP REAL-TIME LISTENER
         window.addEventListener('DOMContentLoaded', () => {
             const checkFirebaseInterval = setInterval(() => {
                 if (window.dbDocRef && window.firebaseModules) {
@@ -480,24 +506,12 @@
                     const data = docSnap.data();
                     state.isRegistrationOpen = data.isRegistrationOpen ?? false;
                     state.prizePoolText = data.prizePoolText ?? "₹30,000 + trophies";
+                    state.regOpenText = data.regOpenText ?? "OCT 28, 2026 // 5:00 PM";
+                    state.regCloseText = data.regCloseText ?? "OCT 30, 2026 // 6:00 PM";
+                    state.scheduleText = data.scheduleText ?? "OCT 30, 2026 // 6:30 PM";
                     
                     if (Array.isArray(data.slots) && data.slots.length === 12) {
                         state.slots = data.slots;
-                    } else if (Array.isArray(data.guilds)) {
-                        // Migration fallback if upgrading from previous array
-                        let slots = getInitialSlots();
-                        data.guilds.forEach((g, idx) => {
-                            if (idx < 12) {
-                                slots[idx] = {
-                                    claimed: true,
-                                    guildName: g.guildName,
-                                    guildId: g.guildId,
-                                    discord: g.discord,
-                                    points: g.points ?? null
-                                };
-                            }
-                        });
-                        state.slots = slots;
                     } else {
                         state.slots = getInitialSlots();
                     }
@@ -518,6 +532,9 @@
                 await setDoc(window.dbDocRef, {
                     isRegistrationOpen: state.isRegistrationOpen,
                     prizePoolText: state.prizePoolText,
+                    regOpenText: state.regOpenText,
+                    regCloseText: state.regCloseText,
+                    scheduleText: state.scheduleText,
                     slots: state.slots
                 });
             } catch (e) {
@@ -525,7 +542,6 @@
             }
         }
 
-        // RENDER 12 FIXED SLOTS GRID
         function renderSlotsGrid() {
             const container = document.getElementById('slots-container');
             if (!container) return;
@@ -572,7 +588,6 @@
             });
         }
 
-        // UPDATE UI DEPENDING ON REGISTRATION STATE
         function updateUIState() {
             const claimedCount = state.slots.filter(s => s.claimed).length;
             const countText = document.getElementById('claimed-count-text');
@@ -620,12 +635,27 @@
             if (prizeDisplay) prizeDisplay.innerText = state.prizePoolText;
             
             const prizeInput = document.getElementById('admin-prize-input');
-            if (prizeInput) {
-                prizeInput.value = state.prizePoolText;
-            }
+            if (prizeInput) prizeInput.value = state.prizePoolText;
+
+            const regOpenDisplay = document.getElementById('widget-reg-open-display');
+            if (regOpenDisplay) regOpenDisplay.innerText = `OPENS: ${state.regOpenText}`;
+
+            const regCloseDisplay = document.getElementById('widget-reg-close-display');
+            if (regCloseDisplay) regCloseDisplay.innerText = `CLOSES: ${state.regCloseText}`;
+
+            const scheduleDisplay = document.getElementById('widget-schedule-display');
+            if (scheduleDisplay) scheduleDisplay.innerText = state.scheduleText;
+
+            const regOpenInput = document.getElementById('admin-reg-open-input');
+            if (regOpenInput) regOpenInput.value = state.regOpenText;
+
+            const regCloseInput = document.getElementById('admin-reg-close-input');
+            if (regCloseInput) regCloseInput.value = state.regCloseText;
+
+            const scheduleInput = document.getElementById('admin-schedule-input');
+            if (scheduleInput) scheduleInput.value = state.scheduleText;
         }
 
-        // TOAST NOTIFICATION SYSTEM
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -651,7 +681,6 @@
             }, 3500);
         }
 
-        // DIRECT HERO REGISTRATION CLICK (Finds first available slot)
         function handleDirectRegisterClick() {
             if (!state.isRegistrationOpen) {
                 showToast("Registration is currently closed", "error");
@@ -703,7 +732,6 @@
                 return;
             }
 
-            // STRICT DUPLICATE CHECK ACROSS ALL SLOTS
             const normalizedGuildName = guildName.toLowerCase();
             const normalizedDiscord = discord.toLowerCase();
             
@@ -729,7 +757,6 @@
             const btn = document.getElementById('btn-claim-submit');
             if (btn) btn.innerHTML = `<span>Booking Slot...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
-            // Claim specific slot
             state.slots[index] = {
                 claimed: true,
                 guildName: guildName,
@@ -750,7 +777,6 @@
             showToast(`Successfully registered ${guildName} to Slot #${String(index + 1).padStart(2, '0')}!`, "success");
         }
 
-        // ADMIN CONTROL ROOM LOGIC
         function openAdminModal() {
             const adminModal = document.getElementById('modal-admin');
             if (adminModal) adminModal.classList.remove('hidden');
@@ -770,8 +796,7 @@
         }
 
         function closeAdminModal() {
-            const adminModal = document.getElementById('modal-admin');
-            if (adminModal) adminModal.classList.add('hidden');
+            document.getElementById('modal-admin').classList.add('hidden');
         }
 
         function handleAdminLoginSubmit(e) {
@@ -825,6 +850,16 @@
             
             const prizeInput = document.getElementById('admin-prize-input');
             if (prizeInput) state.prizePoolText = prizeInput.value;
+
+            const regOpenInput = document.getElementById('admin-reg-open-input');
+            if (regOpenInput) state.regOpenText = regOpenInput.value;
+
+            const regCloseInput = document.getElementById('admin-reg-close-input');
+            if (regCloseInput) state.regCloseText = regCloseInput.value;
+
+            const scheduleInput = document.getElementById('admin-schedule-input');
+            if (scheduleInput) state.scheduleText = scheduleInput.value;
+
             await saveStateToFirebase();
 
             setTimeout(() => {
@@ -835,13 +870,11 @@
         }
 
         function openClearAllModal() {
-            const modal = document.getElementById('modal-clear-all');
-            if (modal) modal.classList.remove('hidden');
+            document.getElementById('modal-clear-all').classList.remove('hidden');
         }
 
         function closeClearAllModal() {
-            const modal = document.getElementById('modal-clear-all');
-            if (modal) modal.classList.add('hidden');
+            document.getElementById('modal-clear-all').classList.add('hidden');
         }
 
         async function confirmClearAllRegistrations() {
