@@ -77,7 +77,6 @@
         .font-mono-code {
             font-family: 'JetBrains Mono', monospace;
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -91,7 +90,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #FF4D00;
         }
-        /* Glassmorphism modal background overlay */
         .backdrop-blur-custom {
             backdrop-filter: blur(8px);
             background-color: rgba(5, 5, 6, 0.85);
@@ -108,16 +106,20 @@
     <!-- NAVIGATION BAR -->
     <header class="border-b border-brand-border bg-brand-bg/90 backdrop-blur sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <!-- Logo -->
             <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex items-center gap-2 text-lg sm:text-xl font-extrabold tracking-wider hover:opacity-90 transition">
                 <span class="text-brand-orange font-mono-code">&lt;/&gt;</span>
                 <span class="tracking-widest">AKZ / GUILD WAR</span>
             </a>
 
-            <!-- Nav Links -->
-            <nav class="flex items-center gap-6 text-xs sm:text-sm font-semibold tracking-wide text-brand-textMuted">
+            <nav class="flex items-center gap-4 text-xs sm:text-sm font-semibold tracking-wide text-brand-textMuted">
                 <a href="#overview" class="hover:text-white transition">Overview</a>
-                <a href="#lobby" class="hover:text-white transition">Registration</a>
+                <a href="#created-rooms-section" class="hover:text-white transition text-brand-orange">Created Rooms</a>
+                <a href="#lobby" class="hover:text-white transition">Lobby</a>
+                
+                <div id="auth-nav-container" class="flex items-center gap-2 pl-2 border-l border-brand-border">
+                    <!-- Injected by JS -->
+                </div>
+
                 <button onclick="openAdminModal()" class="text-brand-orange hover:text-white border border-brand-orange/40 hover:border-brand-orange px-3 py-1.5 rounded transition flex items-center gap-1.5">
                     <i class="fa-solid font-mono text-xs">🔒</i> Admin
                 </button>
@@ -130,7 +132,6 @@
 
         <!-- HERO SECTION (OVERVIEW) -->
         <section id="overview" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-4">
-            <!-- Left Hero Content -->
             <div class="lg:col-span-7 space-y-6">
                 <div class="inline-block text-xs font-mono-code uppercase tracking-widest text-brand-orange font-bold bg-brand-orange/10 px-3 py-1 border border-brand-orange/20 rounded">
                     AKSHAY AKZ PRESENTS // FREE FIRE
@@ -142,7 +143,7 @@
 
                 <p class="text-brand-textMuted text-sm sm:text-base leading-relaxed max-w-xl font-medium">
                     <strong class="text-white">12 guilds. Two battlegrounds. One top spot.</strong><br>
-                    Bring your guild to Bermuda and Purgatory. Battle for points, climb the standings, and compete for the prize pool. Hosted by Akshay AKZ.
+                    Bring your guild to Bermuda and Purgatory. Register your slot, log in, and access your created room ID & password. Hosted by Akshay AKZ.
                 </p>
 
                 <div class="pt-2">
@@ -153,7 +154,6 @@
                 </div>
             </div>
 
-            <!-- Right Hero Tournament Card Widget -->
             <div class="lg:col-span-5 bg-brand-card border border-brand-border p-6 sm:p-8 rounded-xl space-y-6 shadow-2xl relative overflow-hidden">
                 <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-brand-orange/5 rounded-full blur-2xl pointer-events-none"></div>
                 
@@ -188,35 +188,18 @@
             </div>
         </section>
 
-        <!-- SECTION 01: THE ARENAS -->
-        <section class="space-y-6 border-t border-brand-border/60 pt-12">
-            <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">01 // THE ARENAS</div>
-            <h2 class="text-2xl sm:text-4xl font-black uppercase tracking-tight">TWO MAPS. NO SECOND CHANCES.</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                <!-- Bermuda Card -->
-                <div class="bg-brand-card border border-brand-border p-6 sm:p-8 rounded-xl hover:border-brand-orange/50 transition group relative">
-                    <div class="flex justify-between items-start mb-6">
-                        <span class="text-xs font-mono-code text-brand-textMuted">ARENA // 01</span>
-                        <div class="w-8 h-8 rounded border border-brand-orange/30 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-white transition">
-                            <i class="fa-solid fa-crosshairs"></i>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black tracking-wide uppercase mb-2">BERMUDA</h3>
-                    <p class="text-brand-textMuted text-sm">Familiar ground. Fierce competition. Make every rotation count.</p>
+        <!-- SECTION: CREATED ROOMS / AVAILABLE MATCHES -->
+        <section id="created-rooms-section" class="space-y-6 border-t border-brand-border/60 pt-12">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">01 // TOURNAMENT ROOMS</div>
+                    <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">CREATED ROOMS.</h2>
+                    <p class="text-brand-textMuted text-sm mt-1">Active tournament rooms created by admin. Register slots to unlock credentials.</p>
                 </div>
+            </div>
 
-                <!-- Purgatory Card -->
-                <div class="bg-brand-card border border-brand-border p-6 sm:p-8 rounded-xl hover:border-brand-orange/50 transition group relative">
-                    <div class="flex justify-between items-start mb-6">
-                        <span class="text-xs font-mono-code text-brand-textMuted">ARENA // 02</span>
-                        <div class="w-8 h-8 rounded border border-brand-orange/30 flex items-center justify-center text-brand-orange group-hover:bg-brand-orange group-hover:text-white transition">
-                            <i class="fa-solid fa-map-location-dot"></i>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black tracking-wide uppercase mb-2">PURGATORY</h3>
-                    <p class="text-brand-textMuted text-sm">New terrain. Same mission. Keep your guild at the top.</p>
-                </div>
+            <div id="created-rooms-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Dynamically injected created rooms -->
             </div>
         </section>
 
@@ -226,7 +209,7 @@
                 <div>
                     <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">02 // THE LOBBY</div>
                     <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">TOURNAMENT SLOTS.</h2>
-                    <p class="text-brand-textMuted text-sm mt-1">Select an available slot to register your guild for both maps.</p>
+                    <p class="text-brand-textMuted text-sm mt-1">Select an available slot to register your guild.</p>
                 </div>
 
                 <div class="flex items-center gap-4 text-xs font-mono-code">
@@ -257,7 +240,6 @@
                     </p>
                 </div>
 
-                <!-- Prize Pool Card -->
                 <div class="lg:col-span-4 bg-brand-card border border-brand-border p-6 rounded-xl flex items-center gap-5">
                     <div class="text-brand-orange text-3xl sm:text-4xl p-3 bg-brand-orange/10 border border-brand-orange/20 rounded-lg">
                         <i class="fa-solid fa-trophy"></i>
@@ -281,14 +263,57 @@
 
     <!-- ==================== MODALS ==================== -->
 
-    <!-- 1. CLAIM SLOT MODAL -->
+    <!-- AUTHENTICATION MODAL (LOGIN / REGISTER) -->
+    <div id="modal-auth" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
+        <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl">
+            <button onclick="closeAuthModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">
+                <span id="auth-modal-title">USER ACCOUNT</span>
+            </div>
+
+            <div>
+                <h3 id="auth-modal-heading" class="text-2xl sm:text-3xl font-black tracking-tight">Welcome back</h3>
+                <p id="auth-modal-sub" class="text-brand-textMuted text-xs mt-1">Sign in to book slots and view match details.</p>
+            </div>
+
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-mono-code text-brand-textMuted">Username</label>
+                    <input type="text" id="auth-username" placeholder="e.g. akz_gamer" required
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-mono-code text-brand-textMuted">Password</label>
+                    <input type="password" id="auth-password" placeholder="••••••••" required
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
+                </div>
+
+                <button type="submit" id="btn-auth-submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
+                    <span id="auth-btn-text">Sign In</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+
+            <div class="text-center pt-2 border-t border-brand-border/60">
+                <button type="button" onclick="toggleAuthMode()" id="auth-switch-btn" class="text-xs font-mono-code text-brand-textMuted hover:text-white transition">
+                    Don't have an account? <span class="text-brand-orange font-bold">Register here</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLAIM SLOT MODAL -->
     <div id="modal-claim" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl">
             <button onclick="closeClaimModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
-            <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold flex justify-between items-center">
+            <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">
                 <span id="modal-slot-title">CLAIM SLOT #01</span>
             </div>
 
@@ -303,19 +328,19 @@
                 <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Guild Name</label>
                     <input type="text" id="claim-guild-name" placeholder="e.g. Team AKZ" required
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand-orange transition">
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
                 </div>
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Guild ID (8 to 10 digits)</label>
                     <input type="text" id="claim-guild-id" placeholder="e.g. 301294829" required pattern="\d{8,10}" maxlength="10" title="Guild ID must be between 8 and 10 digits"
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand-orange transition font-mono-code">
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                 </div>
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Discord username</label>
                     <input type="text" id="claim-discord" placeholder="@your-handle" required
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand-orange transition">
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
                 </div>
 
                 <button type="submit" id="btn-claim-submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
@@ -326,8 +351,7 @@
         </div>
     </div>
 
-
-    <!-- 2. ADMIN CONTROL ROOM MODAL -->
+    <!-- ADMIN CONTROL ROOM MODAL -->
     <div id="modal-admin" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-2xl rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
             <button onclick="closeAdminModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
@@ -339,7 +363,7 @@
                 <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">ADMIN ACCESS</div>
                 <div>
                     <h3 class="text-2xl sm:text-3xl font-black tracking-tight">Admin control room.</h3>
-                    <p class="text-brand-textMuted text-xs mt-1">Sign in to manage the tournament.</p>
+                    <p class="text-brand-textMuted text-xs mt-1">Sign in to manage rooms & tournaments.</p>
                 </div>
 
                 <form onsubmit="handleAdminLoginSubmit(event)" class="space-y-4">
@@ -369,16 +393,16 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                         <h3 class="text-2xl sm:text-3xl font-black tracking-tight">Admin control room</h3>
-                        <p class="text-brand-textMuted text-xs mt-1">Signed in as admin</p>
+                        <p class="text-brand-textMuted text-xs mt-1">Manage tournaments & rooms</p>
                     </div>
                     <button onclick="adminLogout()" class="text-xs font-mono-code text-red-400 hover:underline">Log out</button>
                 </div>
 
-                <!-- Admin Global Controls -->
+                <!-- Global Settings -->
                 <div class="bg-brand-bg border border-brand-border p-4 rounded-lg space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-1">
-                            <span class="block text-xs font-mono-code text-brand-textMuted">Registration status override</span>
+                            <span class="block text-xs font-mono-code text-brand-textMuted">Registration status</span>
                             <div class="flex items-center gap-3 pt-1">
                                 <button type="button" onclick="toggleRegistrationStatus()" id="admin-status-toggle-btn" 
                                     class="w-12 h-6 bg-zinc-700 rounded-full p-1 transition duration-200 ease-in-out relative">
@@ -395,62 +419,97 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="block text-xs font-mono-code text-brand-textMuted">Registration Opens Date/Time</label>
-                            <input type="text" id="admin-reg-open-input" value="OCT 28, 2026 // 5:00 PM" 
-                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-brand-orange font-bold font-mono-code focus:outline-none focus:border-brand-orange">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-xs font-mono-code text-brand-textMuted">Registration Closes Date/Time</label>
-                            <input type="text" id="admin-reg-close-input" value="OCT 30, 2026 // 6:00 PM" 
-                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-brand-orange font-bold font-mono-code focus:outline-none focus:border-brand-orange">
-                        </div>
-                    </div>
-
-                    <div class="space-y-1 pt-1">
-                        <label class="block text-xs font-mono-code text-brand-textMuted">Tournament Match Schedule</label>
-                        <input type="text" id="admin-schedule-input" value="OCT 30, 2026 // 6:30 PM" 
-                            class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-brand-orange font-bold font-mono-code focus:outline-none focus:border-brand-orange">
-                    </div>
-
                     <div class="flex items-center gap-3 pt-2">
-                        <button onclick="saveAdminSettings()" id="btn-save-schedule" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
-                            <span>Save settings</span> <i class="fa-solid fa-check"></i>
+                        <button onclick="saveAdminGlobalSettings()" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2 rounded transition">
+                            Save Global Settings
                         </button>
-                        <button onclick="openClearAllModal()" class="bg-zinc-800 hover:bg-red-900/60 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
-                            <span>Clear all slots</span> <i class="fa-solid fa-trash-can"></i>
+                        <button onclick="openClearAllModal()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
+                            <span>Remove All / Clear All</span> <i class="fa-solid fa-trash-can"></i>
                         </button>
+                    </div>
+                </div>
+
+                <!-- CREATE TOURNAMENT ROOM FORM -->
+                <div class="bg-brand-bg border border-brand-border p-4 rounded-lg space-y-4">
+                    <div class="text-xs font-mono-code text-brand-orange uppercase font-bold">CREATE TOURNAMENT ROOM</div>
+                    
+                    <div class="space-y-1">
+                        <label class="block text-xs font-mono-code text-brand-textMuted">Tournament Name (TR Name)</label>
+                        <input type="text" id="create-tr-name" placeholder="e.g. AKZ Pro League Finals" 
+                            class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-white font-mono-code focus:outline-none focus:border-brand-orange">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="block text-xs font-mono-code text-brand-textMuted">Registration Open</label>
+                            <input type="text" id="create-reg-open" placeholder="OCT 28, 2026 // 5:00 PM" 
+                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-white font-mono-code focus:outline-none focus:border-brand-orange">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-xs font-mono-code text-brand-textMuted">Registration Close</label>
+                            <input type="text" id="create-reg-close" placeholder="OCT 30, 2026 // 6:00 PM" 
+                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-white font-mono-code focus:outline-none focus:border-brand-orange">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="space-y-1">
+                            <label class="block text-xs font-mono-code text-brand-textMuted">Schedule Time</label>
+                            <input type="text" id="create-schedule" placeholder="OCT 30, 2026 // 6:30 PM" 
+                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-white font-mono-code focus:outline-none focus:border-brand-orange">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-xs font-mono-code text-brand-textMuted">Room ID</label>
+                            <input type="text" id="create-room-id" placeholder="8492019" 
+                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-white font-mono-code focus:outline-none focus:border-brand-orange">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-xs font-mono-code text-brand-textMuted">Room Password</label>
+                            <input type="text" id="create-room-pass" placeholder="akz2026" 
+                                class="w-full bg-brand-card border border-brand-border rounded px-3 py-1.5 text-xs text-white font-mono-code focus:outline-none focus:border-brand-orange">
+                        </div>
+                    </div>
+
+                    <button onclick="handleCreateTournamentRoom()" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code py-2.5 rounded transition">
+                        Create & Publish Room
+                    </button>
+                </div>
+
+                <!-- Manage Created Rooms -->
+                <div class="space-y-3 pt-2">
+                    <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold">MANAGE CREATED ROOMS</h4>
+                    <div id="admin-rooms-list" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                        <!-- Admin room items -->
                     </div>
                 </div>
 
                 <!-- Admin Slots Management -->
                 <div class="space-y-3 pt-2">
                     <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold">SLOTS MANAGEMENT (1 TO 12)</h4>
-                    <div id="admin-slots-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-                        <!-- Dynamic slot items injected by JS -->
+                    <div id="admin-slots-list" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                        <!-- Dynamic slot items -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. CLEAR ALL SLOTS CONFIRMATION POP-UP -->
+    <!-- REMOVE ALL / CLEAR ALL CONFIRMATION -->
     <div id="modal-clear-all" class="fixed inset-0 z-[70] flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-red-500/40 w-full max-w-sm rounded-xl p-6 space-y-5 relative shadow-2xl">
             <div class="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-lg">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <div class="space-y-1">
-                <h3 class="text-lg font-black uppercase text-white">Clear All Tournament Slots?</h3>
-                <p class="text-brand-textMuted text-xs">This will reset all 12 slots to available and cannot be undone.</p>
+                <h3 class="text-lg font-black uppercase text-white">Remove All Data?</h3>
+                <p class="text-brand-textMuted text-xs">This will delete all created rooms, reset all 12 slots, and cannot be undone.</p>
             </div>
             <div class="flex items-center gap-3 pt-2">
                 <button onclick="closeClearAllModal()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2.5 rounded text-xs transition">
                     Cancel
                 </button>
-                <button onclick="confirmClearAllRegistrations()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded text-xs transition">
-                    Yes, Clear All
+                <button onclick="confirmRemoveAllData()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded text-xs transition">
+                    Yes, Remove All
                 </button>
             </div>
         </div>
@@ -464,6 +523,7 @@
             for (let i = 0; i < 12; i++) {
                 slots.push({
                     claimed: false,
+                    bookedBy: "",
                     guildName: "",
                     guildId: "",
                     discord: "",
@@ -476,13 +536,14 @@
         let state = {
             isRegistrationOpen: false,
             prizePoolText: "₹30,000 + trophies",
-            regOpenText: "OCT 28, 2026 // 5:00 PM",
-            regCloseText: "OCT 30, 2026 // 6:00 PM",
-            scheduleText: "OCT 30, 2026 // 6:30 PM",
-            slots: getInitialSlots()
+            tournaments: [], // Created rooms list
+            slots: getInitialSlots(),
+            users: []
         };
 
+        let currentUser = localStorage.getItem('akz_current_user') || null;
         let isAdminLoggedIn = false;
+        let authMode = 'login';
 
         window.addEventListener('DOMContentLoaded', () => {
             const checkFirebaseInterval = setInterval(() => {
@@ -496,6 +557,8 @@
             if (savedAdminLogin === 'true') {
                 isAdminLoggedIn = true;
             }
+
+            renderAuthNav();
         });
 
         function initFirebaseRealtimeSync() {
@@ -506,9 +569,8 @@
                     const data = docSnap.data();
                     state.isRegistrationOpen = data.isRegistrationOpen ?? false;
                     state.prizePoolText = data.prizePoolText ?? "₹30,000 + trophies";
-                    state.regOpenText = data.regOpenText ?? "OCT 28, 2026 // 5:00 PM";
-                    state.regCloseText = data.regCloseText ?? "OCT 30, 2026 // 6:00 PM";
-                    state.scheduleText = data.scheduleText ?? "OCT 30, 2026 // 6:30 PM";
+                    state.tournaments = Array.isArray(data.tournaments) ? data.tournaments : [];
+                    state.users = Array.isArray(data.users) ? data.users : [];
                     
                     if (Array.isArray(data.slots) && data.slots.length === 12) {
                         state.slots = data.slots;
@@ -519,8 +581,11 @@
                     saveStateToFirebase();
                 }
                 renderSlotsGrid();
+                renderCreatedRooms();
                 renderAdminSlots();
+                renderAdminRooms();
                 updateUIState();
+                renderAuthNav();
             }, (error) => {
                 console.error("Firestore sync error: ", error);
             });
@@ -532,14 +597,196 @@
                 await setDoc(window.dbDocRef, {
                     isRegistrationOpen: state.isRegistrationOpen,
                     prizePoolText: state.prizePoolText,
-                    regOpenText: state.regOpenText,
-                    regCloseText: state.regCloseText,
-                    scheduleText: state.scheduleText,
-                    slots: state.slots
+                    tournaments: state.tournaments,
+                    slots: state.slots,
+                    users: state.users
                 });
             } catch (e) {
                 console.error("Error saving to Firestore: ", e);
             }
+        }
+
+        // RENDER AUTH NAV
+        function renderAuthNav() {
+            const container = document.getElementById('auth-nav-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (currentUser) {
+                container.innerHTML = `
+                    <div class="flex items-center gap-3 text-xs font-mono-code">
+                        <span class="text-brand-orange font-bold"><i class="fa-solid fa-user"></i> ${escapeHtml(currentUser)}</span>
+                        <button onclick="handleLogout()" class="text-red-400 hover:underline">Logout</button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <button onclick="openAuthModal('login')" class="bg-brand-card hover:bg-brand-border text-white px-3 py-1.5 rounded transition text-xs font-mono-code border border-brand-border">Login</button>
+                        <button onclick="openAuthModal('register')" class="bg-brand-orange hover:bg-brand-orangeHover text-white px-3 py-1.5 rounded transition text-xs font-mono-code font-bold">Register</button>
+                    </div>
+                `;
+            }
+        }
+
+        function openAuthModal(mode = 'login') {
+            authMode = mode;
+            const modal = document.getElementById('modal-auth');
+            const heading = document.getElementById('auth-modal-heading');
+            const sub = document.getElementById('auth-modal-sub');
+            const btnText = document.getElementById('auth-btn-text');
+            const switchBtn = document.getElementById('auth-switch-btn');
+
+            if (mode === 'register') {
+                heading.innerText = "Create Account";
+                sub.innerText = "Register a normal account to book tournament slots.";
+                btnText.innerText = "Register Account";
+                switchBtn.innerHTML = `Already have an account? <span class="text-brand-orange font-bold">Login here</span>`;
+            } else {
+                heading.innerText = "Welcome back";
+                sub.innerText = "Sign in to access created rooms & room credentials.";
+                btnText.innerText = "Sign In";
+                switchBtn.innerHTML = `Don't have an account? <span class="text-brand-orange font-bold">Register here</span>`;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('modal-auth').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            authMode = authMode === 'login' ? 'register' : 'login';
+            openAuthModal(authMode);
+        }
+
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('auth-username').value.trim().toLowerCase();
+            const password = document.getElementById('auth-password').value;
+
+            if (authMode === 'register') {
+                const existing = state.users.find(u => u.username === username);
+                if (existing) {
+                    showToast("Username already exists! Choose another.", "error");
+                    return;
+                }
+
+                state.users.push({ username, password });
+                await saveStateToFirebase();
+
+                currentUser = username;
+                localStorage.setItem('akz_current_user', currentUser);
+                closeAuthModal();
+                renderAuthNav();
+                renderCreatedRooms();
+                showToast(`Account created successfully! Welcome ${username}`, "success");
+            } else {
+                const user = state.users.find(u => u.username === username && u.password === password);
+                if (!user) {
+                    showToast("Invalid username or password!", "error");
+                    return;
+                }
+
+                currentUser = username;
+                localStorage.setItem('akz_current_user', currentUser);
+                closeAuthModal();
+                renderAuthNav();
+                renderCreatedRooms();
+                showToast(`Logged in successfully as ${username}`, "success");
+            }
+
+            document.getElementById('auth-username').value = '';
+            document.getElementById('auth-password').value = '';
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('akz_current_user');
+            renderAuthNav();
+            renderCreatedRooms();
+            showToast("Logged out successfully", "info");
+        }
+
+        // RENDER CREATED ROOMS CATEGORY (ID/PASS REVEAL FOR REGISTERED USERS)
+        function renderCreatedRooms() {
+            const container = document.getElementById('created-rooms-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (state.tournaments.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-8 text-center text-xs font-mono-code text-brand-textMuted border border-brand-border/60 rounded-xl bg-brand-card">
+                        NO TOURNAMENT ROOMS CREATED YET BY ADMIN.
+                    </div>
+                `;
+                return;
+            }
+
+            // Check if user has registered at least one slot
+            const userHasRegistered = currentUser && state.slots.some(s => s.claimed && s.bookedBy === currentUser);
+
+            state.tournaments.forEach((tr) => {
+                const card = document.createElement('div');
+                card.className = "bg-brand-card border border-brand-orange p-6 rounded-xl space-y-4 shadow-xl";
+
+                let credentialsHtml = '';
+                if (!currentUser) {
+                    credentialsHtml = `
+                        <div class="bg-brand-bg p-3 rounded border border-brand-border text-center text-xs text-brand-textMuted">
+                            Please <button onclick="openAuthModal('login')" class="text-brand-orange underline font-bold">Login</button> & register a slot to view Room ID & Password.
+                        </div>
+                    `;
+                } else if (!userHasRegistered) {
+                    credentialsHtml = `
+                        <div class="bg-brand-bg p-3 rounded border border-brand-border text-center text-xs text-brand-textMuted">
+                            You must register a slot in the Lobby below to reveal Room ID & Password.
+                        </div>
+                    `;
+                } else {
+                    credentialsHtml = `
+                        <div class="bg-brand-bg p-3 rounded border border-brand-border space-y-2 mt-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-brand-orange font-bold">Room ID:</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-white font-bold select-all">${escapeHtml(tr.roomId)}</span>
+                                    <button onclick="copyToClipboard('${escapeHtml(tr.roomId)}', 'Room ID')" class="bg-zinc-800 hover:bg-zinc-700 text-brand-orange px-2 py-1 rounded text-xs">Copy</button>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center border-t border-brand-border/40 pt-2">
+                                <span class="text-brand-orange font-bold">Password:</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-white font-bold select-all">${escapeHtml(tr.roomPass)}</span>
+                                    <button onclick="copyToClipboard('${escapeHtml(tr.roomPass)}', 'Password')" class="bg-zinc-800 hover:bg-zinc-700 text-brand-orange px-2 py-1 rounded text-xs">Copy</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-xs font-mono-code">
+                        <span class="text-brand-orange font-bold uppercase">${escapeHtml(tr.trName)}</span>
+                        <span class="bg-brand-orange/10 text-brand-orange px-2 py-0.5 rounded">ACTIVE ROOM</span>
+                    </div>
+                    <div class="border-t border-brand-border pt-3 space-y-2 font-mono-code text-xs">
+                        <div class="flex justify-between"><span class="text-brand-textMuted">Reg Opens:</span> <span class="text-white">${escapeHtml(tr.regOpen)}</span></div>
+                        <div class="flex justify-between"><span class="text-brand-textMuted">Reg Closes:</span> <span class="text-white">${escapeHtml(tr.regClose)}</span></div>
+                        <div class="flex justify-between"><span class="text-brand-textMuted">Schedule:</span> <span class="text-white">${escapeHtml(tr.schedule)}</span></div>
+                        ${credentialsHtml}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function copyToClipboard(text, label) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`${label} copied to clipboard!`, "success");
+            }).catch(err => {
+                showToast("Failed to copy", "error");
+            });
         }
 
         function renderSlotsGrid() {
@@ -561,7 +808,7 @@
                         <div class="py-2">
                             <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code">${escapeHtml(slot.guildName)}</div>
                             <div class="text-xs font-mono-code text-brand-textMuted">Guild ID: ${escapeHtml(slot.guildId || '-')}</div>
-                            <div class="text-xs font-mono-code text-brand-textMuted">Discord: ${escapeHtml(slot.discord || '-')}</div>
+                            <div class="text-xs font-mono-code text-brand-textMuted">Owner: ${escapeHtml(slot.bookedBy || '-')}</div>
                         </div>
                         <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
                             <span>Points:</span>
@@ -637,23 +884,17 @@
             const prizeInput = document.getElementById('admin-prize-input');
             if (prizeInput) prizeInput.value = state.prizePoolText;
 
-            const regOpenDisplay = document.getElementById('widget-reg-open-display');
-            if (regOpenDisplay) regOpenDisplay.innerText = `OPENS: ${state.regOpenText}`;
+            if (state.tournaments.length > 0) {
+                const latest = state.tournaments[0];
+                const regOpenDisplay = document.getElementById('widget-reg-open-display');
+                if (regOpenDisplay) regOpenDisplay.innerText = `OPENS: ${latest.regOpen}`;
 
-            const regCloseDisplay = document.getElementById('widget-reg-close-display');
-            if (regCloseDisplay) regCloseDisplay.innerText = `CLOSES: ${state.regCloseText}`;
+                const regCloseDisplay = document.getElementById('widget-reg-close-display');
+                if (regCloseDisplay) regCloseDisplay.innerText = `CLOSES: ${latest.regClose}`;
 
-            const scheduleDisplay = document.getElementById('widget-schedule-display');
-            if (scheduleDisplay) scheduleDisplay.innerText = state.scheduleText;
-
-            const regOpenInput = document.getElementById('admin-reg-open-input');
-            if (regOpenInput) regOpenInput.value = state.regOpenText;
-
-            const regCloseInput = document.getElementById('admin-reg-close-input');
-            if (regCloseInput) regCloseInput.value = state.regCloseText;
-
-            const scheduleInput = document.getElementById('admin-schedule-input');
-            if (scheduleInput) scheduleInput.value = state.scheduleText;
+                const scheduleDisplay = document.getElementById('widget-schedule-display');
+                if (scheduleDisplay) scheduleDisplay.innerText = latest.schedule;
+            }
         }
 
         function showToast(message, type = 'info') {
@@ -682,6 +923,11 @@
         }
 
         function handleDirectRegisterClick() {
+            if (!currentUser) {
+                showToast("Please login or register an account first!", "error");
+                openAuthModal('login');
+                return;
+            }
             if (!state.isRegistrationOpen) {
                 showToast("Registration is currently closed", "error");
                 return;
@@ -695,6 +941,11 @@
         }
 
         function promptClaimSlot(index) {
+            if (!currentUser) {
+                showToast("Please login or register an account first!", "error");
+                openAuthModal('login');
+                return;
+            }
             if (!state.isRegistrationOpen) {
                 showToast("Registration is currently closed", "error");
                 return;
@@ -759,6 +1010,7 @@
 
             state.slots[index] = {
                 claimed: true,
+                bookedBy: currentUser,
                 guildName: guildName,
                 guildId: guildId,
                 discord: discord,
@@ -774,9 +1026,11 @@
             document.getElementById('claim-discord').value = '';
 
             closeClaimModal();
-            showToast(`Successfully registered ${guildName} to Slot #${String(index + 1).padStart(2, '0')}!`, "success");
+            renderCreatedRooms();
+            showToast(`Successfully registered ${guildName} to Slot #${String(index + 1).padStart(2, '0')}! Room ID unlocked.`, "success");
         }
 
+        // ADMIN CONTROLS
         function openAdminModal() {
             const adminModal = document.getElementById('modal-admin');
             if (adminModal) adminModal.classList.remove('hidden');
@@ -788,6 +1042,7 @@
                 if (loginView) loginView.classList.add('hidden');
                 if (dashView) dashView.classList.remove('hidden');
                 renderAdminSlots();
+                renderAdminRooms();
             } else {
                 if (loginView) loginView.classList.remove('hidden');
                 if (dashView) dashView.classList.add('hidden');
@@ -804,38 +1059,27 @@
             const user = document.getElementById('admin-user').value.trim();
             const pass = document.getElementById('admin-pass').value;
 
-            const btn = document.getElementById('btn-admin-login');
-            if (btn) btn.innerHTML = `<span>Checking...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+            if ((user === 'admin' || user === 'admin@admin') && pass === 'admin@akz') {
+                isAdminLoggedIn = true;
+                localStorage.setItem('akz_admin_logged_in', 'true');
 
-            setTimeout(() => {
-                if (btn) btn.innerHTML = `<span>Admin Login</span> <i class="fa-solid fa-arrow-right"></i>`;
-                if ((user === 'admin' || user === 'admin@admin') && pass === 'admin@akz') {
-                    isAdminLoggedIn = true;
-                    localStorage.setItem('akz_admin_logged_in', 'true');
-
-                    const loginView = document.getElementById('admin-view-login');
-                    const dashView = document.getElementById('admin-view-dashboard');
-                    if (loginView) loginView.classList.add('hidden');
-                    if (dashView) dashView.classList.remove('hidden');
-                    
-                    updateUIState();
-                    renderAdminSlots();
-                    showToast("Welcome back", "success");
-                } else {
-                    showToast("Invalid email or password", "error");
-                }
-            }, 600);
+                document.getElementById('admin-view-login').classList.add('hidden');
+                document.getElementById('admin-view-dashboard').classList.remove('hidden');
+                
+                updateUIState();
+                renderAdminSlots();
+                renderAdminRooms();
+                showToast("Welcome back admin", "success");
+            } else {
+                showToast("Invalid email or password", "error");
+            }
         }
 
         function adminLogout() {
             isAdminLoggedIn = false;
             localStorage.removeItem('akz_admin_logged_in');
-
-            const loginView = document.getElementById('admin-view-login');
-            const dashView = document.getElementById('admin-view-dashboard');
-            if (dashView) dashView.classList.add('hidden');
-            if (loginView) loginView.classList.remove('hidden');
-            
+            document.getElementById('admin-view-dashboard').classList.add('hidden');
+            document.getElementById('admin-view-login').classList.remove('hidden');
             showToast("Logged out successfully", "info");
         }
 
@@ -844,29 +1088,81 @@
             await saveStateToFirebase();
         }
 
-        async function saveAdminSettings() {
-            const btn = document.getElementById('btn-save-schedule');
-            if (btn) btn.innerHTML = `<span>Saving...</span> <i class="fa-solid fa-check"></i>`;
-            
+        async function saveAdminGlobalSettings() {
             const prizeInput = document.getElementById('admin-prize-input');
             if (prizeInput) state.prizePoolText = prizeInput.value;
+            await saveStateToFirebase();
+            showToast("Global settings updated", "success");
+        }
 
-            const regOpenInput = document.getElementById('admin-reg-open-input');
-            if (regOpenInput) state.regOpenText = regOpenInput.value;
+        async function handleCreateTournamentRoom() {
+            const trName = document.getElementById('create-tr-name').value.trim();
+            const regOpen = document.getElementById('create-reg-open').value.trim();
+            const regClose = document.getElementById('create-reg-close').value.trim();
+            const schedule = document.getElementById('create-schedule').value.trim();
+            const roomId = document.getElementById('create-room-id').value.trim();
+            const roomPass = document.getElementById('create-room-pass').value.trim();
 
-            const regCloseInput = document.getElementById('admin-reg-close-input');
-            if (regCloseInput) state.regCloseText = regCloseInput.value;
+            if (!trName || !roomId || !roomPass) {
+                showToast("Please fill in TR Name, Room ID, and Room Password!", "error");
+                return;
+            }
 
-            const scheduleInput = document.getElementById('admin-schedule-input');
-            if (scheduleInput) state.scheduleText = scheduleInput.value;
+            state.tournaments.push({
+                trName,
+                regOpen: regOpen || "TBD",
+                regClose: regClose || "TBD",
+                schedule: schedule || "TBD",
+                roomId,
+                roomPass
+            });
 
             await saveStateToFirebase();
 
-            setTimeout(() => {
-                if (btn) btn.innerHTML = `<span>Save settings</span> <i class="fa-solid fa-check"></i>`;
-                updateUIState();
-                showToast("Tournament settings updated", "success");
-            }, 600);
+            document.getElementById('create-tr-name').value = '';
+            document.getElementById('create-reg-open').value = '';
+            document.getElementById('create-reg-close').value = '';
+            document.getElementById('create-schedule').value = '';
+            document.getElementById('create-room-id').value = '';
+            document.getElementById('create-room-pass').value = '';
+
+            renderCreatedRooms();
+            renderAdminRooms();
+            showToast(`Tournament room '${trName}' created successfully!`, "success");
+        }
+
+        function renderAdminRooms() {
+            const container = document.getElementById('admin-rooms-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (state.tournaments.length === 0) {
+                container.innerHTML = `<div class="text-xs font-mono-code text-brand-textMuted p-2">No rooms created.</div>`;
+                return;
+            }
+
+            state.tournaments.forEach((tr, index) => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between text-xs font-mono-code bg-brand-card p-2.5 rounded border border-brand-border/60";
+                item.innerHTML = `
+                    <div>
+                        <span class="text-brand-orange font-bold">${escapeHtml(tr.trName)}</span>
+                        <span class="text-brand-textMuted ml-2">ID: ${escapeHtml(tr.roomId)} | Pass: ${escapeHtml(tr.roomPass)}</span>
+                    </div>
+                    <button onclick="removeTournamentRoom(${index})" class="text-red-400 hover:underline">Delete</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        async function removeTournamentRoom(index) {
+            if (index >= 0 && index < state.tournaments.length) {
+                state.tournaments.splice(index, 1);
+                await saveStateToFirebase();
+                renderCreatedRooms();
+                renderAdminRooms();
+                showToast("Tournament room deleted", "success");
+            }
         }
 
         function openClearAllModal() {
@@ -877,11 +1173,15 @@
             document.getElementById('modal-clear-all').classList.add('hidden');
         }
 
-        async function confirmClearAllRegistrations() {
+        async function confirmRemoveAllData() {
             state.slots = getInitialSlots();
+            state.tournaments = [];
             await saveStateToFirebase();
             closeClearAllModal();
-            showToast("All slots reset successfully", "success");
+            renderCreatedRooms();
+            renderAdminSlots();
+            renderAdminRooms();
+            showToast("All data and rooms removed successfully", "success");
         }
 
         function renderAdminSlots() {
@@ -899,7 +1199,7 @@
                         <div class="flex items-center gap-4">
                             <span class="text-brand-orange font-bold">SLOT #${slotNum}</span>
                             <span class="text-white font-bold">${escapeHtml(slot.guildName)}</span>
-                            <span class="text-brand-textMuted">ID: ${escapeHtml(slot.guildId)} | Discord: ${escapeHtml(slot.discord)}</span>
+                            <span class="text-brand-textMuted">User: ${escapeHtml(slot.bookedBy)}</span>
                         </div>
                         <button onclick="removeSlotRegistration(${index})" class="text-red-400 hover:underline">Free Slot</button>
                     `;
@@ -921,12 +1221,14 @@
                 const freedName = state.slots[index].guildName;
                 state.slots[index] = {
                     claimed: false,
+                    bookedBy: "",
                     guildName: "",
                     guildId: "",
                     discord: "",
                     points: null
                 };
                 await saveStateToFirebase();
+                renderCreatedRooms();
                 showToast(`Freed slot #${String(index + 1).padStart(2, '0')} (${freedName})`, "success");
             }
         }
