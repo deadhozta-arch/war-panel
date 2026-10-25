@@ -106,11 +106,11 @@
     <!-- NAVIGATION BAR -->
     <header class="border-b border-brand-border bg-brand-bg/90 backdrop-blur sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <!-- Left Side: Auth & Logo with Akshay Logo -->
+            <!-- Left Side: Auth & Logo with akshay.png -->
             <div class="flex items-center gap-6">
                 <div id="auth-nav-container" class="flex items-center gap-2 pr-4 border-r border-brand-border"></div>
                 <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex items-center gap-3 text-lg sm:text-xl font-extrabold tracking-wider hover:opacity-90 transition">
-                    <img src="https://i.imgur.com/KzX5W8B.png" alt="Akshay AKZ Logo" class="w-9 h-9 rounded-full border border-brand-orange object-cover shadow-md shadow-brand-orange/30" onerror="this.src='https://raw.githubusercontent.com/username/repo/main/logo.png'">
+                    <img src="akshay.png" alt="Akshay AKZ Logo" class="w-9 h-9 rounded-full border border-brand-orange object-cover shadow-md shadow-brand-orange/30">
                     <span class="tracking-widest">AKZ / GUILD WAR</span>
                 </a>
             </div>
@@ -415,7 +415,7 @@
         </div>
     </div>
 
-    <!-- 100% PROFESSIONAL WIDER ADMIN CONTROL ROOM MODAL -->
+    <!-- ADMIN CONTROL ROOM MODAL -->
     <div id="modal-admin" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-5xl rounded-2xl p-6 sm:p-10 space-y-8 relative shadow-2xl max-h-[92vh] overflow-y-auto">
             <button onclick="closeAdminModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
@@ -673,7 +673,6 @@
             }
         }
 
-        // ACCOUNT INFO FIXED TO FAR LEFT
         function renderAuthNav() {
             const container = document.getElementById('auth-nav-container');
             if (!container) return;
@@ -867,7 +866,6 @@
             });
         }
 
-        // RENDER PUBLIC LEADERBOARD
         function renderPublicLeaderboard() {
             const container = document.getElementById('public-leaderboard-container');
             if (!container) return;
@@ -1137,7 +1135,7 @@
             const existingDuplicate = state.slots.some(s => 
                 s.claimed && (
                     s.guildName.trim().toLowerCase() === normalizedGuildName || 
-                    s.guildId.trim() === guildId ||
+                    s.guildId.tr() === guildId ||
                     s.discord.trim().toLowerCase() === normalizedDiscord
                 )
             );
