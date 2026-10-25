@@ -429,7 +429,7 @@
         </div>
     </div>
 
-    <!-- SMS / MESSAGING CENTER POPUP MODAL -->
+    <!-- SMS / MESSAGING CENTER POPUP MODAL (SIMPLIFIED: DIRECT USERNAME INPUT) -->
     <div id="modal-sms" class="fixed inset-0 z-[80] flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-2xl rounded-2xl p-6 sm:p-8 space-y-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
             <button onclick="closeSmsModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
@@ -439,38 +439,45 @@
             <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">ADMIN SMS & MESSAGING CENTER</div>
             <div>
                 <h3 class="text-2xl font-black tracking-tight">Direct Messaging & Broadcasts</h3>
-                <p class="text-brand-textMuted text-xs mt-1">Search for a registered user and send them a message or broadcast to all.</p>
+                <p class="text-brand-textMuted text-xs mt-1">Type a specific username or type <strong class="text-white">all</strong> to broadcast to everyone.</p>
             </div>
 
-            <!-- Search Bar -->
+            <!-- Recipient Username Input -->
             <div class="space-y-1.5">
-                <label class="block text-xs font-mono-code text-brand-textMuted">Search User or Guild</label>
-                <div class="relative">
-                    <i class="fa-solid fa-search absolute left-3.5 top-3 text-brand-textMuted text-xs"></i>
-                    <input type="text" id="sms-search-input" oninput="filterSmsUsers()" placeholder="Search by username, guild name, or discord..."
-                        class="w-full bg-brand-bg border border-brand-border rounded pl-10 pr-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
-                </div>
-            </div>
-
-            <!-- User Selector / List -->
-            <div class="space-y-1.5">
-                <label class="block text-xs font-mono-code text-brand-textMuted">Select Recipient</label>
-                <select id="sms-recipient-select" class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
-                    <option value="broadcast_all">📢 Broadcast to All Registered Users</option>
-                    <!-- Injected by JS -->
-                </select>
+                <label class="block text-xs font-mono-code text-brand-textMuted">Recipient Username (or type 'all' for broadcast)</label>
+                <input type="text" id="sms-recipient-input" placeholder="e.g. deadxhozta or all" required
+                    class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
             </div>
 
             <!-- Message Textarea -->
             <div class="space-y-1.5">
                 <label class="block text-xs font-mono-code text-brand-textMuted">Message Content</label>
                 <textarea id="sms-message-input" rows="4" placeholder="Type your message here..." required
-                    class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code"></textarea>
+                    class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code"></textarea>
             </div>
 
-            <button onclick="sendAdminSms()" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3 rounded text-xs tracking-wide transition flex items-center justify-center gap-2 font-mono-code">
+            <button onclick="sendAdminSms()" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3.5 rounded text-xs tracking-wide transition flex items-center justify-center gap-2 font-mono-code shadow-lg shadow-brand-orange/20">
                 <span>Send Message / SMS</span> <i class="fa-solid fa-paper-plane"></i>
             </button>
+        </div>
+    </div>
+
+    <!-- USER INBOX POPUP MODAL -->
+    <div id="modal-inbox" class="fixed inset-0 z-[80] flex items-center justify-center p-4 backdrop-blur-custom hidden">
+        <div class="bg-brand-card border border-brand-border w-full max-w-lg rounded-2xl p-6 sm:p-8 space-y-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeInboxModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">USER INBOX</div>
+            <div>
+                <h3 class="text-2xl font-black tracking-tight">Your Messages & Notifications</h3>
+                <p class="text-brand-textMuted text-xs mt-1">Direct messages and announcements from admin.</p>
+            </div>
+
+            <div id="inbox-messages-container" class="space-y-3 max-h-96 overflow-y-auto pr-1">
+                <!-- Injected by JS -->
+            </div>
         </div>
     </div>
 
@@ -553,7 +560,7 @@
                         <button onclick="removeLeaderboard()" class="bg-zinc-800 hover:bg-amber-900/60 text-amber-400 hover:text-white border border-amber-500/30 text-xs font-bold font-mono-code px-4 py-3 rounded-lg transition flex items-center gap-2">
                             <span>Hide Leaderboard</span> <i class="fa-solid fa-eye-slash"></i>
                         </button>
-                        <!-- SMS / MESSAGE CENTER BUTTON (PLACED EXACTLY WHERE YOU MARKED) -->
+                        <!-- SMS CENTER BUTTON -->
                         <button onclick="openSmsModal()" class="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold font-mono-code px-4 sm:px-5 py-3 rounded-lg transition flex items-center gap-2">
                             <span>SMS Center</span> <i class="fa-solid fa-message"></i>
                         </button>
@@ -605,7 +612,7 @@
     </div>
 
 
-    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & SMS MODAL SYSTEM -->
+    <!-- FIREBASE LIVE REAL-TIME APP LOGIC -->
     <script>
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-dropdown');
@@ -727,7 +734,6 @@
                 renderPublicLeaderboard();
                 renderAdminSlots();
                 renderAdminRooms();
-                populateSmsRecipients();
                 updateUIState();
                 renderAuthNav();
             }, (error) => {
@@ -752,15 +758,23 @@
             }
         }
 
+        // RENDER AUTH NAV WITH INBOX BUTTON ON FAR LEFT NEAR ACCOUNT
         function renderAuthNav() {
             const container = document.getElementById('auth-nav-container');
             if (!container) return;
             container.innerHTML = '';
 
             if (currentUser) {
+                // Check if user has unread messages
+                const userMessages = state.messages.filter(m => m.recipient === currentUser || m.recipient.toLowerCase() === 'all');
+                const hasMsgs = userMessages.length > 0;
+
                 container.innerHTML = `
                     <div class="flex items-center gap-2 sm:gap-3 text-xs font-mono-code">
-                        <span class="text-brand-orange font-bold flex items-center gap-1.5 truncate max-w-[100px] sm:max-w-none"><i class="fa-solid fa-user"></i> ${escapeHtml(currentUser)}</span>
+                        <button onclick="openInboxModal()" class="bg-brand-orange/20 hover:bg-brand-orange/30 text-brand-orange border border-brand-orange/40 px-2.5 py-1 rounded transition flex items-center gap-1.5 font-bold relative">
+                            <i class="fa-solid fa-inbox"></i> Inbox ${hasMsgs ? `<span class="w-2 h-2 rounded-full bg-brand-orange animate-ping absolute -top-0.5 -right-0.5"></span>` : ''}
+                        </button>
+                        <span class="text-brand-orange font-bold flex items-center gap-1.5 truncate max-w-[90px] sm:max-w-none"><i class="fa-solid fa-user"></i> ${escapeHtml(currentUser)}</span>
                         <button onclick="handleLogout()" class="text-red-400 hover:underline shrink-0">Logout</button>
                     </div>
                 `;
@@ -1296,44 +1310,18 @@
         // SMS / MESSAGING CENTER FUNCTIONS
         function openSmsModal() {
             document.getElementById('modal-sms').classList.remove('hidden');
-            populateSmsRecipients();
         }
 
         function closeSmsModal() {
             document.getElementById('modal-sms').classList.add('hidden');
         }
 
-        function populateSmsRecipients(filterQuery = '') {
-            const select = document.getElementById('sms-recipient-select');
-            if (!select) return;
-
-            // Keep broadcast option
-            let optionsHtml = `<option value="broadcast_all">📢 Broadcast to All Registered Users</option>`;
-
-            state.slots.forEach((slot, index) => {
-                if (slot.claimed) {
-                    const label = `Slot #${index + 1} - ${slot.guildName} (${slot.bookedBy} / ${slot.discord})`;
-                    const query = filterQuery.toLowerCase();
-                    if (!query || label.toLowerCase().includes(query)) {
-                        optionsHtml += `<option value="${escapeHtml(slot.bookedBy)}">${escapeHtml(label)}</option>`;
-                    }
-                }
-            });
-
-            select.innerHTML = optionsHtml;
-        }
-
-        function filterSmsUsers() {
-            const query = document.getElementById('sms-search-input').value.trim();
-            populateSmsRecipients(query);
-        }
-
         async function sendAdminSms() {
-            const recipient = document.getElementById('sms-recipient-select').value;
+            const recipient = document.getElementById('sms-recipient-input').value.trim().toLowerCase();
             const messageText = document.getElementById('sms-message-input').value.trim();
 
-            if (!messageText) {
-                showToast("Please enter a message!", "error");
+            if (!recipient || !messageText) {
+                showToast("Please fill in both recipient username and message!", "error");
                 return;
             }
 
@@ -1344,9 +1332,56 @@
             });
 
             await saveStateToFirebase();
+            document.getElementById('sms-recipient-input').value = '';
             document.getElementById('sms-message-input').value = '';
             closeSmsModal();
             showToast("Message / SMS sent successfully!", "success");
+        }
+
+        // USER INBOX FUNCTIONS
+        function openInboxModal() {
+            if (!currentUser) {
+                showToast("Please login first to view your inbox!", "error");
+                openAuthModal('login');
+                return;
+            }
+            renderUserInbox();
+            document.getElementById('modal-inbox').classList.remove('hidden');
+        }
+
+        function closeInboxModal() {
+            document.getElementById('modal-inbox').classList.add('hidden');
+        }
+
+        function renderUserInbox() {
+            const container = document.getElementById('inbox-messages-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Filter messages for current user or broadcasts ('all')
+            const myMsgs = state.messages.filter(m => m.recipient === currentUser.toLowerCase() || m.recipient === 'all');
+
+            if (myMsgs.length === 0) {
+                container.innerHTML = `
+                    <div class="py-8 text-center text-xs font-mono-code text-brand-textMuted">
+                        YOUR INBOX IS EMPTY.
+                    </div>
+                `;
+                return;
+            }
+
+            myMsgs.reverse().forEach((msg) => {
+                const item = document.createElement('div');
+                item.className = "bg-brand-bg border border-brand-border p-4 rounded-xl space-y-1 font-mono-code text-xs";
+                item.innerHTML = `
+                    <div class="flex justify-between items-center text-[10px] text-brand-textMuted">
+                        <span class="text-brand-orange font-bold">${msg.recipient === 'all' ? '📢 ANNOUNCEMENT / BROADCAST' : '✉️ DIRECT MESSAGE'}</span>
+                        <span>${formatDateTime(msg.timestamp)}</span>
+                    </div>
+                    <div class="text-white pt-1 whitespace-pre-wrap">${escapeHtml(msg.message)}</div>
+                `;
+                container.appendChild(item);
+            });
         }
 
         // ADMIN CONTROLS & POINTS CALCULATION
