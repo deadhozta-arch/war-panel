@@ -44,7 +44,7 @@
     <!-- Firebase SDK & Live Connection -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-gltjKSRP6WlFXxcgvlhp7pN0eGHGC24",
@@ -61,7 +61,7 @@
 
         window.db = db;
         window.dbDocRef = doc(db, "tournament", "main_state");
-        window.firebaseModules = { doc, getDoc, setDoc, onSnapshot };
+        window.firebaseModules = { doc, getDoc, setDoc, onSnapshot, runTransaction };
     </script>
 
     <style>
@@ -1137,10 +1137,10 @@
                 showToast("All 15 tournament slots are fully booked!", "error");
                 return;
             }
-            promptClaimSlot(firstOpenIndex);
+            promptClaimSlot();
         }
 
-        function promptClaimSlot(index) {
+        function promptClaimSlot() {
             if (!currentUser) {
                 showToast("Please login or register an account first!", "error");
                 openAuthModal('login');
@@ -1167,13 +1167,6 @@
                 return;
             }
 
-            const nextOpenIndex = state.slots.findIndex(s => !s.claimed);
-            if (nextOpenIndex === -1) {
-                showToast("Error: All 15 tournament slots are fully booked!", "error");
-                closeClaimModal();
-                return;
-            }
-
             const guildName = document.getElementById('claim-guild-name').value.trim();
             const guildId = document.getElementById('claim-guild-id').value.trim();
             const discord = document.getElementById('claim-discord').value.trim();
@@ -1183,49 +1176,73 @@
                 return;
             }
 
-            const normalizedGuildName = guildName.toLowerCase();
-            const normalizedDiscord = discord.toLowerCase();
-            
-            const existingDuplicate = state.slots.some(s => 
-                s.claimed && (
-                    s.guildName.trim().toLowerCase() === normalizedGuildName || 
-                    s.guildId.trim() === guildId ||
-                    s.discord.trim().toLowerCase() === normalizedDiscord
-                )
-            );
-
-            if (existingDuplicate) {
-                showToast("Error: This Guild Name, Guild ID, or Discord Username is already registered!", "error");
-                return;
-            }
-
             const btn = document.getElementById('btn-claim-submit');
             if (btn) btn.innerHTML = `<span>Booking Slot...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
-            state.slots[nextOpenIndex] = {
-                claimed: true,
-                bookedBy: currentUser,
-                guildName: guildName,
-                guildId: guildId,
-                discord: discord,
-                match1: 0,
-                match2: 0,
-                totalPoints: 0,
-                rank: "-"
-            };
+            const { runTransaction, doc } = window.firebaseModules;
 
-            await saveStateToFirebase();
+            try {
+                let successMessage = "";
+                await runTransaction(window.db, async (transaction) => {
+                    const docSnap = await transaction.get(window.dbDocRef);
+                    if (!docSnap.exists()) {
+                        throw new Error("Tournament data not found.");
+                    }
 
-            if (btn) btn.innerHTML = `<span>Submit & Claim Slot</span> <i class="fa-solid fa-arrow-right"></i>`;
+                    const data = docSnap.data();
+                    let currentSlots = Array.isArray(data.slots) ? data.slots : getInitialSlots();
 
-            document.getElementById('claim-guild-name').value = '';
-            document.getElementById('claim-guild-id').value = '';
-            document.getElementById('claim-discord').value = '';
+                    // Check duplicate entries across concurrent race submissions
+                    const normalizedGuildName = guildName.toLowerCase();
+                    const normalizedDiscord = discord.toLowerCase();
+                    
+                    const existingDuplicate = currentSlots.some(s => 
+                        s.claimed && (
+                            s.guildName.trim().toLowerCase() === normalizedGuildName || 
+                            s.guildId.trim() === guildId ||
+                            s.discord.trim().toLowerCase() === normalizedDiscord
+                        )
+                    );
 
-            closeClaimModal();
-            renderRegisteredGuildsList();
-            renderCreatedRooms();
-            showToast(`Successfully registered ${guildName} to Slot #${nextOpenIndex + 1}!`, "success");
+                    if (existingDuplicate) {
+                        throw new Error("This Guild Name, Guild ID, or Discord Username is already registered!");
+                    }
+
+                    // Find the true available slot at this exact transactional moment
+                    const nextOpenIndex = currentSlots.findIndex(s => !s.claimed);
+                    if (nextOpenIndex === -1) {
+                        throw new Error("All 15 tournament slots are fully booked!");
+                    }
+
+                    currentSlots[nextOpenIndex] = {
+                        claimed: true,
+                        bookedBy: currentUser,
+                        guildName: guildName,
+                        guildId: guildId,
+                        discord: discord,
+                        match1: 0,
+                        match2: 0,
+                        totalPoints: 0,
+                        rank: "-"
+                    };
+
+                    transaction.update(window.dbDocRef, { slots: currentSlots });
+                    successMessage = `Successfully registered ${guildName} to Slot #${nextOpenIndex + 1}!`;
+                });
+
+                if (btn) btn.innerHTML = `<span>Submit & Claim Slot</span> <i class="fa-solid fa-arrow-right"></i>`;
+
+                document.getElementById('claim-guild-name').value = '';
+                document.getElementById('claim-guild-id').value = '';
+                document.getElementById('claim-discord').value = '';
+
+                closeClaimModal();
+                showToast(successMessage, "success");
+
+            } catch (err) {
+                if (btn) btn.innerHTML = `<span>Submit & Claim Slot</span> <i class="fa-solid fa-arrow-right"></i>`;
+                showToast(err.message || "Failed to book slot. Try again!", "error");
+            }
         }
 
         // ADMIN CONTROLS & POINTS CALCULATION
