@@ -41,32 +41,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase SDK (Modular v10 with your config) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Your exact Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-gltjKSRP6WlFXxcgvlhp7pN0eGHGC24",
-            authDomain: "akz-guild-war.firebaseapp.com",
-            projectId: "akz-guild-war",
-            storageBucket: "akz-guild-war.firebasestorage.app",
-            messagingSenderId: "79033992862",
-            appId: "1:79033992862:web:a8e24ec46771e114a61d8f",
-            measurementId: "G-0DL54YP6JT"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        window.db = db;
-        window.dbDocRef = doc(db, "tournament", "main_state");
-        window.firebaseModules = { doc, getDoc, setDoc, onSnapshot };
-    </script>
-
     <style>
         body {
             background-color: #0B0B0C;
@@ -77,6 +51,7 @@
         .font-mono-code {
             font-family: 'JetBrains Mono', monospace;
         }
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -90,6 +65,7 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #FF4D00;
         }
+        /* Glassmorphism modal background overlay */
         .backdrop-blur-custom {
             backdrop-filter: blur(8px);
             background-color: rgba(5, 5, 6, 0.85);
@@ -106,10 +82,13 @@
     <!-- NAVIGATION BAR -->
     <header class="border-b border-brand-border bg-brand-bg/90 backdrop-blur sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo -->
             <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex items-center gap-2 text-lg sm:text-xl font-extrabold tracking-wider hover:opacity-90 transition">
                 <span class="text-brand-orange font-mono-code">&lt;/&gt;</span>
                 <span class="tracking-widest">AKZ / GUILD WAR</span>
             </a>
+
+            <!-- Nav Links -->
             <nav class="flex items-center gap-6 text-xs sm:text-sm font-semibold tracking-wide text-brand-textMuted">
                 <a href="#overview" class="hover:text-white transition">Overview</a>
                 <a href="#lobby" class="hover:text-white transition">Registration</a>
@@ -125,6 +104,7 @@
 
         <!-- HERO SECTION (OVERVIEW) -->
         <section id="overview" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-4">
+            <!-- Left Hero Content -->
             <div class="lg:col-span-7 space-y-6">
                 <div class="inline-block text-xs font-mono-code uppercase tracking-widest text-brand-orange font-bold bg-brand-orange/10 px-3 py-1 border border-brand-orange/20 rounded">
                     AKSHAY AKZ PRESENTS // FREE FIRE
@@ -147,6 +127,7 @@
                 </div>
             </div>
 
+            <!-- Right Hero Tournament Card Widget -->
             <div class="lg:col-span-5 bg-brand-card border border-brand-border p-6 sm:p-8 rounded-xl space-y-6 shadow-2xl relative overflow-hidden">
                 <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-brand-orange/5 rounded-full blur-2xl pointer-events-none"></div>
                 
@@ -181,6 +162,7 @@
             <h2 class="text-2xl sm:text-4xl font-black uppercase tracking-tight">TWO MAPS. NO SECOND CHANCES.</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                <!-- Bermuda Card -->
                 <div class="bg-brand-card border border-brand-border p-6 sm:p-8 rounded-xl hover:border-brand-orange/50 transition group relative">
                     <div class="flex justify-between items-start mb-6">
                         <span class="text-xs font-mono-code text-brand-textMuted">ARENA // 01</span>
@@ -192,6 +174,7 @@
                     <p class="text-brand-textMuted text-sm">Familiar ground. Fierce competition. Make every rotation count.</p>
                 </div>
 
+                <!-- Purgatory Card -->
                 <div class="bg-brand-card border border-brand-border p-6 sm:p-8 rounded-xl hover:border-brand-orange/50 transition group relative">
                     <div class="flex justify-between items-start mb-6">
                         <span class="text-xs font-mono-code text-brand-textMuted">ARENA // 02</span>
@@ -224,8 +207,9 @@
                 </div>
             </div>
 
+            <!-- Dynamic Registered Guilds Container -->
             <div id="registered-guilds-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Dynamic roster cards -->
+                <!-- Javascript will inject registered guild cards dynamically here -->
             </div>
 
             <div class="pt-2">
@@ -247,6 +231,7 @@
                     </p>
                 </div>
 
+                <!-- Prize Pool Card -->
                 <div class="lg:col-span-4 bg-brand-card border border-brand-border p-6 rounded-xl flex items-center gap-5">
                     <div class="text-brand-orange text-3xl sm:text-4xl p-3 bg-brand-orange/10 border border-brand-orange/20 rounded-lg">
                         <i class="fa-solid fa-trophy"></i>
@@ -268,14 +253,16 @@
         </div>
     </footer>
 
-    <!-- MODALS -->
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- 1. LOCK YOUR GUILD IN / REGISTRATION MODAL -->
     <div id="modal-claim" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl">
             <button onclick="closeClaimModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
-            <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">
+            <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold flex justify-between items-center">
                 <span>GUILD REGISTRATION WINDOW</span>
             </div>
 
@@ -311,13 +298,15 @@
         </div>
     </div>
 
-    <!-- ADMIN MODAL -->
+
+    <!-- 2. ADMIN CONTROL ROOM MODAL -->
     <div id="modal-admin" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-2xl rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
             <button onclick="closeAdminModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
 
+            <!-- Admin Login View -->
             <div id="admin-view-login" class="space-y-6">
                 <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">ADMIN ACCESS</div>
                 <div>
@@ -345,6 +334,7 @@
                 </form>
             </div>
 
+            <!-- Admin Control Console View -->
             <div id="admin-view-dashboard" class="space-y-6 hidden">
                 <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">COMMAND CONSOLE</div>
                 
@@ -356,6 +346,7 @@
                     <button onclick="adminLogout()" class="text-xs font-mono-code text-red-400 hover:underline">Log out</button>
                 </div>
 
+                <!-- Admin Global Controls -->
                 <div class="bg-brand-bg border border-brand-border p-4 rounded-lg space-y-4">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div class="space-y-1">
@@ -386,15 +377,18 @@
                     </div>
                 </div>
 
+                <!-- Admin Roster Management -->
                 <div class="space-y-3 pt-2">
                     <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold">REGISTERED GUILDS LIST</h4>
-                    <div id="admin-guilds-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                    <div id="admin-guilds-list" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <!-- Dynamic guild items injected by JS -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- CLEAR ALL CONFIRMATION -->
+    <!-- 3. CLEAR ALL REGISTRATIONS CONFIRMATION POP-UP -->
     <div id="modal-clear-all" class="fixed inset-0 z-[70] flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-red-500/40 w-full max-w-sm rounded-xl p-6 space-y-5 relative shadow-2xl">
             <div class="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-lg">
@@ -415,63 +409,80 @@
         </div>
     </div>
 
-    <!-- LIVE FIREBASE SYNC APP LOGIC -->
+
+    <!-- JAVASCRIPT APP LOGIC -->
     <script>
+        // GLOBAL APP STATE WITH LOCALSTORAGE PERSISTENCE
         let state = {
             isRegistrationOpen: false,
             prizePoolText: "₹30,000 + trophies",
-            guilds: []
+            guilds: [] // Dynamic list of registered guilds
         };
 
         let isAdminLoggedIn = false;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const checkFirebaseInterval = setInterval(() => {
-                if (window.dbDocRef && window.firebaseModules) {
-                    clearInterval(checkFirebaseInterval);
-                    initFirebaseRealtimeSync();
+        // LOAD SAVED STATE & LOGIN STATUS ON STARTUP
+        function loadState() {
+            const saved = localStorage.getItem('akz_guild_war_state_v2');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    state.isRegistrationOpen = parsed.isRegistrationOpen ?? false;
+                    state.prizePoolText = parsed.prizePoolText ?? "₹30,000 + trophies";
+                    state.guilds = Array.isArray(parsed.guilds) ? parsed.guilds : [];
+                } catch (e) {
+                    console.error("Failed to load saved state", e);
                 }
-            }, 100);
+            } else {
+                // Backward compatibility check for older slot data
+                const oldSaved = localStorage.getItem('akz_guild_war_state');
+                if (oldSaved) {
+                    try {
+                        const parsedOld = JSON.parse(oldSaved);
+                        state.isRegistrationOpen = parsedOld.isRegistrationOpen ?? false;
+                        state.prizePoolText = parsedOld.prizePoolText ?? "₹30,000 + trophies";
+                        if (Array.isArray(parsedOld.slots)) {
+                            state.guilds = parsedOld.slots.filter(s => s.claimed).map(s => ({
+                                guildName: s.guildName || '',
+                                guildId: s.guildId || s.guildUID || s.guildVUID || '',
+                                discord: s.discord || '',
+                                points: s.points ?? null
+                            }));
+                        }
+                    } catch (e) {}
+                }
+            }
 
             const savedAdminLogin = localStorage.getItem('akz_admin_logged_in');
             if (savedAdminLogin === 'true') {
                 isAdminLoggedIn = true;
             }
-        });
+        }
 
-        function initFirebaseRealtimeSync() {
-            const { onSnapshot } = window.firebaseModules;
+        function saveState() {
+            localStorage.setItem('akz_guild_war_state_v2', JSON.stringify(state));
+        }
 
-            onSnapshot(window.dbDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    state.isRegistrationOpen = data.isRegistrationOpen ?? false;
-                    state.prizePoolText = data.prizePoolText ?? "₹30,000 + trophies";
-                    state.guilds = Array.isArray(data.guilds) ? data.guilds : [];
-                } else {
-                    saveStateToFirebase();
-                }
+        // LISTEN FOR STORAGE CHANGES ACROSS TABS (LIVE SYNC)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'akz_guild_war_state_v2') {
+                loadState();
                 renderGuildsGrid();
                 renderAdminGuilds();
                 updateUIState();
-            }, (error) => {
-                console.error("Firestore sync error: ", error);
-            });
-        }
-
-        async function saveStateToFirebase() {
-            const { setDoc } = window.firebaseModules;
-            try {
-                await setDoc(window.dbDocRef, {
-                    isRegistrationOpen: state.isRegistrationOpen,
-                    prizePoolText: state.prizePoolText,
-                    guilds: state.guilds
-                });
-            } catch (e) {
-                console.error("Error saving to Firestore: ", e);
             }
-        }
+        });
 
+        // DOM LOAD INITIALIZATION
+        window.onload = function () {
+            window.scrollTo(0, 0);
+            loadState();
+            renderGuildsGrid();
+            renderAdminGuilds();
+            updateUIState();
+        };
+
+        // RENDER REGISTERED GUILDS DYNAMICALLY
         function renderGuildsGrid() {
             const container = document.getElementById('registered-guilds-container');
             if (!container) return;
@@ -510,6 +521,7 @@
             });
         }
 
+        // UPDATE UI DEPENDING ON REGISTRATION STATE
         function updateUIState() {
             const registeredCount = state.guilds.length;
             const countText = document.getElementById('claimed-count-text');
@@ -568,6 +580,7 @@
             }
         }
 
+        // TOAST NOTIFICATION SYSTEM
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -583,14 +596,19 @@
             
             container.appendChild(toast);
 
-            setTimeout(() => toast.classList.remove('translate-y-[-10px]', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-[-10px]', 'opacity-0');
+            }, 10);
+
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-[-10px]');
                 setTimeout(() => toast.remove(), 300);
             }, 3500);
         }
 
+        // DIRECT REGISTRATION / CLAIM MODAL LOGIC
         function handleDirectRegisterClick() {
+            loadState(); // Sync latest state across tabs
             if (!state.isRegistrationOpen) {
                 showToast("Registration is currently closed", "error");
                 return;
@@ -599,15 +617,20 @@
         }
 
         function openClaimModal() {
-            document.getElementById('modal-claim').classList.remove('hidden');
+            const modal = document.getElementById('modal-claim');
+            if (modal) modal.classList.remove('hidden');
         }
 
         function closeClaimModal() {
-            document.getElementById('modal-claim').classList.add('hidden');
+            const modal = document.getElementById('modal-claim');
+            if (modal) modal.classList.add('hidden');
         }
 
-        async function handleClaimSubmit(e) {
+        function handleClaimSubmit(e) {
             e.preventDefault();
+            
+            // Re-read fresh state from localStorage before finalizing
+            loadState();
 
             if (!state.isRegistrationOpen) {
                 showToast("Registration is currently closed", "error");
@@ -624,57 +647,75 @@
                 return;
             }
 
-            const normalizedName = guildName.toLowerCase();
+            // STRICT DUPLICATE CHECK: Prevent duplicate Guild Name, Guild ID, or Discord Username
+            const normalizedGuildName = guildName.toLowerCase();
             const normalizedDiscord = discord.toLowerCase();
             
-            const isDuplicate = state.guilds.some(g => 
-                g.guildName.trim().toLowerCase() === normalizedName ||
+            const existingDuplicate = state.guilds.find(g => 
+                g.guildName.trim().toLowerCase() === normalizedGuildName || 
                 g.guildId.trim() === guildId ||
                 g.discord.trim().toLowerCase() === normalizedDiscord
             );
 
-            if (isDuplicate) {
-                showToast("Error: This Guild Name, Guild ID, or Discord is already registered!", "error");
+            if (existingDuplicate) {
+                showToast("Error: This Guild Name, Guild ID, or Discord Username is already registered!", "error");
                 return;
             }
 
             const btn = document.getElementById('btn-claim-submit');
             if (btn) btn.innerHTML = `<span>Registering...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
-            state.guilds.push({
-                guildName: guildName,
-                guildId: guildId,
-                discord: discord,
-                points: null
-            });
+            setTimeout(() => {
+                if (btn) btn.innerHTML = `<span>Submit Registration</span> <i class="fa-solid fa-arrow-right"></i>`;
+                
+                loadState();
+                
+                // Add new guild to the dynamic list
+                state.guilds.push({
+                    guildName: guildName,
+                    guildId: guildId,
+                    discord: discord,
+                    points: null
+                });
 
-            await saveStateToFirebase();
+                saveState();
 
-            if (btn) btn.innerHTML = `<span>Submit Registration</span> <i class="fa-solid fa-arrow-right"></i>`;
-            
-            document.getElementById('claim-guild-name').value = '';
-            document.getElementById('claim-guild-id').value = '';
-            document.getElementById('claim-discord').value = '';
+                document.getElementById('claim-guild-name').value = '';
+                document.getElementById('claim-guild-id').value = '';
+                document.getElementById('claim-discord').value = '';
 
-            closeClaimModal();
-            showToast(`Successfully registered ${guildName}!`, "success");
+                closeClaimModal();
+                renderGuildsGrid();
+                renderAdminGuilds();
+                updateUIState();
+
+                showToast(`Successfully registered ${guildName}!`, "success");
+            }, 300);
         }
 
+        // ADMIN CONTROL ROOM LOGIC
         function openAdminModal() {
-            document.getElementById('modal-admin').classList.remove('hidden');
+            loadState();
+            const adminModal = document.getElementById('modal-admin');
+            if (adminModal) adminModal.classList.remove('hidden');
+
+            const loginView = document.getElementById('admin-view-login');
+            const dashView = document.getElementById('admin-view-dashboard');
+
             if (isAdminLoggedIn) {
-                document.getElementById('admin-view-login').classList.add('hidden');
-                document.getElementById('admin-view-dashboard').classList.remove('hidden');
+                if (loginView) loginView.classList.add('hidden');
+                if (dashView) dashView.classList.remove('hidden');
                 renderAdminGuilds();
             } else {
-                document.getElementById('admin-view-login').classList.remove('hidden');
-                document.getElementById('admin-view-dashboard').classList.add('hidden');
+                if (loginView) loginView.classList.remove('hidden');
+                if (dashView) dashView.classList.add('hidden');
             }
             updateUIState();
         }
 
         function closeAdminModal() {
-            document.getElementById('modal-admin').classList.add('hidden');
+            const adminModal = document.getElementById('modal-admin');
+            if (adminModal) adminModal.classList.add('hidden');
         }
 
         function handleAdminLoginSubmit(e) {
@@ -682,49 +723,80 @@
             const user = document.getElementById('admin-user').value.trim();
             const pass = document.getElementById('admin-pass').value;
 
-            if ((user === 'admin' || user === 'admin@admin') && pass === 'admin@akz') {
-                isAdminLoggedIn = true;
-                localStorage.setItem('akz_admin_logged_in', 'true');
-                document.getElementById('admin-view-login').classList.add('hidden');
-                document.getElementById('admin-view-dashboard').classList.remove('hidden');
-                renderAdminGuilds();
-                showToast("Welcome back", "success");
-            } else {
-                showToast("Invalid email or password", "error");
-            }
+            const btn = document.getElementById('btn-admin-login');
+            if (btn) btn.innerHTML = `<span>Checking...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+
+            setTimeout(() => {
+                if (btn) btn.innerHTML = `<span>Admin Login</span> <i class="fa-solid fa-arrow-right"></i>`;
+                if ((user === 'admin' || user === 'admin@admin') && pass === 'admin@akz') {
+                    isAdminLoggedIn = true;
+                    localStorage.setItem('akz_admin_logged_in', 'true');
+
+                    const loginView = document.getElementById('admin-view-login');
+                    const dashView = document.getElementById('admin-view-dashboard');
+                    if (loginView) loginView.classList.add('hidden');
+                    if (dashView) dashView.classList.remove('hidden');
+                    
+                    updateUIState();
+                    renderAdminGuilds();
+                    showToast("Welcome back", "success");
+                } else {
+                    showToast("Invalid email or password", "error");
+                }
+            }, 600);
         }
 
         function adminLogout() {
             isAdminLoggedIn = false;
             localStorage.removeItem('akz_admin_logged_in');
-            document.getElementById('admin-view-dashboard').classList.add('hidden');
-            document.getElementById('admin-view-login').classList.remove('hidden');
+
+            const loginView = document.getElementById('admin-view-login');
+            const dashView = document.getElementById('admin-view-dashboard');
+            if (dashView) dashView.classList.add('hidden');
+            if (loginView) loginView.classList.remove('hidden');
+            
             showToast("Logged out successfully", "info");
         }
 
-        async function toggleRegistrationStatus() {
+        function toggleRegistrationStatus() {
             state.isRegistrationOpen = !state.isRegistrationOpen;
-            await saveStateToFirebase();
+            saveState();
+            renderGuildsGrid();
+            renderAdminGuilds();
+            updateUIState();
         }
 
-        async function saveAdminSettings() {
+        function saveAdminSettings() {
+            const btn = document.getElementById('btn-save-schedule');
+            if (btn) btn.innerHTML = `<span>Saving...</span> <i class="fa-solid fa-check"></i>`;
+            
             const prizeInput = document.getElementById('admin-prize-input');
             if (prizeInput) state.prizePoolText = prizeInput.value;
-            await saveStateToFirebase();
-            showToast("Tournament settings updated", "success");
+            saveState();
+
+            setTimeout(() => {
+                if (btn) btn.innerHTML = `<span>Save settings</span> <i class="fa-solid fa-check"></i>`;
+                updateUIState();
+                showToast("Tournament settings updated", "success");
+            }, 600);
         }
 
         function openClearAllModal() {
-            document.getElementById('modal-clear-all').classList.remove('hidden');
+            const modal = document.getElementById('modal-clear-all');
+            if (modal) modal.classList.remove('hidden');
         }
 
         function closeClearAllModal() {
-            document.getElementById('modal-clear-all').classList.add('hidden');
+            const modal = document.getElementById('modal-clear-all');
+            if (modal) modal.classList.add('hidden');
         }
 
-        async function confirmClearAllRegistrations() {
+        function confirmClearAllRegistrations() {
             state.guilds = [];
-            await saveStateToFirebase();
+            saveState();
+            renderGuildsGrid();
+            renderAdminGuilds();
+            updateUIState();
             closeClearAllModal();
             showToast("All registrations cleared", "success");
         }
@@ -756,11 +828,14 @@
             });
         }
 
-        async function removeGuildRegistration(index) {
+        function removeGuildRegistration(index) {
             if (index >= 0 && index < state.guilds.length) {
                 const removedName = state.guilds[index].guildName;
                 state.guilds.splice(index, 1);
-                await saveStateToFirebase();
+                saveState();
+                renderGuildsGrid();
+                renderAdminGuilds();
+                updateUIState();
                 showToast(`Removed registration for ${removedName}`, "success");
             }
         }
