@@ -291,12 +291,6 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-mono-code text-brand-textMuted">Player In-Game UID</label>
-                    <input type="text" id="claim-uid" placeholder="In-game UID" required
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand-orange transition">
-                </div>
-
-                <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Discord username</label>
                     <input type="text" id="claim-discord" placeholder="@your-handle" required
                         class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand-orange transition">
@@ -445,7 +439,6 @@
                 claimed: false,
                 guildName: '',
                 guildUID: '',
-                uid: '',
                 discord: '',
                 points: null
             }))
@@ -463,8 +456,12 @@
                     state.prizePoolText = parsed.prizePoolText ?? "₹30,000 + trophies";
                     if (parsed.slots && Array.isArray(parsed.slots)) {
                         state.slots = parsed.slots.map(s => ({
-                            ...s,
-                            guildUID: s.guildUID || s.guildVUID || ''
+                            id: s.id,
+                            claimed: s.claimed,
+                            guildName: s.guildName || '',
+                            guildUID: s.guildUID || s.guildVUID || '',
+                            discord: s.discord || '',
+                            points: s.points ?? null
                         }));
                     }
                 } catch (e) {
@@ -697,7 +694,6 @@
 
             const guildName = document.getElementById('claim-guild-name').value.trim();
             const guildUID = document.getElementById('claim-guild-uid').value.trim();
-            const uid = document.getElementById('claim-uid').value.trim();
             const discord = document.getElementById('claim-discord').value.trim();
 
             if (!/^\d{8,10}$/.test(guildUID)) {
@@ -705,18 +701,20 @@
                 return;
             }
 
-            // DUPLICATE CHECK: Prevent duplicate Guild Name, Guild UID, or Player In-Game UID
+            // DUPLICATE CHECK: Prevent duplicate Guild Name, Guild UID, or Discord Username
             const normalizedGuildName = guildName.toLowerCase();
+            const normalizedDiscord = discord.toLowerCase();
+            
             const existingDuplicate = state.slots.find(s => 
                 s.claimed && (
                     s.guildName.trim().toLowerCase() === normalizedGuildName || 
                     s.guildUID.trim() === guildUID ||
-                    s.uid.trim() === uid
+                    s.discord.trim().toLowerCase() === normalizedDiscord
                 )
             );
 
             if (existingDuplicate) {
-                showToast("Error: This Guild Name, Guild UID, or Player UID is already registered!", "error");
+                showToast("Error: This Guild Name, Guild UID, or Discord Username is already registered!", "error");
                 return;
             }
 
@@ -750,7 +748,6 @@
                 freshTargetSlot.claimed = true;
                 freshTargetSlot.guildName = guildName;
                 freshTargetSlot.guildUID = guildUID;
-                freshTargetSlot.uid = uid;
                 freshTargetSlot.discord = discord;
 
                 // CHECK IF ALL 12 SLOTS ARE NOW FILLED -> AUTO-CLOSE REGISTRATION
@@ -766,7 +763,6 @@
 
                 document.getElementById('claim-guild-name').value = '';
                 document.getElementById('claim-guild-uid').value = '';
-                document.getElementById('claim-uid').value = '';
                 document.getElementById('claim-discord').value = '';
 
                 closeClaimModal();
@@ -879,7 +875,6 @@
                 slot.claimed = false;
                 slot.guildName = '';
                 slot.guildUID = '';
-                slot.uid = '';
                 slot.discord = '';
                 slot.points = null;
             });
@@ -906,7 +901,7 @@
                         <div class="flex items-center gap-4">
                             <span class="text-brand-orange font-bold">Slot ${slotNum}</span>
                             <span class="text-white font-bold">${escapeHtml(slot.guildName)}</span>
-                            <span class="text-brand-textMuted">GUID: ${escapeHtml(slot.guildUID)} | UID: ${escapeHtml(slot.uid)}</span>
+                            <span class="text-brand-textMuted">GUID: ${escapeHtml(slot.guildUID)} | Discord: ${escapeHtml(slot.discord)}</span>
                         </div>
                         <button onclick="clearSlotRegistration(${slot.id})" class="text-red-400 hover:underline">Clear registration</button>
                     `;
@@ -929,7 +924,6 @@
                 slot.claimed = false;
                 slot.guildName = '';
                 slot.guildUID = '';
-                slot.uid = '';
                 slot.discord = '';
                 saveState();
                 renderSlotsGrid();
