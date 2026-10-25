@@ -705,6 +705,21 @@
                 return;
             }
 
+            // DUPLICATE CHECK: Prevent duplicate Guild Name, Guild UID, or Player In-Game UID
+            const normalizedGuildName = guildName.toLowerCase();
+            const existingDuplicate = state.slots.find(s => 
+                s.claimed && (
+                    s.guildName.trim().toLowerCase() === normalizedGuildName || 
+                    s.guildUID.trim() === guildUID ||
+                    s.uid.trim() === uid
+                )
+            );
+
+            if (existingDuplicate) {
+                showToast("Error: This Guild Name, Guild UID, or Player UID is already registered!", "error");
+                return;
+            }
+
             const targetSlot = state.targetSlotId 
                 ? state.slots.find(s => s.id === state.targetSlotId) 
                 : state.slots.find(s => !s.claimed);
@@ -723,7 +738,6 @@
             setTimeout(() => {
                 if (btn) btn.innerHTML = `<span>Claim available slot</span> <i class="fa-solid fa-arrow-right"></i>`;
                 
-                // Double check once more inside timeout before assigning
                 loadState();
                 const freshTargetSlot = state.slots.find(s => s.id === targetSlot.id);
                 if (freshTargetSlot.claimed) {
@@ -837,7 +851,7 @@
 
         function saveAdminSettings() {
             const btn = document.getElementById('btn-save-schedule');
-            if (btn) btn.innerHTML = `<span>Saving...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+            if (btn) btn.innerHTML = `<span>Saving...</span> <i class="fa-solid fa-check"></i>`;
             
             const prizeInput = document.getElementById('admin-prize-input');
             if (prizeInput) state.prizePoolText = prizeInput.value;
