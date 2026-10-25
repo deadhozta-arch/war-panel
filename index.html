@@ -176,7 +176,7 @@
             <div class="lg:col-span-5 bg-brand-card border border-brand-border p-6 sm:p-8 rounded-xl space-y-6 shadow-2xl relative overflow-hidden">
                 <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-brand-orange/5 rounded-full blur-2xl pointer-events-none"></div>
                 
-                <!-- Red Circle area: Registration Status Badge at the top -->
+                <!-- Registration Status Badge at the top -->
                 <div class="flex items-center justify-between font-mono-code text-xs">
                     <div class="flex items-center gap-2">
                         <span id="card-status-dot" class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
@@ -250,7 +250,6 @@
                     <p class="text-brand-textMuted text-sm mt-1">All successfully registered teams in the 15 available slots.</p>
                 </div>
 
-                <!-- Green Circle area: Status & Direct Register Button -->
                 <div class="flex flex-wrap items-center gap-3 text-xs font-mono-code">
                     <button onclick="handleDirectRegisterClick()" class="bg-brand-orange hover:bg-brand-orangeHover text-white font-bold px-4 py-2 rounded text-xs transition flex items-center gap-2 shadow-md">
                         <i class="fa-solid fa-user-plus"></i> Register Slot
@@ -1455,111 +1454,10 @@
                                 <input type="number" id="m2-${index}" value="${slot.match2 || 0}" class="bg-brand-bg border border-brand-border rounded px-2 py-1 text-xs text-white w-14 sm:w-16 text-center font-mono-code">
                             </div>
                             <button onclick="saveMatchPoints(${index})" class="bg-zinc-800 hover:bg-zinc-700 text-brand-orange px-2.5 sm:px-3 py-1 rounded font-bold shrink-0">Set</button>
-                            <button onclick="removeSlotRegistration(${index})" class="text-red-400 hover:underline shrink-0 ml-1">Free</button>
+                            <button onclick="removeSlotRegistration(${index})" class="text-red-400 hover:underline shrink-0 ml-1">Clear</button>
                         </div>
                     `;
                 } else {
                     item.innerHTML = `
                         <div class="flex items-center gap-3">
-                            <span class="text-brand-textMuted font-bold">#${slotNum}</span>
-                            <span class="text-brand-textMuted italic">Available / Unclaimed Slot</span>
-                        </div>
-                        <span class="text-zinc-600">--</span>
-                    `;
-                }
-                container.appendChild(item);
-            });
-        }
-
-        async function saveMatchPoints(index) {
-            const m1 = parseInt(document.getElementById(`m1-${index}`).value) || 0;
-            const m2 = parseInt(document.getElementById(`m2-${index}`).value) || 0;
-
-            state.slots[index].match1 = m1;
-            state.slots[index].match2 = m2;
-            state.slots[index].totalPoints = m1 + m2;
-
-            await saveStateToFirebase();
-            showToast(`Saved points for slot #${index + 1}`, "success");
-        }
-
-        async function calculateStandings() {
-            state.slots.forEach((slot, index) => {
-                if (slot.claimed) {
-                    const m1Input = document.getElementById(`m1-${index}`);
-                    const m2Input = document.getElementById(`m2-${index}`);
-                    if (m1Input && m2Input) {
-                        slot.match1 = parseInt(m1Input.value) || 0;
-                        slot.match2 = parseInt(m2Input.value) || 0;
-                    }
-                    slot.totalPoints = (slot.match1 || 0) + (slot.match2 || 0);
-                }
-            });
-
-            await saveStateToFirebase();
-            renderAdminSlots();
-            showToast("Successfully calculated total points and rankings!", "success");
-        }
-
-        async function publishLeaderboard() {
-            state.leaderboardPublished = true;
-            await saveStateToFirebase();
-            renderPublicLeaderboard();
-            showToast("Leaderboard published successfully!", "success");
-        }
-
-        async function removeLeaderboard() {
-            state.leaderboardPublished = false;
-            await saveStateToFirebase();
-            renderPublicLeaderboard();
-            showToast("Leaderboard unpublished/hidden from public view", "info");
-        }
-
-        function openClearAllModal() {
-            document.getElementById('modal-clear-all').classList.remove('hidden');
-        }
-
-        function closeClearAllModal() {
-            document.getElementById('modal-clear-all').classList.add('hidden');
-        }
-
-        async function confirmRemoveAllData() {
-            state.slots = getInitialSlots();
-            state.tournaments = [];
-            state.leaderboardPublished = false;
-            await saveStateToFirebase();
-            closeClearAllModal();
-            renderCreatedRooms();
-            renderPublicLeaderboard();
-            renderAdminSlots();
-            renderAdminRooms();
-            showToast("All data and rooms removed successfully", "success");
-        }
-
-        async function removeSlotRegistration(index) {
-            if (index >= 0 && index < 15) {
-                const freedName = state.slots[index].guildName;
-                state.slots[index] = {
-                    claimed: false,
-                    bookedBy: "",
-                    guildName: "",
-                    guildId: "",
-                    discord: "",
-                    match1: 0,
-                    match2: 0,
-                    totalPoints: 0,
-                    rank: "-"
-                };
-                await saveStateToFirebase();
-                renderRegisteredGuildsList();
-                renderAdminSlots();
-                showToast(`Freed slot #${String(index + 1).padStart(2, '0')} (${freedName})`, "success");
-            }
-        }
-
-        function escapeHtml(str) {
-            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-        }
-    </script>
-</body>
-</html>
+                            <span class="text-brand-textMuted font-bold">
