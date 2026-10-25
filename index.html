@@ -1234,3 +1234,38 @@
                         <button onclick="removeSlotRegistration(${index})" class="text-red-400 hover:underline">Free Slot</button>
                     `;
                 } else {
+                    item.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <span class="text-brand-textMuted font-bold">SLOT #${slotNum}</span>
+                            <span class="text-brand-textMuted italic">Available / Unclaimed</span>
+                        </div>
+                        <span class="text-zinc-600">--</span>
+                    `;
+                }
+                container.appendChild(item);
+            });
+        }
+
+        async function removeSlotRegistration(index) {
+            if (index >= 0 && index < 12) {
+                const freedName = state.slots[index].guildName;
+                state.slots[index] = {
+                    claimed: false,
+                    bookedBy: "",
+                    guildName: "",
+                    guildId: "",
+                    discord: "",
+                    points: null
+                };
+                await saveStateToFirebase();
+                renderCreatedRooms();
+                showToast(`Freed slot #${String(index + 1).padStart(2, '0')} (${freedName})`, "success");
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+    </script>
+</body>
+</html>
