@@ -358,8 +358,8 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-mono-code text-brand-textMuted">Guild ID (8 to 10 digits)</label>
-                    <input type="text" id="claim-guild-id" placeholder="e.g. 301294829" required pattern="\d{8,10}" maxlength="10" title="Guild ID must be between 8 and 10 digits"
+                    <label class="block text-xs font-mono-code text-brand-textMuted">Guild ID (5 to 10 digits number only)</label>
+                    <input type="text" id="claim-guild-id" placeholder="e.g. 30129" required pattern="\d{5,10}" maxlength="10" title="Guild ID must be between 5 and 10 digits with no letters"
                         class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                 </div>
 
@@ -1159,12 +1159,7 @@
         }
 
         /* ========================================================
-         * CONCURRENT REGISTRATION RACE CONDITION FIX
-         * Added atomic verification right before booking so that 
-         * if two devices try to claim the last available slot at 
-         * the exact same second, only the first device succeeds 
-         * and the second device receives a polite notification 
-         * that the slot was just taken.
+         * CONCURRENT REGISTRATION RACE CONDITION FIX & 5-10 DIGIT ID CHECK
          * ======================================================== */
         async function handleClaimSubmit(e) {
             e.preventDefault();
@@ -1179,8 +1174,9 @@
             const guildId = document.getElementById('claim-guild-id').value.trim();
             const discord = document.getElementById('claim-discord').value.trim();
 
-            if (!/^\d{8,10}$/.test(guildId)) {
-                showToast("Guild ID must be between 8 and 10 digits", "error");
+            // Strictly enforce 5 to 10 digit number with no letters
+            if (!/^\d{5,10}$/.test(guildId)) {
+                showToast("Guild ID must be a 5 to 10 digit number (no letters)", "error");
                 return;
             }
 
@@ -1191,7 +1187,6 @@
 
             try {
                 let successMessage = "";
-                // Use Firestore transactions for atomic synchronization across concurrent requests
                 await runTransaction(window.db, async (transaction) => {
                     const docSnap = await transaction.get(window.dbDocRef);
                     if (!docSnap.exists()) {
@@ -1201,7 +1196,6 @@
                     const data = docSnap.data();
                     let currentSlots = Array.isArray(data.slots) ? data.slots : getInitialSlots();
 
-                    // Check duplicate entries across concurrent race submissions
                     const normalizedGuildName = guildName.toLowerCase();
                     const normalizedDiscord = discord.toLowerCase();
                     
@@ -1217,7 +1211,6 @@
                         throw new Error("This Guild Name, Guild ID, or Discord Username is already registered!");
                     }
 
-                    // Find the true available slot at this exact transactional millisecond
                     const nextOpenIndex = currentSlots.findIndex(s => !s.claimed);
                     if (nextOpenIndex === -1) {
                         throw new Error("Slot was just taken! All 15 tournament slots are fully booked.");
