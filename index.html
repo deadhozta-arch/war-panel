@@ -91,11 +91,6 @@
             backdrop-filter: blur(8px);
             background-color: rgba(5, 5, 6, 0.85);
         }
-        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            cursor: pointer;
-            padding: 2px;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brand-orange selection:text-white">
@@ -362,12 +357,12 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-mono-code text-brand-textMuted">Registration Open</label>
+                        <label class="block text-xs font-mono-code text-brand-textMuted">Registration Open (Date & Time)</label>
                         <input type="datetime-local" id="create-reg-open" required
                             class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-mono-code text-brand-textMuted">Registration Close</label>
+                        <label class="block text-xs font-mono-code text-brand-textMuted">Registration Close (Date & Time)</label>
                         <input type="datetime-local" id="create-reg-close" required
                             class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
@@ -375,7 +370,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-mono-code text-brand-textMuted">Password Time</label>
+                        <label class="block text-xs font-mono-code text-brand-textMuted">Password Time (Date & Time)</label>
                         <input type="datetime-local" id="create-schedule" required
                             class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
@@ -449,7 +444,7 @@
                 <div class="bg-brand-bg border border-brand-border p-4 rounded-lg space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-1">
-                            <span class="block text-xs font-mono-code text-brand-textMuted">Registration status (Manual Override)</span>
+                            <span class="block text-xs font-mono-code text-brand-textMuted">Registration status</span>
                             <div class="flex items-center gap-3 pt-1">
                                 <button type="button" onclick="toggleRegistrationStatus()" id="admin-status-toggle-btn" 
                                     class="w-12 h-6 bg-zinc-700 rounded-full p-1 transition duration-200 ease-in-out relative">
@@ -566,13 +561,12 @@
             }, 1000);
         });
 
-        // AUTOMATION CHECKER
         function checkAutomatedSchedule() {
             if (state.tournaments.length === 0) return;
 
             const now = new Date().getTime();
             let shouldBeOpen = false;
-            let slotFull = state.slots.every(s => s.claimed); // Check if 12/12 slots are full
+            let slotFull = state.slots.every(s => s.claimed);
 
             state.tournaments.forEach(tr => {
                 if (tr.regOpen && tr.regClose) {
@@ -584,12 +578,10 @@
                 }
             });
 
-            // If slots are full, force close registration regardless of time
             if (slotFull) {
                 shouldBeOpen = false;
             }
 
-            // Only update if state changes to avoid unnecessary re-renders
             if (state.isRegistrationOpen !== shouldBeOpen) {
                 state.isRegistrationOpen = shouldBeOpen;
                 renderSlotsGrid();
