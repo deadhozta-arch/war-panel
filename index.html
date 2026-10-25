@@ -484,7 +484,6 @@
 
         // DOM LOAD INITIALIZATION
         window.onload = function () {
-            // Ensure scroll is at top immediately after load
             window.scrollTo(0, 0);
             loadState();
             renderSlotsGrid();
@@ -495,6 +494,7 @@
         // RENDER 12 SLOTS IN LOBBY
         function renderSlotsGrid() {
             const container = document.getElementById('slots-grid');
+            if (!container) return;
             container.innerHTML = '';
 
             state.slots.forEach(slot => {
@@ -542,7 +542,8 @@
         // UPDATE UI DEPENDING ON REGISTRATION STATE
         function updateUIState() {
             const claimedCount = state.slots.filter(s => s.claimed).length;
-            document.getElementById('claimed-count-text').innerText = `${claimedCount}/12 claimed`;
+            const countText = document.getElementById('claimed-count-text');
+            if (countText) countText.innerText = `${claimedCount}/12 claimed`;
             
             const statusDot = document.getElementById('reg-status-dot');
             const statusBadge = document.getElementById('reg-status-badge');
@@ -555,12 +556,14 @@
             const toggleText = document.getElementById('admin-status-text');
 
             if (state.isRegistrationOpen) {
-                statusDot.className = "w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse";
-                statusBadge.innerText = "Registration open";
-                statusBadge.className = "text-green-400 font-bold uppercase";
-                lobbySubtext.innerText = "Move fast – window is live";
-                lobbyRegisterText.innerText = "Claim a slot now";
-                heroBtnText.innerText = "Register Guild / Claim Slot";
+                if (statusDot) statusDot.className = "w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse";
+                if (statusBadge) {
+                    statusBadge.innerText = "Registration open";
+                    statusBadge.className = "text-green-400 font-bold uppercase";
+                }
+                if (lobbySubtext) lobbySubtext.innerText = "Move fast – window is live";
+                if (lobbyRegisterText) lobbyRegisterText.innerText = "Claim a slot now";
+                if (heroBtnText) heroBtnText.innerText = "Register Guild / Claim Slot";
 
                 if (toggleBtn && toggleThumb && toggleText) {
                     toggleBtn.className = "w-12 h-6 bg-brand-orange rounded-full p-1 transition duration-200 ease-in-out relative";
@@ -569,12 +572,14 @@
                     toggleText.className = "text-xs font-mono-code font-bold text-green-400";
                 }
             } else {
-                statusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
-                statusBadge.innerText = "Registration closed";
-                statusBadge.className = "text-brand-textMuted font-bold uppercase";
-                lobbySubtext.innerText = "Setup pending – watch this space";
-                lobbyRegisterText.innerText = "Register when open";
-                heroBtnText.innerText = "Register Guild";
+                if (statusDot) statusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+                if (statusBadge) {
+                    statusBadge.innerText = "Registration closed";
+                    statusBadge.className = "text-brand-textMuted font-bold uppercase";
+                }
+                if (lobbySubtext) lobbySubtext.innerText = "Setup pending – watch this space";
+                if (lobbyRegisterText) lobbyRegisterText.innerText = "Register when open";
+                if (heroBtnText) heroBtnText.innerText = "Register Guild";
 
                 if (toggleBtn && toggleThumb && toggleText) {
                     toggleBtn.className = "w-12 h-6 bg-zinc-700 rounded-full p-1 transition duration-200 ease-in-out relative";
@@ -584,7 +589,9 @@
                 }
             }
 
-            document.getElementById('prize-pool-display').innerText = state.prizePoolText;
+            const prizeDisplay = document.getElementById('prize-pool-display');
+            if (prizeDisplay) prizeDisplay.innerText = state.prizePoolText;
+            
             const prizeInput = document.getElementById('admin-prize-input');
             if (prizeInput) {
                 prizeInput.value = state.prizePoolText;
@@ -594,6 +601,7 @@
         // TOAST NOTIFICATION SYSTEM
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
+            if (!container) return;
             const toast = document.createElement('div');
             toast.className = `px-5 py-3 rounded-lg shadow-xl text-xs font-mono-code font-bold flex items-center gap-3 border transition-all duration-300 transform translate-y-[-10px] opacity-0 ${
                 type === 'error' ? 'bg-zinc-900 text-red-400 border-red-500/50' : 
@@ -643,12 +651,15 @@
         function openClaimModal(slotId = null) {
             state.targetSlotId = slotId;
             const slotTitle = slotId ? `SLOT ${String(slotId).padStart(2, '0')} CLAIM // REGISTRATION` : `SLOT CLAIM // REGISTRATION WINDOW`;
-            document.getElementById('claim-modal-slot-title').innerText = slotTitle;
-            document.getElementById('modal-claim').classList.remove('hidden');
+            const titleEl = document.getElementById('claim-modal-slot-title');
+            if (titleEl) titleEl.innerText = slotTitle;
+            const modal = document.getElementById('modal-claim');
+            if (modal) modal.classList.remove('hidden');
         }
 
         function closeClaimModal() {
-            document.getElementById('modal-claim').classList.add('hidden');
+            const modal = document.getElementById('modal-claim');
+            if (modal) modal.classList.add('hidden');
             state.targetSlotId = null;
         }
 
@@ -681,10 +692,10 @@
             }
 
             const btn = document.getElementById('btn-claim-submit');
-            btn.innerHTML = `<span>Claiming...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+            if (btn) btn.innerHTML = `<span>Claiming...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
             setTimeout(() => {
-                btn.innerHTML = `<span>Claim available slot</span> <i class="fa-solid fa-arrow-right"></i>`;
+                if (btn) btn.innerHTML = `<span>Claim available slot</span> <i class="fa-solid fa-arrow-right"></i>`;
                 
                 targetSlot.claimed = true;
                 targetSlot.guildName = guildName;
@@ -710,17 +721,26 @@
 
         // ADMIN CONTROL ROOM LOGIC
         function openAdminModal() {
-            document.getElementById('modal-admin').classList.remove('hidden');
+            const adminModal = document.getElementById('modal-admin');
+            if (adminModal) adminModal.classList.remove('hidden');
+
+            const loginView = document.getElementById('admin-view-login');
+            const dashView = document.getElementById('admin-view-dashboard');
+
             if (isAdminLoggedIn) {
-                document.getElementById('admin-view-login').classList.add('hidden');
-                document.getElementById('admin-view-dashboard').classList.remove('hidden');
+                if (loginView) loginView.classList.add('hidden');
+                if (dashView) dashView.classList.remove('hidden');
                 renderAdminSlots();
+            } else {
+                if (loginView) loginView.classList.remove('hidden');
+                if (dashView) dashView.classList.add('hidden');
             }
             updateUIState();
         }
 
         function closeAdminModal() {
-            document.getElementById('modal-admin').classList.add('hidden');
+            const adminModal = document.getElementById('modal-admin');
+            if (adminModal) adminModal.classList.add('hidden');
         }
 
         function handleAdminLoginSubmit(e) {
@@ -729,16 +749,19 @@
             const pass = document.getElementById('admin-pass').value;
 
             const btn = document.getElementById('btn-admin-login');
-            btn.innerHTML = `<span>Checking...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+            if (btn) btn.innerHTML = `<span>Checking...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
             setTimeout(() => {
-                btn.innerHTML = `<span>Admin Login</span> <i class="fa-solid fa-arrow-right"></i>`;
+                if (btn) btn.innerHTML = `<span>Admin Login</span> <i class="fa-solid fa-arrow-right"></i>`;
                 if ((user === 'admin' || user === 'admin@admin') && pass === 'admin@akz') {
                     isAdminLoggedIn = true;
                     localStorage.setItem('akz_admin_logged_in', 'true');
 
-                    document.getElementById('admin-view-login').classList.add('hidden');
-                    document.getElementById('admin-view-dashboard').classList.remove('hidden');
+                    const loginView = document.getElementById('admin-view-login');
+                    const dashView = document.getElementById('admin-view-dashboard');
+                    if (loginView) loginView.classList.add('hidden');
+                    if (dashView) dashView.classList.remove('hidden');
+                    
                     updateUIState();
                     renderAdminSlots();
                     showToast("Welcome back", "success");
@@ -752,8 +775,11 @@
             isAdminLoggedIn = false;
             localStorage.removeItem('akz_admin_logged_in');
 
-            document.getElementById('admin-view-dashboard').classList.add('hidden');
-            document.getElementById('admin-view-login').classList.remove('hidden');
+            const loginView = document.getElementById('admin-view-login');
+            const dashView = document.getElementById('admin-view-dashboard');
+            if (dashView) dashView.classList.add('hidden');
+            if (loginView) loginView.classList.remove('hidden');
+            
             showToast("Logged out successfully", "info");
         }
 
@@ -767,24 +793,27 @@
 
         function saveAdminSettings() {
             const btn = document.getElementById('btn-save-schedule');
-            btn.innerHTML = `<span>Saving...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+            if (btn) btn.innerHTML = `<span>Saving...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
             
-            state.prizePoolText = document.getElementById('admin-prize-input').value;
+            const prizeInput = document.getElementById('admin-prize-input');
+            if (prizeInput) state.prizePoolText = prizeInput.value;
             saveState();
 
             setTimeout(() => {
-                btn.innerHTML = `<span>Save schedule</span> <i class="fa-solid fa-check"></i>`;
+                if (btn) btn.innerHTML = `<span>Save schedule</span> <i class="fa-solid fa-check"></i>`;
                 updateUIState();
                 showToast("Tournament schedule updated", "success");
             }, 600);
         }
 
         function openClearAllModal() {
-            document.getElementById('modal-clear-all').classList.remove('hidden');
+            const modal = document.getElementById('modal-clear-all');
+            if (modal) modal.classList.remove('hidden');
         }
 
         function closeClearAllModal() {
-            document.getElementById('modal-clear-all').classList.add('hidden');
+            const modal = document.getElementById('modal-clear-all');
+            if (modal) modal.classList.add('hidden');
         }
 
         function confirmClearAllRegistrations() {
@@ -837,7 +866,7 @@
         }
 
         function clearSlotRegistration(slotId) {
-            const slot = state.slots.main?.find ? null : state.slots.find(s => s.id === slotId);
+            const slot = state.slots.find(s => s.id === slotId);
             if (slot && slot.claimed) {
                 slot.claimed = false;
                 slot.guildName = '';
