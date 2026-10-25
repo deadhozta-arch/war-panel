@@ -175,12 +175,12 @@
                     </div>
                     <div class="flex flex-col gap-1 border-t border-brand-border/40 pt-2">
                         <span class="text-brand-orange font-bold">REGISTRATION WINDOW:</span>
-                        <span id="widget-reg-open-display" class="text-white">OPENS: TBD</span>
-                        <span id="widget-reg-close-display" class="text-white">CLOSES: TBD</span>
+                        <span id="widget-reg-open-display" class="text-white">OPENS: Coming Soon</span>
+                        <span id="widget-reg-close-display" class="text-white">CLOSES: Coming Soon</span>
                     </div>
                     <div class="flex justify-between items-center border-t border-brand-border/40 pt-2">
                         <span class="text-brand-textMuted">PASSWORD TIME:</span>
-                        <span id="widget-schedule-display" class="text-white">TBD</span>
+                        <span id="widget-schedule-display" class="text-white">Coming Soon</span>
                     </div>
                     <div class="flex items-center gap-2 text-white pt-2 border-t border-brand-border/40">
                         <i class="fa-solid fa-user-ninja text-brand-orange"></i>
@@ -216,7 +216,7 @@
             <div id="public-leaderboard-container" class="bg-brand-card border border-brand-border rounded-xl overflow-hidden p-6"></div>
         </section>
 
-        <!-- SECTION: REGISTRATION & REGISTERED GUILDS LIST (15 SLOTS) -->
+        <!-- SECTION: REGISTRATION -->
         <section id="registration" class="space-y-6 border-t border-brand-border/60 pt-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
@@ -317,7 +317,7 @@
         </div>
     </div>
 
-    <!-- CLAIM SLOT MODAL (SINGLE REGISTER FORM FOR 15 SLOTS) -->
+    <!-- CLAIM SLOT MODAL -->
     <div id="modal-claim" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl">
             <button onclick="closeClaimModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
@@ -505,7 +505,7 @@
                     <div id="admin-rooms-list" class="space-y-2 max-h-50 overflow-y-auto pr-1"></div>
                 </div>
 
-                <!-- Slots (1 to 15) & Match Points Management -->
+                <!-- Slots & Match Points Management -->
                 <div class="space-y-4 pt-2">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold tracking-wider">SLOTS & MATCH POINTS MANAGEMENT (1 TO 15)</h4>
@@ -541,7 +541,7 @@
     </div>
 
 
-    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & 15 SLOTS -->
+    <!-- FIREBASE LIVE REAL-TIME APP LOGIC -->
     <script>
         function getInitialSlots() {
             let slots = [];
@@ -599,7 +599,7 @@
 
             const now = new Date().getTime();
             let shouldBeOpen = false;
-            let slotFull = state.slots.every(s => s.claimed); // Check if all 15 slots are full
+            let slotFull = state.slots.every(s => s.claimed);
 
             state.tournaments.forEach(tr => {
                 if (tr.regOpen && tr.regClose) {
@@ -775,13 +775,13 @@
         }
 
         function formatDateTime(dtStr) {
-            if (!dtStr) return "TBD";
+            if (!dtStr) return "Coming Soon";
             try {
                 const d = new Date(dtStr);
                 if (isNaN(d.getTime())) return dtStr;
                 return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
             } catch (e) {
-                return dtStr;
+                return "Coming Soon";
             }
         }
 
@@ -883,7 +883,6 @@
             });
         }
 
-        // RENDER REGISTERED GUILDS LIST (15 SLOTS)
         function renderRegisteredGuildsList() {
             const container = document.getElementById('registered-guilds-list-container');
             if (!container) return;
@@ -1058,6 +1057,13 @@
 
                 const scheduleDisplay = document.getElementById('widget-schedule-display');
                 if (scheduleDisplay) scheduleDisplay.innerText = formatDateTime(latest.schedule);
+            } else {
+                const regOpenDisplay = document.getElementById('widget-reg-open-display');
+                if (regOpenDisplay) regOpenDisplay.innerText = `OPENS: Coming Soon`;
+                const regCloseDisplay = document.getElementById('widget-reg-close-display');
+                if (regCloseDisplay) regCloseDisplay.innerText = `CLOSES: Coming Soon`;
+                const scheduleDisplay = document.getElementById('widget-schedule-display');
+                if (scheduleDisplay) scheduleDisplay.innerText = `Coming Soon`;
             }
         }
 
@@ -1086,7 +1092,6 @@
             }, 3500);
         }
 
-        // SINGLE REGISTER BUTTON LOGIC (Finds first available open slot out of 15)
         function handleDirectRegisterClick() {
             if (!currentUser) {
                 showToast("Please login or register an account first!", "error");
@@ -1116,7 +1121,6 @@
                 return;
             }
 
-            document.getElementById('selected-slot-index').value = index;
             document.getElementById('modal-claim').classList.remove('hidden');
         }
 
@@ -1133,7 +1137,6 @@
                 return;
             }
 
-            // Find the next available unclaimed slot automatically
             const nextOpenIndex = state.slots.findIndex(s => !s.claimed);
             if (nextOpenIndex === -1) {
                 showToast("Error: All 15 tournament slots are fully booked!", "error");
@@ -1190,6 +1193,7 @@
             document.getElementById('claim-discord').value = '';
 
             closeClaimModal();
+            renderRegisteredGuildsList();
             renderCreatedRooms();
             showToast(`Successfully registered ${guildName} to Slot #${nextOpenIndex + 1}!`, "success");
         }
