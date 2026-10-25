@@ -91,10 +91,11 @@
             backdrop-filter: blur(8px);
             background-color: rgba(5, 5, 6, 0.85);
         }
-        /* Custom styling for native date/time pickers */
+        /* Custom styling for compact date/time pickers */
         input[type="datetime-local"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             cursor: pointer;
+            padding: 2px;
         }
     </style>
 </head>
@@ -175,7 +176,7 @@
                         <span id="widget-reg-close-display" class="text-white">CLOSES: TBD</span>
                     </div>
                     <div class="flex justify-between items-center border-t border-brand-border/40 pt-2">
-                        <span class="text-brand-textMuted">PASSWORD REVEAL TIME:</span>
+                        <span class="text-brand-textMuted">PASSWORD TIME:</span>
                         <span id="widget-schedule-display" class="text-white">TBD</span>
                     </div>
                     <div class="flex items-center gap-2 text-white pt-2 border-t border-brand-border/40">
@@ -363,21 +364,27 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Registration Open</label>
-                        <input type="datetime-local" id="create-reg-open" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                        <div class="relative">
+                            <input type="datetime-local" id="create-reg-open" required
+                                class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                        </div>
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Registration Close</label>
-                        <input type="datetime-local" id="create-reg-close" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                        <div class="relative">
+                            <input type="datetime-local" id="create-reg-close" required
+                                class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                        </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-mono-code text-brand-textMuted">Password Reveal Time</label>
-                        <input type="datetime-local" id="create-schedule" required
-                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                        <label class="block text-xs font-mono-code text-brand-textMuted">Password Time</label>
+                        <div class="relative">
+                            <input type="datetime-local" id="create-schedule" required
+                                class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                        </div>
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Room ID</label>
@@ -780,7 +787,7 @@
                     <div class="border-t border-brand-border pt-3 space-y-2 font-mono-code text-xs">
                         <div class="flex justify-between"><span class="text-brand-textMuted">Reg Opens:</span> <span class="text-white">${escapeHtml(formatDateTime(tr.regOpen))}</span></div>
                         <div class="flex justify-between"><span class="text-brand-textMuted">Reg Closes:</span> <span class="text-white">${escapeHtml(formatDateTime(tr.regClose))}</span></div>
-                        <div class="flex justify-between"><span class="text-brand-textMuted">Password Reveal Time:</span> <span class="text-white">${escapeHtml(formatDateTime(tr.schedule))}</span></div>
+                        <div class="flex justify-between"><span class="text-brand-textMuted">Password Time:</span> <span class="text-white">${escapeHtml(formatDateTime(tr.schedule))}</span></div>
                         ${credentialsHtml}
                     </div>
                 `;
