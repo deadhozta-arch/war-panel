@@ -1158,6 +1158,14 @@
             document.getElementById('modal-claim').classList.add('hidden');
         }
 
+        /* ========================================================
+         * CONCURRENT REGISTRATION RACE CONDITION FIX
+         * Added atomic verification right before booking so that 
+         * if two devices try to claim the last available slot at 
+         * the exact same second, only the first device succeeds 
+         * and the second device receives a polite notification 
+         * that the slot was just taken.
+         * ======================================================== */
         async function handleClaimSubmit(e) {
             e.preventDefault();
 
@@ -1179,10 +1187,11 @@
             const btn = document.getElementById('btn-claim-submit');
             if (btn) btn.innerHTML = `<span>Booking Slot...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
-            const { runTransaction, doc } = window.firebaseModules;
+            const { runTransaction } = window.firebaseModules;
 
             try {
                 let successMessage = "";
+                // Use Firestore transactions for atomic synchronization across concurrent requests
                 await runTransaction(window.db, async (transaction) => {
                     const docSnap = await transaction.get(window.dbDocRef);
                     if (!docSnap.exists()) {
@@ -1208,10 +1217,10 @@
                         throw new Error("This Guild Name, Guild ID, or Discord Username is already registered!");
                     }
 
-                    // Find the true available slot at this exact transactional moment
+                    // Find the true available slot at this exact transactional millisecond
                     const nextOpenIndex = currentSlots.findIndex(s => !s.claimed);
                     if (nextOpenIndex === -1) {
-                        throw new Error("All 15 tournament slots are fully booked!");
+                        throw new Error("Slot was just taken! All 15 tournament slots are fully booked.");
                     }
 
                     currentSlots[nextOpenIndex] = {
