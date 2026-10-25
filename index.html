@@ -41,6 +41,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK & Live Connection -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Your Firebase configuration for akz-guild-war[cite: 7]
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-gltjKSRP6WlFXxcgvlhp7pN0eGHGC24",
+            authDomain: "akz-guild-war.firebaseapp.com",
+            projectId: "akz-guild-war",
+            storageBucket: "akz-guild-war.firebasestorage.app",
+            messagingSenderId: "79033992862",
+            appId: "1:79033992862:web:a8e24ec46771e114a61d8f",
+            measurementId: "G-0DL54YP6JT"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.dbDocRef = doc(db, "tournament", "main_state");
+        window.firebaseModules = { doc, getDoc, setDoc, onSnapshot };
+    </script>
+
     <style>
         body {
             background-color: #0B0B0C;
@@ -410,77 +436,64 @@
     </div>
 
 
-    <!-- JAVASCRIPT APP LOGIC -->
+    <!-- FIREBASE LIVE REAL-TIME APP LOGIC -->
     <script>
-        // GLOBAL APP STATE WITH LOCALSTORAGE PERSISTENCE
         let state = {
             isRegistrationOpen: false,
             prizePoolText: "₹30,000 + trophies",
-            guilds: [] // Dynamic list of registered guilds
+            guilds: []
         };
 
         let isAdminLoggedIn = false;
 
-        // LOAD SAVED STATE & LOGIN STATUS ON STARTUP
-        function loadState() {
-            const saved = localStorage.getItem('akz_guild_war_state_v2');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    state.isRegistrationOpen = parsed.isRegistrationOpen ?? false;
-                    state.prizePoolText = parsed.prizePoolText ?? "₹30,000 + trophies";
-                    state.guilds = Array.isArray(parsed.guilds) ? parsed.guilds : [];
-                } catch (e) {
-                    console.error("Failed to load saved state", e);
+        // FETCH DATA LIVE FROM FIREBASE ON LOAD & SETUP REAL-TIME LISTENER
+        window.addEventListener('DOMContentLoaded', () => {
+            const checkFirebaseInterval = setInterval(() => {
+                if (window.dbDocRef && window.firebaseModules) {
+                    clearInterval(checkFirebaseInterval);
+                    initFirebaseRealtimeSync();
                 }
-            } else {
-                // Backward compatibility check for older slot data
-                const oldSaved = localStorage.getItem('akz_guild_war_state');
-                if (oldSaved) {
-                    try {
-                        const parsedOld = JSON.parse(oldSaved);
-                        state.isRegistrationOpen = parsedOld.isRegistrationOpen ?? false;
-                        state.prizePoolText = parsedOld.prizePoolText ?? "₹30,000 + trophies";
-                        if (Array.isArray(parsedOld.slots)) {
-                            state.guilds = parsedOld.slots.filter(s => s.claimed).map(s => ({
-                                guildName: s.guildName || '',
-                                guildId: s.guildId || s.guildUID || s.guildVUID || '',
-                                discord: s.discord || '',
-                                points: s.points ?? null
-                            }));
-                        }
-                    } catch (e) {}
-                }
-            }
+            }, 100);
 
             const savedAdminLogin = localStorage.getItem('akz_admin_logged_in');
             if (savedAdminLogin === 'true') {
                 isAdminLoggedIn = true;
             }
-        }
+        });
 
-        function saveState() {
-            localStorage.setItem('akz_guild_war_state_v2', JSON.stringify(state));
-        }
+        function initFirebaseRealtimeSync() {
+            const { onSnapshot } = window.firebaseModules;
 
-        // LISTEN FOR STORAGE CHANGES ACROSS TABS (LIVE SYNC)
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'akz_guild_war_state_v2') {
-                loadState();
+            // Real-time listener: syncs instantly across all devices/phones worldwide
+            onSnapshot(window.dbDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    state.isRegistrationOpen = data.isRegistrationOpen ?? false;
+                    state.prizePoolText = data.prizePoolText ?? "₹30,000 + trophies";
+                    state.guilds = Array.isArray(data.guilds) ? data.guilds : [];
+                } else {
+                    saveStateToFirebase();
+                }
                 renderGuildsGrid();
                 renderAdminGuilds();
                 updateUIState();
-            }
-        });
+            }, (error) => {
+                console.error("Firestore sync error: ", error);
+            });
+        }
 
-        // DOM LOAD INITIALIZATION
-        window.onload = function () {
-            window.scrollTo(0, 0);
-            loadState();
-            renderGuildsGrid();
-            renderAdminGuilds();
-            updateUIState();
-        };
+        async function saveStateToFirebase() {
+            const { setDoc } = window.firebaseModules;
+            try {
+                await setDoc(window.dbDocRef, {
+                    isRegistrationOpen: state.isRegistrationOpen,
+                    prizePoolText: state.prizePoolText,
+                    guilds: state.guilds
+                });
+            } catch (e) {
+                console.error("Error saving to Firestore: ", e);
+            }
+        }
 
         // RENDER REGISTERED GUILDS DYNAMICALLY
         function renderGuildsGrid() {
@@ -608,7 +621,6 @@
 
         // DIRECT REGISTRATION / CLAIM MODAL LOGIC
         function handleDirectRegisterClick() {
-            loadState(); // Sync latest state across tabs
             if (!state.isRegistrationOpen) {
                 showToast("Registration is currently closed", "error");
                 return;
@@ -626,11 +638,8 @@
             if (modal) modal.classList.add('hidden');
         }
 
-        function handleClaimSubmit(e) {
+        async function handleClaimSubmit(e) {
             e.preventDefault();
-            
-            // Re-read fresh state from localStorage before finalizing
-            loadState();
 
             if (!state.isRegistrationOpen) {
                 showToast("Registration is currently closed", "error");
@@ -651,7 +660,7 @@
             const normalizedGuildName = guildName.toLowerCase();
             const normalizedDiscord = discord.toLowerCase();
             
-            const existingDuplicate = state.guilds.find(g => 
+            const existingDuplicate = state.guilds.some(g => 
                 g.guildName.trim().toLowerCase() === normalizedGuildName || 
                 g.guildId.trim() === guildId ||
                 g.discord.trim().toLowerCase() === normalizedDiscord
@@ -665,37 +674,28 @@
             const btn = document.getElementById('btn-claim-submit');
             if (btn) btn.innerHTML = `<span>Registering...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
-            setTimeout(() => {
-                if (btn) btn.innerHTML = `<span>Submit Registration</span> <i class="fa-solid fa-arrow-right"></i>`;
-                
-                loadState();
-                
-                // Add new guild to the dynamic list
-                state.guilds.push({
-                    guildName: guildName,
-                    guildId: guildId,
-                    discord: discord,
-                    points: null
-                });
+            // Add new guild and save directly to Firebase
+            state.guilds.push({
+                guildName: guildName,
+                guildId: guildId,
+                discord: discord,
+                points: null
+            });
 
-                saveState();
+            await saveStateToFirebase();
 
-                document.getElementById('claim-guild-name').value = '';
-                document.getElementById('claim-guild-id').value = '';
-                document.getElementById('claim-discord').value = '';
+            if (btn) btn.innerHTML = `<span>Submit Registration</span> <i class="fa-solid fa-arrow-right"></i>`;
 
-                closeClaimModal();
-                renderGuildsGrid();
-                renderAdminGuilds();
-                updateUIState();
+            document.getElementById('claim-guild-name').value = '';
+            document.getElementById('claim-guild-id').value = '';
+            document.getElementById('claim-discord').value = '';
 
-                showToast(`Successfully registered ${guildName}!`, "success");
-            }, 300);
+            closeClaimModal();
+            showToast(`Successfully registered ${guildName}!`, "success");
         }
 
         // ADMIN CONTROL ROOM LOGIC
         function openAdminModal() {
-            loadState();
             const adminModal = document.getElementById('modal-admin');
             if (adminModal) adminModal.classList.remove('hidden');
 
@@ -758,21 +758,18 @@
             showToast("Logged out successfully", "info");
         }
 
-        function toggleRegistrationStatus() {
+        async function toggleRegistrationStatus() {
             state.isRegistrationOpen = !state.isRegistrationOpen;
-            saveState();
-            renderGuildsGrid();
-            renderAdminGuilds();
-            updateUIState();
+            await saveStateToFirebase();
         }
 
-        function saveAdminSettings() {
+        async function saveAdminSettings() {
             const btn = document.getElementById('btn-save-schedule');
             if (btn) btn.innerHTML = `<span>Saving...</span> <i class="fa-solid fa-check"></i>`;
             
             const prizeInput = document.getElementById('admin-prize-input');
             if (prizeInput) state.prizePoolText = prizeInput.value;
-            saveState();
+            await saveStateToFirebase();
 
             setTimeout(() => {
                 if (btn) btn.innerHTML = `<span>Save settings</span> <i class="fa-solid fa-check"></i>`;
@@ -791,12 +788,9 @@
             if (modal) modal.classList.add('hidden');
         }
 
-        function confirmClearAllRegistrations() {
+        async function confirmClearAllRegistrations() {
             state.guilds = [];
-            saveState();
-            renderGuildsGrid();
-            renderAdminGuilds();
-            updateUIState();
+            await saveStateToFirebase();
             closeClearAllModal();
             showToast("All registrations cleared", "success");
         }
@@ -828,14 +822,11 @@
             });
         }
 
-        function removeGuildRegistration(index) {
+        async function removeGuildRegistration(index) {
             if (index >= 0 && index < state.guilds.length) {
                 const removedName = state.guilds[index].guildName;
                 state.guilds.splice(index, 1);
-                saveState();
-                renderGuildsGrid();
-                renderAdminGuilds();
-                updateUIState();
+                await saveStateToFirebase();
                 showToast(`Removed registration for ${removedName}`, "success");
             }
         }
