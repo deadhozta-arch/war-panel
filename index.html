@@ -144,12 +144,12 @@
                 </h1>
 
                 <p class="text-brand-textMuted text-sm sm:text-base leading-relaxed max-w-xl font-medium">
-                    <strong class="text-white">12 guilds. Two battlegrounds. One top spot.</strong><br>
-                    Bring your guild to Bermuda and Purgatory. Register your slot, log in, and access your created room ID & password automatically. Hosted by Akshay AKZ.
+                    <strong class="text-white">15 slots. Two battlegrounds. One top spot.</strong><br>
+                    Bring your guild to Bermuda and Purgatory. Click register below to claim your slot instantly. Hosted by Akshay AKZ.
                 </p>
 
                 <div class="pt-2">
-                    <button id="main-hero-action-btn" onclick="handleDirectRegisterClick()" class="bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3.5 px-6 rounded text-sm sm:text-base tracking-wide flex items-center gap-3 transition shadow-lg shadow-brand-orange/20 group">
+                    <button id="main-hero-action-btn" onclick="handleDirectRegisterClick()" class="bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-4 px-8 rounded text-sm sm:text-base tracking-wide flex items-center gap-3 transition shadow-lg shadow-brand-orange/20 group">
                         <span id="hero-btn-text">Register Guild Slot</span>
                         <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </button>
@@ -165,7 +165,7 @@
                 </div>
 
                 <div class="space-y-1">
-                    <div class="text-5xl sm:text-6xl font-black tracking-tight text-white">12</div>
+                    <div class="text-5xl sm:text-6xl font-black tracking-tight text-white">15</div>
                     <div class="text-lg font-extrabold uppercase text-white tracking-wider">GUILDS. ONE TOP SPOT.</div>
                 </div>
 
@@ -216,13 +216,13 @@
             <div id="public-leaderboard-container" class="bg-brand-card border border-brand-border rounded-xl overflow-hidden p-6"></div>
         </section>
 
-        <!-- SECTION: REGISTRATION -->
+        <!-- SECTION: REGISTRATION & REGISTERED GUILDS LIST (15 SLOTS) -->
         <section id="registration" class="space-y-6 border-t border-brand-border/60 pt-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">03 // REGISTRATION</div>
-                    <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">TOURNAMENT SLOTS.</h2>
-                    <p class="text-brand-textMuted text-sm mt-1">Select an available slot to register your guild.</p>
+                    <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">REGISTERED GUILDS.</h2>
+                    <p class="text-brand-textMuted text-sm mt-1">All successfully registered teams in the 15 available slots.</p>
                 </div>
 
                 <div class="flex items-center gap-4 text-xs font-mono-code">
@@ -231,11 +231,12 @@
                         <span id="reg-status-badge" class="text-brand-textMuted font-bold uppercase">Registration closed</span>
                     </div>
                     <span class="text-brand-border">|</span>
-                    <span id="claimed-count-text" class="text-brand-orange font-bold">0 / 12 slots claimed</span>
+                    <span id="claimed-count-text" class="text-brand-orange font-bold">0 / 15 slots claimed</span>
                 </div>
             </div>
 
-            <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+            <!-- Dynamic Registered Guilds List (15 Slots) -->
+            <div id="registered-guilds-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
         <!-- SECTION 03: PLAY FOR THE TOP -->
@@ -316,7 +317,7 @@
         </div>
     </div>
 
-    <!-- CLAIM SLOT MODAL -->
+    <!-- CLAIM SLOT MODAL (SINGLE REGISTER FORM FOR 15 SLOTS) -->
     <div id="modal-claim" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
         <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-xl p-6 sm:p-8 space-y-6 relative shadow-2xl">
             <button onclick="closeClaimModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
@@ -324,17 +325,15 @@
             </button>
 
             <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">
-                <span id="modal-slot-title">CLAIM SLOT #01</span>
+                <span>GUILD REGISTRATION // MAX 15 SLOTS</span>
             </div>
 
             <div>
-                <h3 class="text-2xl sm:text-3xl font-black tracking-tight">Lock your guild in.</h3>
-                <p class="text-brand-textMuted text-xs mt-1">Enter your unique guild details below.</p>
+                <h3 class="text-2xl sm:text-3xl font-black tracking-tight">Register your guild.</h3>
+                <p class="text-brand-textMuted text-xs mt-1">Enter your details to claim the next available slot.</p>
             </div>
 
             <form onsubmit="handleClaimSubmit(event)" class="space-y-4">
-                <input type="hidden" id="selected-slot-index">
-                
                 <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Guild Name</label>
                     <input type="text" id="claim-guild-name" placeholder="e.g. Team AKZ" required
@@ -354,7 +353,7 @@
                 </div>
 
                 <button type="submit" id="btn-claim-submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
-                    <span>Confirm Slot Claim</span>
+                    <span>Submit & Claim Slot</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </form>
@@ -506,10 +505,10 @@
                     <div id="admin-rooms-list" class="space-y-2 max-h-50 overflow-y-auto pr-1"></div>
                 </div>
 
-                <!-- Slots & Match Points Management -->
+                <!-- Slots (1 to 15) & Match Points Management -->
                 <div class="space-y-4 pt-2">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold tracking-wider">SLOTS & MATCH POINTS MANAGEMENT (MATCH 1 & MATCH 2)</h4>
+                        <h4 class="text-xs font-mono-code text-brand-textMuted uppercase font-bold tracking-wider">SLOTS & MATCH POINTS MANAGEMENT (1 TO 15)</h4>
                         <button onclick="calculateStandings()" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2.5 rounded-lg transition flex items-center gap-2">
                             <i class="fa-solid fa-calculator"></i> Calculate Standings & Totals
                         </button>
@@ -528,7 +527,7 @@
             </div>
             <div class="space-y-1">
                 <h3 class="text-lg font-black uppercase text-white">Remove All Data?</h3>
-                <p class="text-brand-textMuted text-xs">This will delete all created rooms, reset all 12 slots, and cannot be undone.</p>
+                <p class="text-brand-textMuted text-xs">This will delete all created rooms, reset all 15 slots, and cannot be undone.</p>
             </div>
             <div class="flex items-center gap-3 pt-2">
                 <button onclick="closeClearAllModal()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2.5 rounded text-xs transition">
@@ -542,11 +541,11 @@
     </div>
 
 
-    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & AUTOMATION -->
+    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & 15 SLOTS -->
     <script>
         function getInitialSlots() {
             let slots = [];
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 15; i++) {
                 slots.push({
                     claimed: false,
                     bookedBy: "",
@@ -600,7 +599,7 @@
 
             const now = new Date().getTime();
             let shouldBeOpen = false;
-            let slotFull = state.slots.every(s => s.claimed);
+            let slotFull = state.slots.every(s => s.claimed); // Check if all 15 slots are full
 
             state.tournaments.forEach(tr => {
                 if (tr.regOpen && tr.regClose) {
@@ -618,7 +617,7 @@
 
             if (state.isRegistrationOpen !== shouldBeOpen) {
                 state.isRegistrationOpen = shouldBeOpen;
-                renderSlotsGrid();
+                renderRegisteredGuildsList();
                 updateUIState();
             }
 
@@ -637,7 +636,7 @@
                     state.users = Array.isArray(data.users) ? data.users : [];
                     state.leaderboardPublished = data.leaderboardPublished ?? false;
                     
-                    if (Array.isArray(data.slots) && data.slots.length === 12) {
+                    if (Array.isArray(data.slots) && data.slots.length === 15) {
                         state.slots = data.slots;
                     } else {
                         state.slots = getInitialSlots();
@@ -645,7 +644,7 @@
                 } else {
                     saveStateToFirebase();
                 }
-                renderSlotsGrid();
+                renderRegisteredGuildsList();
                 renderCreatedRooms();
                 renderPublicLeaderboard();
                 renderAdminSlots();
@@ -803,12 +802,30 @@
             const userHasRegistered = currentUser && state.slots.some(s => s.claimed && s.bookedBy === currentUser);
             const now = new Date().getTime();
 
-            state.tournaments.forEach((tr) => {
+            let sortedTournaments = [...state.tournaments].sort((a, b) => {
+                const aClose = a.regClose ? new Date(a.regClose).getTime() : 0;
+                const bClose = b.regClose ? new Date(b.regClose).getTime() : 0;
+                return aClose - bClose;
+            });
+
+            sortedTournaments.forEach((tr) => {
                 const card = document.createElement('div');
                 card.className = "bg-brand-card border border-brand-orange p-6 rounded-xl space-y-4 shadow-xl";
 
-                let credentialsHtml = '';
+                const openTime = tr.regOpen ? new Date(tr.regOpen).getTime() : 0;
+                const closeTime = tr.regClose ? new Date(tr.regClose).getTime() : 0;
                 const revealTime = tr.schedule ? new Date(tr.schedule).getTime() : 0;
+
+                let statusBadge = `<span class="bg-zinc-800 text-brand-textMuted px-2.5 py-0.5 rounded text-[10px]">UPCOMING</span>`;
+                if (now >= openTime && now <= closeTime) {
+                    statusBadge = `<span class="bg-green-500/20 text-green-400 border border-green-500/40 px-2.5 py-0.5 rounded text-[10px] animate-pulse font-bold">🟢 ONGOING</span>`;
+                } else if (now > closeTime && now < revealTime) {
+                    statusBadge = `<span class="bg-zinc-800 text-brand-textMuted px-2.5 py-0.5 rounded text-[10px]">REGISTRATION CLOSED</span>`;
+                } else if (now >= revealTime) {
+                    statusBadge = `<span class="bg-brand-orange/20 text-brand-orange border border-brand-orange/40 px-2.5 py-0.5 rounded text-[10px] font-bold">MATCH LIVE / UNLOCKED</span>`;
+                }
+
+                let credentialsHtml = '';
                 const isPasswordTimeReached = now >= revealTime;
 
                 if (!currentUser) {
@@ -853,7 +870,7 @@
                 card.innerHTML = `
                     <div class="flex justify-between items-center text-xs font-mono-code">
                         <span class="text-brand-orange font-bold uppercase">${escapeHtml(tr.trName)}</span>
-                        <span class="bg-brand-orange/10 text-brand-orange px-2 py-0.5 rounded">ACTIVE ROOM</span>
+                        ${statusBadge}
                     </div>
                     <div class="border-t border-brand-border pt-3 space-y-2 font-mono-code text-xs">
                         <div class="flex justify-between"><span class="text-brand-textMuted">Reg Opens:</span> <span class="text-white">${escapeHtml(formatDateTime(tr.regOpen))}</span></div>
@@ -862,6 +879,53 @@
                         ${credentialsHtml}
                     </div>
                 `;
+                container.appendChild(card);
+            });
+        }
+
+        // RENDER REGISTERED GUILDS LIST (15 SLOTS)
+        function renderRegisteredGuildsList() {
+            const container = document.getElementById('registered-guilds-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            state.slots.forEach((slot, index) => {
+                const slotNum = String(index + 1).padStart(2, '0');
+                const card = document.createElement('div');
+
+                if (slot.claimed) {
+                    card.className = "bg-brand-card border border-brand-orange/40 p-5 rounded-xl space-y-3 flex flex-col justify-between transition relative overflow-hidden";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center text-xs font-mono-code">
+                            <span class="text-brand-textMuted font-bold">SLOT #${slotNum}</span>
+                            <span class="text-brand-orange font-bold uppercase">REGISTERED</span>
+                        </div>
+                        <div class="py-2">
+                            <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code">${escapeHtml(slot.guildName)}</div>
+                            <div class="text-xs font-mono-code text-brand-textMuted">Guild ID: ${escapeHtml(slot.guildId || '-')}</div>
+                            <div class="text-xs font-mono-code text-brand-textMuted">Owner: ${escapeHtml(slot.bookedBy || '-')}</div>
+                        </div>
+                        <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
+                            <span>Total Points:</span>
+                            <span class="text-brand-orange font-bold">${slot.totalPoints || 0}</span>
+                        </div>
+                    `;
+                } else {
+                    card.className = "bg-brand-card border border-brand-border p-5 rounded-xl space-y-3 flex flex-col justify-between transition opacity-60";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center text-xs font-mono-code">
+                            <span class="text-brand-textMuted font-bold">SLOT #${slotNum}</span>
+                            <span class="text-brand-textMuted">AVAILABLE</span>
+                        </div>
+                        <div class="py-4 text-center space-y-1">
+                            <div class="text-xs font-mono-code text-brand-textMuted uppercase font-bold">Open Slot</div>
+                            <div class="text-xs text-brand-textMuted">Waiting for booking</div>
+                        </div>
+                        <div class="text-center text-xs font-mono-code text-brand-textMuted py-2 border-t border-brand-border/60">
+                            Unclaimed
+                        </div>
+                    `;
+                }
                 container.appendChild(card);
             });
         }
@@ -935,56 +999,10 @@
             });
         }
 
-        function renderSlotsGrid() {
-            const container = document.getElementById('slots-container');
-            if (!container) return;
-            container.innerHTML = '';
-
-            state.slots.forEach((slot, index) => {
-                const slotNum = String(index + 1).padStart(2, '0');
-                const card = document.createElement('div');
-
-                if (slot.claimed) {
-                    card.className = "bg-brand-card border border-brand-orange/40 p-5 rounded-xl space-y-3 flex flex-col justify-between transition relative overflow-hidden";
-                    card.innerHTML = `
-                        <div class="flex justify-between items-center text-xs font-mono-code">
-                            <span class="text-brand-textMuted font-bold">SLOT #${slotNum}</span>
-                            <span class="text-brand-orange font-bold uppercase">REGISTERED</span>
-                        </div>
-                        <div class="py-2">
-                            <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code">${escapeHtml(slot.guildName)}</div>
-                            <div class="text-xs font-mono-code text-brand-textMuted">Guild ID: ${escapeHtml(slot.guildId || '-')}</div>
-                            <div class="text-xs font-mono-code text-brand-textMuted">Owner: ${escapeHtml(slot.bookedBy || '-')}</div>
-                        </div>
-                        <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
-                            <span>Total Points:</span>
-                            <span class="text-brand-orange font-bold">${slot.totalPoints || 0}</span>
-                        </div>
-                    `;
-                } else {
-                    card.className = "bg-brand-card border border-brand-border p-5 rounded-xl space-y-3 flex flex-col justify-between transition hover:border-brand-orange/40";
-                    card.innerHTML = `
-                        <div class="flex justify-between items-center text-xs font-mono-code">
-                            <span class="text-brand-textMuted font-bold">SLOT #${slotNum}</span>
-                            <span class="text-brand-textMuted">AVAILABLE</span>
-                        </div>
-                        <div class="py-4 text-center space-y-1">
-                            <div class="text-xs font-mono-code text-brand-textMuted uppercase font-bold">Open Slot</div>
-                            <div class="text-xs text-brand-textMuted">Ready for booking</div>
-                        </div>
-                        <button onclick="promptClaimSlot(${index})" class="w-full bg-brand-orange/10 hover:bg-brand-orange text-brand-orange hover:text-white border border-brand-orange/30 font-bold py-2 rounded text-xs font-mono-code transition">
-                            CLAIM SLOT #${slotNum}
-                        </button>
-                    `;
-                }
-                container.appendChild(card);
-            });
-        }
-
         function updateUIState() {
             const claimedCount = state.slots.filter(s => s.claimed).length;
             const countText = document.getElementById('claimed-count-text');
-            if (countText) countText.innerText = `${claimedCount} / 12 slots claimed`;
+            if (countText) countText.innerText = `${claimedCount} / 15 slots claimed`;
             
             const statusDot = document.getElementById('reg-status-dot');
             const statusBadge = document.getElementById('reg-status-badge');
@@ -1068,6 +1086,7 @@
             }, 3500);
         }
 
+        // SINGLE REGISTER BUTTON LOGIC (Finds first available open slot out of 15)
         function handleDirectRegisterClick() {
             if (!currentUser) {
                 showToast("Please login or register an account first!", "error");
@@ -1080,7 +1099,7 @@
             }
             const firstOpenIndex = state.slots.findIndex(s => !s.claimed);
             if (firstOpenIndex === -1) {
-                showToast("All 12 tournament slots are fully booked!", "error");
+                showToast("All 15 tournament slots are fully booked!", "error");
                 return;
             }
             promptClaimSlot(firstOpenIndex);
@@ -1096,13 +1115,8 @@
                 showToast("Registration is currently closed", "error");
                 return;
             }
-            if (state.slots[index].claimed) {
-                showToast("This slot is already claimed!", "error");
-                return;
-            }
 
             document.getElementById('selected-slot-index').value = index;
-            document.getElementById('modal-slot-title').innerText = `CLAIM SLOT #${String(index + 1).padStart(2, '0')}`;
             document.getElementById('modal-claim').classList.remove('hidden');
         }
 
@@ -1119,7 +1133,14 @@
                 return;
             }
 
-            const index = parseInt(document.getElementById('selected-slot-index').value);
+            // Find the next available unclaimed slot automatically
+            const nextOpenIndex = state.slots.findIndex(s => !s.claimed);
+            if (nextOpenIndex === -1) {
+                showToast("Error: All 15 tournament slots are fully booked!", "error");
+                closeClaimModal();
+                return;
+            }
+
             const guildName = document.getElementById('claim-guild-name').value.trim();
             const guildId = document.getElementById('claim-guild-id').value.trim();
             const discord = document.getElementById('claim-discord').value.trim();
@@ -1135,7 +1156,7 @@
             const existingDuplicate = state.slots.some(s => 
                 s.claimed && (
                     s.guildName.trim().toLowerCase() === normalizedGuildName || 
-                    s.guildId.tr() === guildId ||
+                    s.guildId.trim() === guildId ||
                     s.discord.trim().toLowerCase() === normalizedDiscord
                 )
             );
@@ -1145,16 +1166,10 @@
                 return;
             }
 
-            if (index < 0 || index >= 12 || state.slots[index].claimed) {
-                showToast("Error: Selected slot is invalid or already taken.", "error");
-                closeClaimModal();
-                return;
-            }
-
             const btn = document.getElementById('btn-claim-submit');
             if (btn) btn.innerHTML = `<span>Booking Slot...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
-            state.slots[index] = {
+            state.slots[nextOpenIndex] = {
                 claimed: true,
                 bookedBy: currentUser,
                 guildName: guildName,
@@ -1168,7 +1183,7 @@
 
             await saveStateToFirebase();
 
-            if (btn) btn.innerHTML = `<span>Confirm Slot Claim</span> <i class="fa-solid fa-arrow-right"></i>`;
+            if (btn) btn.innerHTML = `<span>Submit & Claim Slot</span> <i class="fa-solid fa-arrow-right"></i>`;
 
             document.getElementById('claim-guild-name').value = '';
             document.getElementById('claim-guild-id').value = '';
@@ -1176,7 +1191,7 @@
 
             closeClaimModal();
             renderCreatedRooms();
-            showToast(`Successfully registered ${guildName}! Room ID unlocked.`, "success");
+            showToast(`Successfully registered ${guildName} to Slot #${nextOpenIndex + 1}!`, "success");
         }
 
         // ADMIN CONTROLS & POINTS CALCULATION
@@ -1470,7 +1485,7 @@
         }
 
         async function removeSlotRegistration(index) {
-            if (index >= 0 && index < 12) {
+            if (index >= 0 && index < 15) {
                 const freedName = state.slots[index].guildName;
                 state.slots[index] = {
                     claimed: false,
@@ -1484,7 +1499,7 @@
                     rank: "-"
                 };
                 await saveStateToFirebase();
-                renderCreatedRooms();
+                renderRegisteredGuildsList();
                 renderAdminSlots();
                 showToast(`Freed slot #${String(index + 1).padStart(2, '0')} (${freedName})`, "success");
             }
