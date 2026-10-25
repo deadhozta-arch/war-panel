@@ -91,6 +91,11 @@
             backdrop-filter: blur(8px);
             background-color: rgba(5, 5, 6, 0.85);
         }
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+            padding: 2px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brand-orange selection:text-white">
@@ -570,8 +575,8 @@
 
             state.tournaments.forEach(tr => {
                 if (tr.regOpen && tr.regClose) {
-                    const openTime = new Date(tr.regOpen).getTime();
-                    const closeTime = new Date(tr.regClose).getTime();
+                    const openTime = new Date(tr.regOpen.replace('T', ' ')).getTime();
+                    const closeTime = new Date(tr.regClose.replace('T', ' ')).getTime();
                     if (now >= openTime && now <= closeTime) {
                         shouldBeOpen = true;
                     }
@@ -587,6 +592,9 @@
                 renderSlotsGrid();
                 updateUIState();
             }
+
+            // Also re-render created rooms every second so passwords auto-reveal the exact second password time arrives
+            renderCreatedRooms();
         }
 
         function initFirebaseRealtimeSync() {
@@ -739,7 +747,8 @@
         function formatDateTime(dtStr) {
             if (!dtStr) return "TBD";
             try {
-                const d = new Date(dtStr);
+                const d = new Date(dtStr.replace('T', ' '));
+                if (isNaN(d.getTime())) return dtStr;
                 return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
             } catch (e) {
                 return dtStr;
@@ -768,7 +777,7 @@
                 card.className = "bg-brand-card border border-brand-orange p-6 rounded-xl space-y-4 shadow-xl";
 
                 let credentialsHtml = '';
-                const revealTime = tr.schedule ? new Date(tr.schedule).getTime() : 0;
+                const revealTime = tr.schedule ? new Date(tr.schedule.replace('T', ' ')).getTime() : 0;
                 const isPasswordTimeReached = now >= revealTime;
 
                 if (!currentUser) {
