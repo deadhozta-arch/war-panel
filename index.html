@@ -388,7 +388,7 @@
                         <button onclick="saveAdminSettings()" id="btn-save-schedule" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
                             <span>Save schedule</span> <i class="fa-solid fa-check"></i>
                         </button>
-                        <button onclick="clearAllRegistrations()" class="bg-zinc-800 hover:bg-red-900/60 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
+                        <button onclick="openClearAllModal()" class="bg-zinc-800 hover:bg-red-900/60 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold font-mono-code px-4 py-2 rounded transition flex items-center gap-2">
                             <span>Clear all registrations</span> <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -401,6 +401,27 @@
                         <!-- Dynamic slot items injected by JS -->
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. CLEAR ALL REGISTRATIONS CONFIRMATION POP-UP (POPUPS ABOVE ADMIN PANEL) -->
+    <div id="modal-clear-all" class="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-custom hidden">
+        <div class="bg-brand-card border border-red-500/40 w-full max-w-sm rounded-xl p-6 space-y-5 relative shadow-2xl">
+            <div class="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-lg">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="space-y-1">
+                <h3 class="text-lg font-black uppercase text-white">Clear All Registrations?</h3>
+                <p class="text-brand-textMuted text-xs">This will remove all registered guilds from all 12 slots and cannot be undone.</p>
+            </div>
+            <div class="flex items-center gap-3 pt-2">
+                <button onclick="closeClearAllModal()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2.5 rounded text-xs transition">
+                    Cancel
+                </button>
+                <button onclick="confirmClearAllRegistrations()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded text-xs transition">
+                    Yes, Clear All
+                </button>
             </div>
         </div>
     </div>
@@ -424,7 +445,9 @@
             }))
         };
 
-        // LOAD SAVED STATE ON STARTUP
+        let isAdminLoggedIn = false;
+
+        // LOAD SAVED STATE & LOGIN STATUS ON STARTUP
         function loadState() {
             const saved = localStorage.getItem('akz_guild_war_state');
             if (saved) {
@@ -441,6 +464,12 @@
                 } catch (e) {
                     console.error("Failed to load saved state", e);
                 }
+            }
+
+            // Check if admin was logged in on this device
+            const savedAdminLogin = localStorage.getItem('akz_admin_logged_in');
+            if (savedAdminLogin === 'true') {
+                isAdminLoggedIn = true;
             }
         }
 
@@ -678,6 +707,13 @@
         // ADMIN CONTROL ROOM LOGIC
         function openAdminModal() {
             document.getElementById('modal-admin').classList.remove('hidden');
+            
+            // If already logged in on this device, skip login view and show dashboard directly
+            if (isAdminLoggedIn) {
+                document.getElementById('admin-view-login').classList.add('hidden');
+                document.getElementById('admin-view-dashboard').classList.remove('hidden');
+                renderAdminSlots();
+            }
             updateUIState();
         }
 
@@ -696,6 +732,9 @@
             setTimeout(() => {
                 btn.innerHTML = `<span>Admin Login</span> <i class="fa-solid fa-arrow-right"></i>`;
                 if ((user === 'admin' || user === 'admin@admin') && pass === 'admin@akz') {
+                    isAdminLoggedIn = true;
+                    localStorage.setItem('akz_admin_logged_in', 'true');
+
                     document.getElementById('admin-view-login').classList.add('hidden');
                     document.getElementById('admin-view-dashboard').classList.remove('hidden');
                     updateUIState();
@@ -706,103 +745,3 @@
                 }
             }, 600);
         }
-
-        function adminLogout() {
-            document.getElementById('admin-view-dashboard').classList.add('hidden');
-            document.getElementById('admin-view-login').classList.remove('hidden');
-        }
-
-        function toggleRegistrationStatus() {
-            state.isRegistrationOpen = !state.isRegistrationOpen;
-            saveState();
-            renderSlotsGrid();
-            renderAdminSlots();
-            updateUIState();
-        }
-
-        function saveAdminSettings() {
-            const btn = document.getElementById('btn-save-schedule');
-            btn.innerHTML = `<span>Saving...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
-            
-            state.prizePoolText = document.getElementById('admin-prize-input').value;
-            saveState();
-
-            setTimeout(() => {
-                btn.innerHTML = `<span>Save schedule</span> <i class="fa-solid fa-check"></i>`;
-                updateUIState();
-                showToast("Tournament schedule updated", "success");
-            }, 600);
-        }
-
-        function clearAllRegistrations() {
-            if (confirm("Are you sure you want to clear all registered slots? This cannot be undone.")) {
-                state.slots.forEach(slot => {
-                    slot.claimed = false;
-                    slot.guildName = '';
-                    slot.guildUID = '';
-                    slot.uid = '';
-                    slot.discord = '';
-                    slot.points = null;
-                });
-                saveState();
-                renderSlotsGrid();
-                renderAdminSlots();
-                updateUIState();
-                showToast("All slot registrations cleared", "success");
-            }
-        }
-
-        function renderAdminSlots() {
-            const container = document.getElementById('admin-slots-list');
-            if (!container) return;
-            container.innerHTML = '';
-
-            state.slots.forEach(slot => {
-                const item = document.createElement('div');
-                item.className = "flex items-center justify-between text-xs font-mono-code bg-brand-card p-2.5 rounded border border-brand-border/60";
-                
-                const slotNum = String(slot.id).padStart(2, '0');
-                if (slot.claimed) {
-                    item.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <span class="text-brand-orange font-bold">Slot ${slotNum}</span>
-                            <span class="text-white font-bold">${escapeHtml(slot.guildName)}</span>
-                            <span class="text-brand-textMuted">GUID: ${escapeHtml(slot.guildUID)} | UID: ${escapeHtml(slot.uid)}</span>
-                        </div>
-                        <button onclick="clearSlotRegistration(${slot.id})" class="text-red-400 hover:underline">Clear registration</button>
-                    `;
-                } else {
-                    item.innerHTML = `
-                        <div class="flex items-center gap-4">
-                            <span class="text-brand-textMuted font-bold">Slot ${slotNum}</span>
-                            <span class="text-brand-textMuted">Available</span>
-                        </div>
-                        <span class="text-brand-textMuted/60">Ready for a guild</span>
-                    `;
-                }
-                container.appendChild(item);
-            });
-        }
-
-        function clearSlotRegistration(slotId) {
-            const slot = state.slots.find(s => s.id === slotId);
-            if (slot && slot.claimed) {
-                slot.claimed = false;
-                slot.guildName = '';
-                slot.guildUID = '';
-                slot.uid = '';
-                slot.discord = '';
-                saveState();
-                renderSlotsGrid();
-                renderAdminSlots();
-                updateUIState();
-                showToast(`Slot ${slotId} registration cleared`, "success");
-            }
-        }
-
-        function escapeHtml(str) {
-            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-        }
-    </script>
-</body>
-</html>
