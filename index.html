@@ -660,7 +660,7 @@
 
             const slotCheck = state.slots.find(s => s.id === slotId);
             if (slotCheck && slotCheck.claimed) {
-                showToast(`Slot ${String(slotId).padStart(2, '0')} was just claimed by another guild!`, "error");
+                showToast(`Slot ${String(slotId).padStart(2, '0')} was just claimed by another user!`, "error");
                 renderSlotsGrid();
                 return;
             }
@@ -686,7 +686,7 @@
         function handleClaimSubmit(e) {
             e.preventDefault();
             
-            // CRITICAL CONCURRENCY CHECK: Re-read state from localStorage to prevent cross-tab clashes
+            // CRITICAL CONCURRENCY LOCK: Re-read fresh state from localStorage before finalizing
             loadState();
 
             if (!state.isRegistrationOpen) {
@@ -709,11 +709,11 @@
                 ? state.slots.find(s => s.id === state.targetSlotId) 
                 : state.slots.find(s => !s.claimed);
 
-            // RACE CONDITION PROTECTION: Check if slot was claimed by another tab just now
+            // RACE CONDITION SAFETY LOCK: Prevent crash or overwrite if another tab took the slot
             if (!targetSlot || targetSlot.claimed) {
                 closeClaimModal();
                 renderSlotsGrid();
-                showToast("Conflict: That slot was just claimed by another user. Please choose another slot.", "error");
+                showToast("Conflict: That slot was just claimed in another tab. Please select an available slot.", "error");
                 return;
             }
 
@@ -723,11 +723,21 @@
             setTimeout(() => {
                 if (btn) btn.innerHTML = `<span>Claim available slot</span> <i class="fa-solid fa-arrow-right"></i>`;
                 
-                targetSlot.claimed = true;
-                targetSlot.guildName = guildName;
-                targetSlot.guildUID = guildUID;
-                targetSlot.uid = uid;
-                targetSlot.discord = discord;
+                // Double check once more inside timeout before assigning
+                loadState();
+                const freshTargetSlot = state.slots.find(s => s.id === targetSlot.id);
+                if (freshTargetSlot.claimed) {
+                    closeClaimModal();
+                    renderSlotsGrid();
+                    showToast("Conflict: That slot was just claimed in another tab.", "error");
+                    return;
+                }
+
+                freshTargetSlot.claimed = true;
+                freshTargetSlot.guildName = guildName;
+                freshTargetSlot.guildUID = guildUID;
+                freshTargetSlot.uid = uid;
+                freshTargetSlot.discord = discord;
 
                 // CHECK IF ALL 12 SLOTS ARE NOW FILLED -> AUTO-CLOSE REGISTRATION
                 const claimedCount = state.slots.filter(s => s.claimed).length;
@@ -735,7 +745,7 @@
                     state.isRegistrationOpen = false;
                     showToast("Slot 12 filled! Registration has automatically closed.", "success");
                 } else {
-                    showToast(`Slot ${String(targetSlot.id).padStart(2, '0')} confirmed`, "success");
+                    showToast(`Slot ${String(freshTargetSlot.id).padStart(2, '0')} confirmed`, "success");
                 }
 
                 saveState();
@@ -749,7 +759,7 @@
                 renderSlotsGrid();
                 renderAdminSlots();
                 updateUIState();
-            }, 500);
+            }, 300);
         }
 
         // ADMIN CONTROL ROOM LOGIC
