@@ -106,20 +106,23 @@
     <!-- NAVIGATION BAR -->
     <header class="border-b border-brand-border bg-brand-bg/90 backdrop-blur sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex items-center gap-2 text-lg sm:text-xl font-extrabold tracking-wider hover:opacity-90 transition">
-                <span class="text-brand-orange font-mono-code">&lt;/&gt;</span>
-                <span class="tracking-widest">AKZ / GUILD WAR</span>
-            </a>
+            <!-- Left Side: Auth & Logo -->
+            <div class="flex items-center gap-6">
+                <div id="auth-nav-container" class="flex items-center gap-2 pr-4 border-r border-brand-border"></div>
+                <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex items-center gap-2 text-lg sm:text-xl font-extrabold tracking-wider hover:opacity-90 transition">
+                    <span class="text-brand-orange font-mono-code">&lt;/&gt;</span>
+                    <span class="tracking-widest">AKZ / GUILD WAR</span>
+                </a>
+            </div>
 
-            <nav class="flex items-center gap-4 text-xs sm:text-sm font-semibold tracking-wide text-brand-textMuted">
+            <!-- Right Side Navigation Links -->
+            <nav class="flex items-center gap-6 text-xs sm:text-sm font-semibold tracking-wide text-brand-textMuted">
                 <a href="#overview" class="hover:text-white transition">Overview</a>
                 <a href="#created-rooms-section" class="hover:text-white transition text-brand-orange">Created Rooms</a>
-                <a href="#lobby" class="hover:text-white transition">Lobby</a>
+                <a href="#registration" class="hover:text-white transition">Registration</a>
                 <a href="#leaderboard-section" class="hover:text-white transition text-brand-orange">Leaderboard</a>
                 
-                <div id="auth-nav-container" class="flex items-center gap-2 pl-2 border-l border-brand-border"></div>
-
-                <button onclick="openAdminModal()" class="text-brand-orange hover:text-white border border-brand-orange/40 hover:border-brand-orange px-3 py-1.5 rounded transition flex items-center gap-1.5">
+                <button onclick="openAdminModal()" class="text-brand-orange hover:text-white border border-brand-orange/40 hover:border-brand-orange px-3.5 py-1.5 rounded transition flex items-center gap-1.5 font-mono-code text-xs">
                     <i class="fa-solid font-mono text-xs">🔒</i> Admin
                 </button>
             </nav>
@@ -210,16 +213,14 @@
                 </div>
             </div>
 
-            <div id="public-leaderboard-container" class="bg-brand-card border border-brand-border rounded-xl overflow-hidden p-6">
-                <!-- Published Leaderboard Table injected here -->
-            </div>
+            <div id="public-leaderboard-container" class="bg-brand-card border border-brand-border rounded-xl overflow-hidden p-6"></div>
         </section>
 
-        <!-- SECTION 02: THE LOBBY -->
-        <section id="lobby" class="space-y-6 border-t border-brand-border/60 pt-12">
+        <!-- SECTION: REGISTRATION (FORMERLY LOBBY) -->
+        <section id="registration" class="space-y-6 border-t border-brand-border/60 pt-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">03 // THE LOBBY</div>
+                    <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">03 // REGISTRATION</div>
                     <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">TOURNAMENT SLOTS.</h2>
                     <p class="text-brand-textMuted text-sm mt-1">Select an available slot to register your guild.</p>
                 </div>
@@ -414,15 +415,15 @@
         </div>
     </div>
 
-    <!-- WIDER & PROFESSIONAL ADMIN CONTROL ROOM MODAL -->
+    <!-- 100% PROFESSIONAL WIDER ADMIN CONTROL ROOM MODAL -->
     <div id="modal-admin" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
-        <div class="bg-brand-card border border-brand-border w-full max-w-4xl rounded-2xl p-6 sm:p-10 space-y-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="bg-brand-card border border-brand-border w-full max-w-5xl rounded-2xl p-6 sm:p-10 space-y-8 relative shadow-2xl max-h-[92vh] overflow-y-auto">
             <button onclick="closeAdminModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
 
             <!-- Admin Login View -->
-            <div id="admin-view-login" class="space-y-6 max-w-md mx-auto py-10">
+            <div id="admin-view-login" class="space-y-6 max-w-md mx-auto py-12">
                 <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">ADMIN ACCESS</div>
                 <div>
                     <h3 class="text-3xl font-black tracking-tight">Admin control room.</h3>
@@ -480,7 +481,7 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-brand-border/60 pt-4">
                         <button onclick="openCreateRoomModal()" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition flex items-center gap-2 shadow-lg shadow-brand-orange/20">
                             <span>+ Create Tournament Room</span>
                         </button>
@@ -488,7 +489,10 @@
                             Save Settings
                         </button>
                         <button onclick="publishLeaderboard()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition flex items-center gap-2">
-                            <span>Publish Leaderboard Announcement</span> <i class="fa-solid fa-bullhorn"></i>
+                            <span>Publish Leaderboard</span> <i class="fa-solid fa-bullhorn"></i>
+                        </button>
+                        <button onclick="removeLeaderboard()" class="bg-zinc-800 hover:bg-amber-900/60 text-amber-400 hover:text-white border border-amber-500/30 text-xs font-bold font-mono-code px-4 py-3 rounded-lg transition flex items-center gap-2">
+                            <span>Remove Leaderboard</span> <i class="fa-solid fa-eye-slash"></i>
                         </button>
                         <button onclick="openClearAllModal()" class="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition flex items-center gap-2 ml-auto">
                             <span>Remove All / Clear All</span> <i class="fa-solid fa-trash-can"></i>
@@ -538,7 +542,7 @@
     </div>
 
 
-    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & LEADERBOARD -->
+    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & AUTOMATION -->
     <script>
         function getInitialSlots() {
             let slots = [];
@@ -669,6 +673,7 @@
             }
         }
 
+        // ACCOUNT INFO MOVED TO FAR LEFT OF NAVBAR
         function renderAuthNav() {
             const container = document.getElementById('auth-nav-container');
             if (!container) return;
@@ -677,7 +682,7 @@
             if (currentUser) {
                 container.innerHTML = `
                     <div class="flex items-center gap-3 text-xs font-mono-code">
-                        <span class="text-brand-orange font-bold"><i class="fa-solid fa-user"></i> ${escapeHtml(currentUser)}</span>
+                        <span class="text-brand-orange font-bold flex items-center gap-1.5"><i class="fa-solid fa-user"></i> ${escapeHtml(currentUser)}</span>
                         <button onclick="handleLogout()" class="text-red-400 hover:underline">Logout</button>
                     </div>
                 `;
@@ -816,7 +821,7 @@
                 } else if (!userHasRegistered) {
                     credentialsHtml = `
                         <div class="bg-brand-bg p-3 rounded border border-brand-border text-center text-xs text-brand-textMuted">
-                            You must register a slot in the Lobby below to reveal Room ID & Password.
+                            You must register a slot in Registration below to reveal Room ID & Password.
                         </div>
                     `;
                 } else if (!isPasswordTimeReached) {
@@ -862,7 +867,7 @@
             });
         }
 
-        // RENDER PUBLIC PUBLISHED LEADERBOARD
+        // RENDER PUBLIC LEADERBOARD
         function renderPublicLeaderboard() {
             const container = document.getElementById('public-leaderboard-container');
             if (!container) return;
@@ -886,7 +891,6 @@
                 return;
             }
 
-            // Sort by totalPoints descending
             let sorted = [...claimedSlots].sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
 
             let html = `
@@ -1393,9 +1397,7 @@
             showToast(`Saved points for slot #${index + 1}`, "success");
         }
 
-        // AUTO CALCULATE STANDINGS BUTTON
         async function calculateStandings() {
-            // Read all input values live before calculating
             state.slots.forEach((slot, index) => {
                 if (slot.claimed) {
                     const m1Input = document.getElementById(`m1-${index}`);
@@ -1413,12 +1415,18 @@
             showToast("Successfully calculated total points and rankings!", "success");
         }
 
-        // PUBLISH LEADERBOARD ANNOUNCEMENT
         async function publishLeaderboard() {
             state.leaderboardPublished = true;
             await saveStateToFirebase();
             renderPublicLeaderboard();
-            showToast("Leaderboard published successfully to the website!", "success");
+            showToast("Leaderboard published successfully!", "success");
+        }
+
+        async function removeLeaderboard() {
+            state.leaderboardPublished = false;
+            await saveStateToFirebase();
+            renderPublicLeaderboard();
+            showToast("Leaderboard unpublished/hidden from public view", "info");
         }
 
         function openClearAllModal() {
