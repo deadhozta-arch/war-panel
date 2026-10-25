@@ -556,7 +556,7 @@
     </div>
 
 
-    <!-- FIREBASE LIVE REAL-TIME APP LOGIC WITH FIXED AUTHENTICATION -->
+    <!-- FIREBASE REAL-TIME APP LOGIC -->
     <script>
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-dropdown');
@@ -652,7 +652,14 @@
         }
 
         function initFirebaseRealtimeSync() {
-            const { onSnapshot } = window.firebaseModules;
+            const { onSnapshot, getDoc } = window.firebaseModules;
+
+            // Ensure document exists on first load
+            getDoc(window.dbDocRef).then((snap) => {
+                if (!snap.exists()) {
+                    saveStateToFirebase();
+                }
+            }).catch(err => console.error(err));
 
             onSnapshot(window.dbDocRef, (docSnap) => {
                 if (docSnap.exists()) {
@@ -693,7 +700,7 @@
                     slots: state.slots,
                     users: state.users,
                     leaderboardPublished: state.leaderboardPublished
-                });
+                }, { merge: true });
             } catch (e) {
                 console.error("Error saving to Firestore: ", e);
             }
@@ -753,7 +760,6 @@
             openAuthModal(authMode);
         }
 
-        // FIXED AUTHENTICATION SUBMISSION WITH ATOMIC TRANSACTION
         async function handleAuthSubmit(e) {
             e.preventDefault();
             const username = document.getElementById('auth-username').value.trim().toLowerCase();
@@ -777,7 +783,7 @@
                         }
 
                         currentUsers.push({ username, password });
-                        transaction.update(window.dbDocRef, { users: currentUsers });
+                        transaction.set(window.dbDocRef, { users: currentUsers }, { merge: true });
                     } else {
                         const user = currentUsers.find(u => u.username === username && u.password === password);
                         if (!user) {
