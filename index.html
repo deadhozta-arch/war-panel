@@ -176,6 +176,14 @@
             <div class="lg:col-span-5 bg-brand-card border border-brand-border p-6 sm:p-8 rounded-xl space-y-6 shadow-2xl relative overflow-hidden">
                 <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-brand-orange/5 rounded-full blur-2xl pointer-events-none"></div>
                 
+                <!-- Red Circle area: Registration Status Badge at the top -->
+                <div class="flex items-center justify-between font-mono-code text-xs">
+                    <div class="flex items-center gap-2">
+                        <span id="card-status-dot" class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                        <span id="card-status-text" class="text-brand-textMuted font-bold uppercase tracking-wider">REGISTRATION CLOSED</span>
+                    </div>
+                </div>
+
                 <div class="text-xs font-mono-code text-brand-orange tracking-wider flex items-center gap-2">
                     <span class="inline-block w-2 h-2 rounded-full bg-brand-orange animate-ping"></span>
                     THE GUILD WAR INVITATIONAL
@@ -242,7 +250,11 @@
                     <p class="text-brand-textMuted text-sm mt-1">All successfully registered teams in the 15 available slots.</p>
                 </div>
 
+                <!-- Green Circle area: Status & Direct Register Button -->
                 <div class="flex flex-wrap items-center gap-3 text-xs font-mono-code">
+                    <button onclick="handleDirectRegisterClick()" class="bg-brand-orange hover:bg-brand-orangeHover text-white font-bold px-4 py-2 rounded text-xs transition flex items-center gap-2 shadow-md">
+                        <i class="fa-solid fa-user-plus"></i> Register Slot
+                    </button>
                     <div class="flex items-center gap-2">
                         <span id="reg-status-dot" class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
                         <span id="reg-status-badge" class="text-brand-textMuted font-bold uppercase">Registration closed</span>
@@ -931,7 +943,7 @@
                         <div class="py-2">
                             <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code truncate">${escapeHtml(slot.guildName)}</div>
                             <div class="text-xs font-mono-code text-brand-textMuted">Guild ID: ${escapeHtml(slot.guildId || '-')}</div>
-                            <div class="text-xs font-mono-code text-brand-textMuted truncate">Owner: ${escapeHtml(slot.bookedBy || '-')}</div>
+                            <div class="text-xs font-mono-code text-brand-textMuted truncate">Discord: ${escapeHtml(slot.discord || '-')}</div>
                         </div>
                         <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
                             <span>Total Points:</span>
@@ -1035,7 +1047,9 @@
             
             const statusDot = document.getElementById('reg-status-dot');
             const statusBadge = document.getElementById('reg-status-badge');
-            const heroBtnText = document.getElementById('hero-btn-text');
+            
+            const cardStatusDot = document.getElementById('card-status-dot');
+            const cardStatusText = document.getElementById('card-status-text');
 
             const toggleThumb = document.getElementById('admin-status-toggle-thumb');
             const toggleBtn = document.getElementById('admin-status-toggle-btn');
@@ -1047,7 +1061,12 @@
                     statusBadge.innerText = "Registration open";
                     statusBadge.className = "text-green-400 font-bold uppercase";
                 }
-                if (heroBtnText) heroBtnText.innerText = "Register Guild Slot";
+
+                if (cardStatusDot) cardStatusDot.className = "w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse";
+                if (cardStatusText) {
+                    cardStatusText.innerText = "REGISTRATION OPEN";
+                    cardStatusText.className = "text-green-400 font-bold uppercase tracking-wider";
+                }
 
                 if (toggleBtn && toggleThumb && toggleText) {
                     toggleBtn.className = "w-12 h-6 bg-brand-orange rounded-full p-1 transition duration-200 ease-in-out relative";
@@ -1061,7 +1080,12 @@
                     statusBadge.innerText = "Registration closed";
                     statusBadge.className = "text-brand-textMuted font-bold uppercase";
                 }
-                if (heroBtnText) heroBtnText.innerText = "Register Guild Slot";
+
+                if (cardStatusDot) cardStatusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+                if (cardStatusText) {
+                    cardStatusText.innerText = "REGISTRATION CLOSED";
+                    cardStatusText.className = "text-brand-textMuted font-bold uppercase tracking-wider";
+                }
 
                 if (toggleBtn && toggleThumb && toggleText) {
                     toggleBtn.className = "w-12 h-6 bg-zinc-700 rounded-full p-1 transition duration-200 ease-in-out relative";
@@ -1158,9 +1182,6 @@
             document.getElementById('modal-claim').classList.add('hidden');
         }
 
-        /* ========================================================
-         * CONCURRENT REGISTRATION RACE CONDITION FIX & 5-10 DIGIT ID CHECK
-         * ======================================================== */
         async function handleClaimSubmit(e) {
             e.preventDefault();
 
@@ -1174,7 +1195,6 @@
             const guildId = document.getElementById('claim-guild-id').value.trim();
             const discord = document.getElementById('claim-discord').value.trim();
 
-            // Strictly enforce 5 to 10 digit number with no letters
             if (!/^\d{5,10}$/.test(guildId)) {
                 showToast("Guild ID must be a 5 to 10 digit number (no letters)", "error");
                 return;
@@ -1423,7 +1443,7 @@
                         <div class="flex items-center gap-2 sm:gap-3 truncate">
                             <span class="text-brand-orange font-bold shrink-0">#${slotNum}</span>
                             <span class="text-white font-bold uppercase truncate">${escapeHtml(slot.guildName)}</span>
-                            <span class="text-brand-textMuted truncate hidden sm:inline">(${escapeHtml(slot.bookedBy)})</span>
+                            <span class="text-brand-textMuted truncate hidden sm:inline">(${escapeHtml(slot.discord)})</span>
                         </div>
                         <div class="flex items-center gap-2 sm:gap-3 justify-between md:justify-end">
                             <div class="flex items-center gap-1">
