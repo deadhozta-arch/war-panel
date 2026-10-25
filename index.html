@@ -44,7 +44,7 @@
     <!-- Firebase SDK & Live Connection -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-gltjKSRP6WlFXxcgvlhp7pN0eGHGC24",
@@ -61,7 +61,7 @@
 
         window.db = db;
         window.dbDocRef = doc(db, "tournament", "main_state");
-        window.firebaseModules = { doc, getDoc, setDoc, onSnapshot, runTransaction };
+        window.firebaseModules = { doc, getDoc, setDoc, onSnapshot };
     </script>
 
     <style>
@@ -70,14 +70,12 @@
             color: #FFFFFF;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
         }
         .font-mono-code {
             font-family: 'JetBrains Mono', monospace;
         }
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #0B0B0C;
@@ -90,106 +88,85 @@
             background: #FF4D00;
         }
         .backdrop-blur-custom {
-            backdrop-filter: blur(10px);
-            background-color: rgba(5, 5, 6, 0.9);
+            backdrop-filter: blur(8px);
+            background-color: rgba(5, 5, 6, 0.85);
         }
         input[type="datetime-local"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             cursor: pointer;
-            padding: 4px;
+            padding: 2px;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-brand-orange selection:text-white">
 
     <!-- TOP TOAST NOTIFICATION CONTAINER -->
-    <div id="toast-container" class="fixed top-4 left-4 right-4 sm:left-1/2 sm:-translate-x-1/2 sm:max-w-md z-[100] flex flex-col items-center gap-2 pointer-events-none transition-all duration-300"></div>
+    <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-[90] flex flex-col items-center gap-2 pointer-events-none transition-all duration-300"></div>
 
-    <!-- RESPONSIVE NAVIGATION BAR -->
-    <header class="border-b border-brand-border bg-brand-bg/95 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
-            
-            <!-- Left: Logo & Title -->
-            <div class="flex items-center gap-2 sm:gap-4 overflow-hidden">
-                <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex items-center gap-2 text-xs sm:text-lg font-extrabold tracking-wider hover:opacity-95 transition shrink-0">
-                    <img src="akshay.png" alt="Akshay AKZ Logo" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-brand-orange object-cover shadow-md shadow-brand-orange/30">
-                    <span class="tracking-wider uppercase truncate">AKZ / GUILD WAR</span>
+    <!-- NAVIGATION BAR -->
+    <header class="border-b border-brand-border bg-brand-bg/90 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Left Side: Auth & Logo with akshay.png -->
+            <div class="flex items-center gap-6">
+                <div id="auth-nav-container" class="flex items-center gap-2 pr-4 border-r border-brand-border"></div>
+                <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex items-center gap-3 text-lg sm:text-xl font-extrabold tracking-wider hover:opacity-90 transition">
+                    <img src="akshay.png" alt="Akshay AKZ Logo" class="w-9 h-9 rounded-full border border-brand-orange object-cover shadow-md shadow-brand-orange/30">
+                    <span class="tracking-widest">AKZ / GUILD WAR</span>
                 </a>
             </div>
 
-            <!-- Desktop Nav Links -->
-            <nav class="hidden md:flex items-center gap-6 text-xs sm:text-sm font-semibold tracking-wide text-brand-textMuted">
+            <!-- Right Side Navigation Links -->
+            <nav class="flex items-center gap-6 text-xs sm:text-sm font-semibold tracking-wide text-brand-textMuted">
                 <a href="#overview" class="hover:text-white transition">Overview</a>
                 <a href="#created-rooms-section" class="hover:text-white transition text-brand-orange">Created Rooms</a>
                 <a href="#registration" class="hover:text-white transition">Registration</a>
                 <a href="#leaderboard-section" class="hover:text-white transition text-brand-orange">Leaderboard</a>
-            </nav>
-
-            <!-- Right: Auth State & Admin & Hamburger -->
-            <div class="flex items-center gap-2 shrink-0">
-                <div id="auth-nav-container" class="flex items-center gap-2 text-xs"></div>
                 
-                <button onclick="openAdminModal()" class="hidden sm:flex text-brand-orange hover:text-white border border-brand-orange/40 hover:border-brand-orange px-3 py-1.5 rounded transition items-center gap-1.5 font-mono-code text-xs">
-                    <i class="fa-solid fa-lock text-xs"></i> Admin
+                <button onclick="openAdminModal()" class="text-brand-orange hover:text-white border border-brand-orange/40 hover:border-brand-orange px-3.5 py-1.5 rounded transition flex items-center gap-1.5 font-mono-code text-xs">
+                    <i class="fa-solid font-mono text-xs">🔒</i> Admin
                 </button>
-
-                <!-- Mobile Admin & Hamburger Menu Toggle -->
-                <button onclick="openAdminModal()" class="md:hidden text-brand-orange border border-brand-orange/40 px-2 py-1 rounded text-xs font-mono-code">
-                    <i class="fa-solid fa-lock"></i>
-                </button>
-                <button onclick="toggleMobileMenu()" class="md:hidden text-white p-1.5 focus:outline-none">
-                    <i id="mobile-menu-icon" class="fa-solid fa-bars text-lg"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Dropdown Menu -->
-        <div id="mobile-dropdown" class="md:hidden bg-brand-card border-b border-brand-border px-4 py-4 space-y-3 hidden font-mono-code text-xs">
-            <a href="#overview" onclick="toggleMobileMenu()" class="block py-2 text-brand-textMuted hover:text-white border-b border-brand-border/40">Overview</a>
-            <a href="#created-rooms-section" onclick="toggleMobileMenu()" class="block py-2 text-brand-orange border-b border-brand-border/40">Created Rooms</a>
-            <a href="#registration" onclick="toggleMobileMenu()" class="block py-2 text-brand-textMuted hover:text-white border-b border-brand-border/40">Registration</a>
-            <a href="#leaderboard-section" onclick="toggleMobileMenu()" class="block py-2 text-brand-orange">Leaderboard</a>
+            </nav>
         </div>
     </header>
 
     <!-- MAIN CONTENT WRAPPER -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 space-y-12 sm:space-y-24">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-16 sm:space-y-24">
 
-        <!-- HERO SECTION -->
-        <section id="overview" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2 sm:pt-4">
+        <!-- HERO SECTION (OVERVIEW) -->
+        <section id="overview" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-4">
             <div class="lg:col-span-7 space-y-6">
-                <div class="inline-block text-[10px] sm:text-xs font-mono-code uppercase tracking-widest text-brand-orange font-bold bg-brand-orange/10 px-3 py-1 border border-brand-orange/20 rounded">
+                <div class="inline-block text-xs font-mono-code uppercase tracking-widest text-brand-orange font-bold bg-brand-orange/10 px-3 py-1 border border-brand-orange/20 rounded">
                     AKSHAY AKZ PRESENTS // FREE FIRE
                 </div>
                 
-                <h1 class="text-4xl sm:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-none">
+                <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-none">
                     GUILD<br><span class="text-brand-orange">WAR.</span>
                 </h1>
 
-                <p class="text-brand-textMuted text-xs sm:text-base leading-relaxed max-w-xl font-medium">
+                <p class="text-brand-textMuted text-sm sm:text-base leading-relaxed max-w-xl font-medium">
                     <strong class="text-white">15 slots. Two battlegrounds. One top spot.</strong><br>
                     Bring your guild to Bermuda and Purgatory. Click register below to claim your slot instantly. Hosted by Akshay AKZ.
                 </p>
 
                 <div class="pt-2">
-                    <button id="main-hero-action-btn" onclick="handleDirectRegisterClick()" class="w-full sm:w-auto bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-4 px-8 rounded text-sm sm:text-base tracking-wide flex items-center justify-center gap-3 transition shadow-lg shadow-brand-orange/20 group">
+                    <button id="main-hero-action-btn" onclick="handleDirectRegisterClick()" class="bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-4 px-8 rounded text-sm sm:text-base tracking-wide flex items-center gap-3 transition shadow-lg shadow-brand-orange/20 group">
                         <span id="hero-btn-text">Register Guild Slot</span>
                         <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </div>
             </div>
 
-            <div class="lg:col-span-5 bg-brand-card border border-brand-border p-5 sm:p-8 rounded-xl space-y-6 shadow-2xl relative overflow-hidden">
+            <div class="lg:col-span-5 bg-brand-card border border-brand-border p-6 sm:p-8 rounded-xl space-y-6 shadow-2xl relative overflow-hidden">
                 <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-brand-orange/5 rounded-full blur-2xl pointer-events-none"></div>
                 
-                <div class="text-[10px] sm:text-xs font-mono-code text-brand-orange tracking-wider flex items-center gap-2">
+                <div class="text-xs font-mono-code text-brand-orange tracking-wider flex items-center gap-2">
                     <span class="inline-block w-2 h-2 rounded-full bg-brand-orange animate-ping"></span>
                     THE GUILD WAR INVITATIONAL
                 </div>
 
                 <div class="space-y-1">
-                    <div class="text-4xl sm:text-6xl font-black tracking-tight text-white">15</div>
-                    <div class="text-sm sm:text-lg font-extrabold uppercase text-white tracking-wider">GUILDS. ONE TOP SPOT.</div>
+                    <div class="text-5xl sm:text-6xl font-black tracking-tight text-white">15</div>
+                    <div class="text-lg font-extrabold uppercase text-white tracking-wider">GUILDS. ONE TOP SPOT.</div>
                 </div>
 
                 <div class="border-t border-brand-border pt-4 space-y-3 font-mono-code text-xs text-brand-textMuted">
@@ -213,73 +190,74 @@
             </div>
         </section>
 
-        <!-- CREATED ROOMS -->
-        <section id="created-rooms-section" class="space-y-6 border-t border-brand-border/60 pt-10 sm:pt-12">
+        <!-- SECTION: CREATED ROOMS -->
+        <section id="created-rooms-section" class="space-y-6 border-t border-brand-border/60 pt-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <div class="text-[10px] sm:text-xs font-mono-code text-brand-orange tracking-widest uppercase">01 // TOURNAMENT ROOMS</div>
-                    <h2 class="text-2xl sm:text-5xl font-black uppercase tracking-tight">CREATED ROOMS.</h2>
-                    <p class="text-brand-textMuted text-xs sm:text-sm mt-1">Active tournament rooms created by admin. Credentials unlock automatically at password time.</p>
+                    <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">01 // TOURNAMENT ROOMS</div>
+                    <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">CREATED ROOMS.</h2>
+                    <p class="text-brand-textMuted text-sm mt-1">Active tournament rooms created by admin. Credentials unlock automatically at password time.</p>
                 </div>
             </div>
 
             <div id="created-rooms-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
-        <!-- LEADERBOARD -->
-        <section id="leaderboard-section" class="space-y-6 border-t border-brand-border/60 pt-10 sm:pt-12">
+        <!-- SECTION: LEADERBOARD & STANDINGS -->
+        <section id="leaderboard-section" class="space-y-6 border-t border-brand-border/60 pt-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <div class="text-[10px] sm:text-xs font-mono-code text-brand-orange tracking-widest uppercase">02 // STANDINGS</div>
-                    <h2 class="text-2xl sm:text-5xl font-black uppercase tracking-tight">LEADERBOARD.</h2>
-                    <p class="text-brand-textMuted text-xs sm:text-sm mt-1">Official match standings & rankings (Published by Admin).</p>
+                    <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">02 // STANDINGS</div>
+                    <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">LEADERBOARD.</h2>
+                    <p class="text-brand-textMuted text-sm mt-1">Official match standings & rankings (Published by Admin).</p>
                 </div>
             </div>
 
-            <div id="public-leaderboard-container" class="bg-brand-card border border-brand-border rounded-xl overflow-hidden p-4 sm:p-6"></div>
+            <div id="public-leaderboard-container" class="bg-brand-card border border-brand-border rounded-xl overflow-hidden p-6"></div>
         </section>
 
-        <!-- REGISTRATION -->
-        <section id="registration" class="space-y-6 border-t border-brand-border/60 pt-10 sm:pt-12">
+        <!-- SECTION: REGISTRATION -->
+        <section id="registration" class="space-y-6 border-t border-brand-border/60 pt-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <div class="text-[10px] sm:text-xs font-mono-code text-brand-orange tracking-widest uppercase">03 // REGISTRATION</div>
-                    <h2 class="text-2xl sm:text-5xl font-black uppercase tracking-tight">REGISTERED GUILDS.</h2>
-                    <p class="text-brand-textMuted text-xs sm:text-sm mt-1">All successfully registered teams in the 15 available slots.</p>
+                    <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">03 // REGISTRATION</div>
+                    <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">REGISTERED GUILDS.</h2>
+                    <p class="text-brand-textMuted text-sm mt-1">All successfully registered teams in the 15 available slots.</p>
                 </div>
 
-                <div class="flex items-center gap-3 text-xs font-mono-code">
+                <div class="flex items-center gap-4 text-xs font-mono-code">
                     <div class="flex items-center gap-2">
                         <span id="reg-status-dot" class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
                         <span id="reg-status-badge" class="text-brand-textMuted font-bold uppercase">Registration closed</span>
                     </div>
                     <span class="text-brand-border">|</span>
-                    <span id="claimed-count-text" class="text-brand-orange font-bold">0 / 15 claimed</span>
+                    <span id="claimed-count-text" class="text-brand-orange font-bold">0 / 15 slots claimed</span>
                 </div>
             </div>
 
+            <!-- Dynamic Registered Guilds List (15 Slots) -->
             <div id="registered-guilds-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
-        <!-- PLAY FOR THE TOP -->
-        <section class="space-y-6 border-t border-brand-border/60 pt-10 sm:pt-12 pb-8">
-            <div class="text-[10px] sm:text-xs font-mono-code text-brand-orange tracking-widest uppercase">04 // PLAY FOR THE TOP</div>
+        <!-- SECTION 03: PLAY FOR THE TOP -->
+        <section class="space-y-6 border-t border-brand-border/60 pt-12 pb-8">
+            <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">04 // PLAY FOR THE TOP</div>
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 <div class="lg:col-span-8 space-y-4">
-                    <h2 class="text-2xl sm:text-5xl font-black uppercase tracking-tight">THE POINTS MATTER.</h2>
-                    <p class="text-brand-textMuted text-xs sm:text-base leading-relaxed max-w-2xl">
+                    <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">THE POINTS MATTER.</h2>
+                    <p class="text-brand-textMuted text-sm sm:text-base leading-relaxed max-w-2xl">
                         Climb the total-points standings across Bermuda and Purgatory. Top-ranked guilds compete for the prize pool.
                     </p>
                 </div>
 
-                <div class="lg:col-span-4 bg-brand-card border border-brand-border p-5 sm:p-6 rounded-xl flex items-center gap-5">
-                    <div class="text-brand-orange text-3xl sm:text-4xl p-3 bg-brand-orange/10 border border-brand-orange/20 rounded-lg shrink-0">
+                <div class="lg:col-span-4 bg-brand-card border border-brand-border p-6 rounded-xl flex items-center gap-5">
+                    <div class="text-brand-orange text-3xl sm:text-4xl p-3 bg-brand-orange/10 border border-brand-orange/20 rounded-lg">
                         <i class="fa-solid fa-trophy"></i>
                     </div>
                     <div>
-                        <div class="text-[10px] sm:text-xs font-mono-code text-brand-textMuted tracking-wider uppercase font-bold">PRIZE POOL</div>
-                        <div id="prize-pool-display" class="text-xl sm:text-3xl font-black text-brand-orange tracking-tight mt-0.5">₹30,000 + trophies</div>
+                        <div class="text-xs font-mono-code text-brand-textMuted tracking-wider uppercase font-bold">PRIZE POOL</div>
+                        <div id="prize-pool-display" class="text-2xl sm:text-3xl font-black text-brand-orange tracking-tight mt-0.5">₹30,000 + trophies</div>
                     </div>
                 </div>
             </div>
@@ -287,8 +265,8 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="border-t border-brand-border py-6 sm:py-8 bg-brand-bg text-xs font-mono-code text-brand-textMuted">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+    <footer class="border-t border-brand-border py-8 bg-brand-bg text-xs font-mono-code text-brand-textMuted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>AKZ / GUILD WAR</div>
             <div>A COMMUNITY TOURNAMENT BY AKSHAY AKZ</div>
         </div>
@@ -316,16 +294,16 @@
                 <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Username</label>
                     <input type="text" id="auth-username" placeholder="e.g. akz_gamer" required
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-sm text-white focus:outline-none focus:border-brand-orange transition">
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
                 </div>
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Password</label>
                     <input type="password" id="auth-password" placeholder="••••••••" required
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-sm text-white focus:outline-none focus:border-brand-orange transition">
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
                 </div>
 
-                <button type="submit" id="btn-auth-submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3.5 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
+                <button type="submit" id="btn-auth-submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
                     <span id="auth-btn-text">Sign In</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
@@ -359,22 +337,22 @@
                 <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Guild Name</label>
                     <input type="text" id="claim-guild-name" placeholder="e.g. Team AKZ" required
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-sm text-white focus:outline-none focus:border-brand-orange transition">
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-mono-code text-brand-textMuted">Guild ID (5 to 10 digits)</label>
-                    <input type="text" id="claim-guild-id" placeholder="e.g. 12345" required pattern="\d{5,10}" maxlength="10" title="Guild ID must be between 5 and 10 digits"
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-sm text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
+                    <label class="block text-xs font-mono-code text-brand-textMuted">Guild ID (8 to 10 digits)</label>
+                    <input type="text" id="claim-guild-id" placeholder="e.g. 301294829" required pattern="\d{8,10}" maxlength="10" title="Guild ID must be between 8 and 10 digits"
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                 </div>
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-mono-code text-brand-textMuted">Discord username</label>
                     <input type="text" id="claim-discord" placeholder="@your-handle" required
-                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-3 text-sm text-white focus:outline-none focus:border-brand-orange transition">
+                        class="w-full bg-brand-bg border border-brand-border rounded px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-orange transition">
                 </div>
 
-                <button type="submit" id="btn-claim-submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3.5 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
+                <button type="submit" id="btn-claim-submit" class="w-full bg-brand-orange hover:bg-brand-orangeHover text-white font-bold py-3 rounded text-sm tracking-wide flex items-center justify-between px-4 transition mt-2">
                     <span>Submit & Claim Slot</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
@@ -437,8 +415,8 @@
     </div>
 
     <!-- ADMIN CONTROL ROOM MODAL -->
-    <div id="modal-admin" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-custom hidden">
-        <div class="bg-brand-card border border-brand-border w-full max-w-5xl rounded-2xl p-4 sm:p-10 space-y-8 relative shadow-2xl max-h-[92vh] overflow-y-auto">
+    <div id="modal-admin" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-custom hidden">
+        <div class="bg-brand-card border border-brand-border w-full max-w-5xl rounded-2xl p-6 sm:p-10 space-y-8 relative shadow-2xl max-h-[92vh] overflow-y-auto">
             <button onclick="closeAdminModal()" class="absolute top-6 right-6 text-brand-textMuted hover:text-white transition">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
@@ -476,13 +454,13 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-border pb-4 gap-4">
                     <div>
                         <div class="text-xs font-mono-code text-brand-orange uppercase tracking-wider font-bold">COMMAND CONSOLE</div>
-                        <h3 class="text-2xl sm:text-3xl font-black tracking-tight mt-1">Tournament Management Hub</h3>
+                        <h3 class="text-3xl font-black tracking-tight mt-1">Tournament Management Hub</h3>
                     </div>
                     <button onclick="adminLogout()" class="text-xs font-mono-code text-red-400 hover:underline">Log out</button>
                 </div>
 
                 <!-- Global Settings & Actions -->
-                <div class="bg-brand-bg border border-brand-border p-4 sm:p-6 rounded-xl space-y-6">
+                <div class="bg-brand-bg border border-brand-border p-6 rounded-xl space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <span class="block text-xs font-mono-code text-brand-textMuted">Registration status</span>
@@ -503,20 +481,20 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-3 pt-2 border-t border-brand-border/60 pt-4">
-                        <button onclick="openCreateRoomModal()" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-4 sm:px-5 py-3 rounded-lg transition flex items-center gap-2 shadow-lg shadow-brand-orange/20">
-                            <span>+ Create Room</span>
+                        <button onclick="openCreateRoomModal()" class="bg-brand-orange hover:bg-brand-orangeHover text-white text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition flex items-center gap-2 shadow-lg shadow-brand-orange/20">
+                            <span>+ Create Tournament Room</span>
                         </button>
-                        <button onclick="saveAdminGlobalSettings()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold font-mono-code px-4 sm:px-5 py-3 rounded-lg transition">
+                        <button onclick="saveAdminGlobalSettings()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition">
                             Save Settings
                         </button>
-                        <button onclick="publishLeaderboard()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold font-mono-code px-4 sm:px-5 py-3 rounded-lg transition flex items-center gap-2">
+                        <button onclick="publishLeaderboard()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition flex items-center gap-2">
                             <span>Publish Leaderboard</span> <i class="fa-solid fa-bullhorn"></i>
                         </button>
                         <button onclick="removeLeaderboard()" class="bg-zinc-800 hover:bg-amber-900/60 text-amber-400 hover:text-white border border-amber-500/30 text-xs font-bold font-mono-code px-4 py-3 rounded-lg transition flex items-center gap-2">
-                            <span>Hide Leaderboard</span> <i class="fa-solid fa-eye-slash"></i>
+                            <span>Remove Leaderboard</span> <i class="fa-solid fa-eye-slash"></i>
                         </button>
-                        <button onclick="openClearAllModal()" class="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold font-mono-code px-4 sm:px-5 py-3 rounded-lg transition flex items-center gap-2 sm:ml-auto">
-                            <span>Clear All</span> <i class="fa-solid fa-trash-can"></i>
+                        <button onclick="openClearAllModal()" class="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold font-mono-code px-5 py-3 rounded-lg transition flex items-center gap-2 ml-auto">
+                            <span>Remove All / Clear All</span> <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
                 </div>
@@ -565,18 +543,6 @@
 
     <!-- FIREBASE LIVE REAL-TIME APP LOGIC -->
     <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-dropdown');
-            const icon = document.getElementById('mobile-menu-icon');
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                icon.className = "fa-solid fa-xmark text-lg";
-            } else {
-                menu.classList.add('hidden');
-                icon.className = "fa-solid fa-bars text-lg";
-            }
-        }
-
         function getInitialSlots() {
             let slots = [];
             for (let i = 0; i < 15; i++) {
@@ -713,16 +679,16 @@
 
             if (currentUser) {
                 container.innerHTML = `
-                    <div class="flex items-center gap-1.5 sm:gap-3 text-xs font-mono-code">
-                        <span class="text-brand-orange font-bold flex items-center gap-1 truncate max-w-[80px] sm:max-w-none"><i class="fa-solid fa-user"></i> ${escapeHtml(currentUser)}</span>
-                        <button onclick="handleLogout()" class="text-red-400 hover:underline shrink-0">Logout</button>
+                    <div class="flex items-center gap-3 text-xs font-mono-code">
+                        <span class="text-brand-orange font-bold flex items-center gap-1.5"><i class="fa-solid fa-user"></i> ${escapeHtml(currentUser)}</span>
+                        <button onclick="handleLogout()" class="text-red-400 hover:underline">Logout</button>
                     </div>
                 `;
             } else {
                 container.innerHTML = `
-                    <div class="flex items-center gap-1.5">
-                        <button onclick="openAuthModal('login')" class="bg-brand-card hover:bg-brand-border text-white px-2.5 py-1 rounded transition text-xs font-mono-code border border-brand-border">Login</button>
-                        <button onclick="openAuthModal('register')" class="bg-brand-orange hover:bg-brand-orangeHover text-white px-2.5 py-1 rounded transition text-xs font-mono-code font-bold">Register</button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openAuthModal('login')" class="bg-brand-card hover:bg-brand-border text-white px-3 py-1.5 rounded transition text-xs font-mono-code border border-brand-border">Login</button>
+                        <button onclick="openAuthModal('register')" class="bg-brand-orange hover:bg-brand-orangeHover text-white px-3 py-1.5 rounded transition text-xs font-mono-code font-bold">Register</button>
                     </div>
                 `;
             }
@@ -844,7 +810,7 @@
 
             sortedTournaments.forEach((tr) => {
                 const card = document.createElement('div');
-                card.className = "bg-brand-card border border-brand-orange p-5 sm:p-6 rounded-xl space-y-4 shadow-xl";
+                card.className = "bg-brand-card border border-brand-orange p-6 rounded-xl space-y-4 shadow-xl";
 
                 const openTime = tr.regOpen ? new Date(tr.regOpen).getTime() : 0;
                 const closeTime = tr.regClose ? new Date(tr.regClose).getTime() : 0;
@@ -883,14 +849,14 @@
                 } else {
                     credentialsHtml = `
                         <div class="bg-brand-bg p-3 rounded border border-brand-border space-y-2 mt-2">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div class="flex justify-between items-center">
                                 <span class="text-brand-orange font-bold">Room ID:</span>
                                 <div class="flex items-center gap-2">
                                     <span class="text-white font-bold select-all">${escapeHtml(tr.roomId)}</span>
                                     <button onclick="copyToClipboard('${escapeHtml(tr.roomId)}', 'Room ID')" class="bg-zinc-800 hover:bg-zinc-700 text-brand-orange px-2 py-1 rounded text-xs">Copy</button>
                                 </div>
                             </div>
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-brand-border/40 pt-2">
+                            <div class="flex justify-between items-center border-t border-brand-border/40 pt-2">
                                 <span class="text-brand-orange font-bold">Password:</span>
                                 <div class="flex items-center gap-2">
                                     <span class="text-white font-bold select-all">${escapeHtml(tr.roomPass)}</span>
@@ -903,13 +869,13 @@
 
                 card.innerHTML = `
                     <div class="flex justify-between items-center text-xs font-mono-code">
-                        <span class="text-brand-orange font-bold uppercase truncate max-w-[180px]">${escapeHtml(tr.trName)}</span>
+                        <span class="text-brand-orange font-bold uppercase">${escapeHtml(tr.trName)}</span>
                         ${statusBadge}
                     </div>
                     <div class="border-t border-brand-border pt-3 space-y-2 font-mono-code text-xs">
-                        <div class="flex justify-between gap-2"><span class="text-brand-textMuted shrink-0">Reg Opens:</span> <span class="text-white text-right">${escapeHtml(formatDateTime(tr.regOpen))}</span></div>
-                        <div class="flex justify-between gap-2"><span class="text-brand-textMuted shrink-0">Reg Closes:</span> <span class="text-white text-right">${escapeHtml(formatDateTime(tr.regClose))}</span></div>
-                        <div class="flex justify-between gap-2"><span class="text-brand-textMuted shrink-0">Password Time:</span> <span class="text-white text-right">${escapeHtml(formatDateTime(tr.schedule))}</span></div>
+                        <div class="flex justify-between"><span class="text-brand-textMuted">Reg Opens:</span> <span class="text-white">${escapeHtml(formatDateTime(tr.regOpen))}</span></div>
+                        <div class="flex justify-between"><span class="text-brand-textMuted">Reg Closes:</span> <span class="text-white">${escapeHtml(formatDateTime(tr.regClose))}</span></div>
+                        <div class="flex justify-between"><span class="text-brand-textMuted">Password Time:</span> <span class="text-white">${escapeHtml(formatDateTime(tr.schedule))}</span></div>
                         ${credentialsHtml}
                     </div>
                 `;
@@ -931,18 +897,12 @@
                     card.innerHTML = `
                         <div class="flex justify-between items-center text-xs font-mono-code">
                             <span class="text-brand-textMuted font-bold">SLOT #${slotNum}</span>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-brand-orange/20 text-brand-orange px-2.5 py-0.5 rounded text-[10px] font-bold border border-brand-orange/40">
-                                    <i class="fa-solid fa-circle-check"></i> Verified
-                                </span>
-                                <span class="text-brand-orange font-bold uppercase">REGISTERED</span>
-                            </div>
+                            <span class="text-brand-orange font-bold uppercase">REGISTERED</span>
                         </div>
-                        <div class="py-2 space-y-1">
-                            <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code truncate">${escapeHtml(slot.guildName)}</div>
+                        <div class="py-2">
+                            <div class="font-extrabold text-lg tracking-wide uppercase text-white font-mono-code">${escapeHtml(slot.guildName)}</div>
                             <div class="text-xs font-mono-code text-brand-textMuted">Guild ID: ${escapeHtml(slot.guildId || '-')}</div>
-                            <div class="text-xs font-mono-code text-brand-textMuted">User Account: <span class="text-white font-bold">${escapeHtml(slot.bookedBy || '-')}</span></div>
-                            <div class="text-xs font-mono-code text-brand-textMuted">Discord: <span class="text-white">${escapeHtml(slot.discord || '-')}</span></div>
+                            <div class="text-xs font-mono-code text-brand-textMuted">Owner: ${escapeHtml(slot.bookedBy || '-')}</div>
                         </div>
                         <div class="text-xs font-mono-code text-brand-textMuted border-t border-brand-border/60 pt-2 flex justify-between">
                             <span>Total Points:</span>
@@ -996,7 +956,7 @@
 
             let html = `
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left font-mono-code text-xs whitespace-nowrap">
+                    <table class="w-full text-left font-mono-code text-xs">
                         <thead>
                             <tr class="border-b border-brand-border text-brand-textMuted">
                                 <th class="py-3 px-4">RANK</th>
@@ -1041,7 +1001,7 @@
         function updateUIState() {
             const claimedCount = state.slots.filter(s => s.claimed).length;
             const countText = document.getElementById('claimed-count-text');
-            if (countText) countText.innerText = `${claimedCount} / 15 claimed`;
+            if (countText) countText.innerText = `${claimedCount} / 15 slots claimed`;
             
             const statusDot = document.getElementById('reg-status-dot');
             const statusBadge = document.getElementById('reg-status-badge');
@@ -1111,14 +1071,14 @@
             const container = document.getElementById('toast-container');
             if (!container) return;
             const toast = document.createElement('div');
-            toast.className = `px-4 py-3 rounded-lg shadow-xl text-xs font-mono-code font-bold flex items-center gap-3 border transition-all duration-300 transform translate-y-[-10px] opacity-0 w-full sm:w-auto ${
+            toast.className = `px-5 py-3 rounded-lg shadow-xl text-xs font-mono-code font-bold flex items-center gap-3 border transition-all duration-300 transform translate-y-[-10px] opacity-0 ${
                 type === 'error' ? 'bg-zinc-900 text-red-400 border-red-500/50' : 
                 type === 'success' ? 'bg-zinc-900 text-white border-brand-orange' : 
                 'bg-zinc-900 text-white border-brand-border'
             }`;
             
             const icon = type === 'error' ? 'fa-triangle-exclamation text-red-400' : 'fa-circle-info text-brand-orange';
-            toast.innerHTML = `<i class="fa-solid ${icon} shrink-0"></i> <span class="truncate">${escapeHtml(message)}</span>`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${escapeHtml(message)}</span>`;
             
             container.appendChild(toast);
 
@@ -1177,76 +1137,68 @@
                 return;
             }
 
+            const nextOpenIndex = state.slots.findIndex(s => !s.claimed);
+            if (nextOpenIndex === -1) {
+                showToast("Error: All 15 tournament slots are fully booked!", "error");
+                closeClaimModal();
+                return;
+            }
+
             const guildName = document.getElementById('claim-guild-name').value.trim();
             const guildId = document.getElementById('claim-guild-id').value.trim();
             const discord = document.getElementById('claim-discord').value.trim();
 
-            if (!/^\d{5,10}$/.test(guildId)) {
-                showToast("Guild ID must be between 5 and 10 digits", "error");
+            if (!/^\d{8,10}$/.test(guildId)) {
+                showToast("Guild ID must be between 8 and 10 digits", "error");
+                return;
+            }
+
+            const normalizedGuildName = guildName.toLowerCase();
+            const normalizedDiscord = discord.toLowerCase();
+            
+            const existingDuplicate = state.slots.some(s => 
+                s.claimed && (
+                    s.guildName.trim().toLowerCase() === normalizedGuildName || 
+                    s.guildId.trim() === guildId ||
+                    s.discord.trim().toLowerCase() === normalizedDiscord
+                )
+            );
+
+            if (existingDuplicate) {
+                showToast("Error: This Guild Name, Guild ID, or Discord Username is already registered!", "error");
                 return;
             }
 
             const btn = document.getElementById('btn-claim-submit');
             if (btn) btn.innerHTML = `<span>Booking Slot...</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
 
-            const { runTransaction } = window.firebaseModules;
+            state.slots[nextOpenIndex] = {
+                claimed: true,
+                bookedBy: currentUser,
+                guildName: guildName,
+                guildId: guildId,
+                discord: discord,
+                match1: 0,
+                match2: 0,
+                totalPoints: 0,
+                rank: "-"
+            };
 
-            try {
-                await runTransaction(window.db, async (transaction) => {
-                    const docSnap = await transaction.get(window.dbDocRef);
-                    if (!docSnap.exists()) {
-                        throw new Error("Tournament data does not exist!");
-                    }
+            await saveStateToFirebase();
 
-                    const data = docSnap.data();
-                    let currentSlots = Array.isArray(data.slots) ? data.slots : getInitialSlots();
+            if (btn) btn.innerHTML = `<span>Submit & Claim Slot</span> <i class="fa-solid fa-arrow-right"></i>`;
 
-                    const normalizedGuildName = guildName.toLowerCase();
-                    const existingDuplicate = currentSlots.some(s => 
-                        s.claimed && (
-                            s.guildName.trim().toLowerCase() === normalizedGuildName || 
-                            s.guildId.trim() === guildId
-                        )
-                    );
+            document.getElementById('claim-guild-name').value = '';
+            document.getElementById('claim-guild-id').value = '';
+            document.getElementById('claim-discord').value = '';
 
-                    if (existingDuplicate) {
-                        throw new Error("This Guild Name or Guild ID is already registered!");
-                    }
-
-                    const nextOpenIndex = currentSlots.findIndex(s => !s.claimed);
-                    if (nextOpenIndex === -1) {
-                        throw new Error("All 15 tournament slots are fully booked!");
-                    }
-
-                    currentSlots[nextOpenIndex] = {
-                        claimed: true,
-                        bookedBy: currentUser,
-                        guildName: guildName,
-                        guildId: guildId,
-                        discord: discord,
-                        match1: 0,
-                        match2: 0,
-                        totalPoints: 0,
-                        rank: "-"
-                    };
-
-                    transaction.update(window.dbDocRef, { slots: currentSlots });
-                });
-
-                if (btn) btn.innerHTML = `<span>Submit & Claim Slot</span> <i class="fa-solid fa-arrow-right"></i>`;
-
-                document.getElementById('claim-guild-name').value = '';
-                document.getElementById('claim-guild-id').value = '';
-                document.getElementById('claim-discord').value = '';
-
-                closeClaimModal();
-                showToast(`Successfully registered ${guildName}!`, "success");
-            } catch (err) {
-                if (btn) btn.innerHTML = `<span>Submit & Claim Slot</span> <i class="fa-solid fa-arrow-right"></i>`;
-                showToast(err.message || "Failed to book slot. Please try again.", "error");
-            }
+            closeClaimModal();
+            renderRegisteredGuildsList();
+            renderCreatedRooms();
+            showToast(`Successfully registered ${guildName} to Slot #${nextOpenIndex + 1}!`, "success");
         }
 
+        // ADMIN CONTROLS & POINTS CALCULATION
         function openAdminModal() {
             const adminModal = document.getElementById('modal-admin');
             if (adminModal) adminModal.classList.remove('hidden');
@@ -1405,6 +1357,27 @@
                 renderAdminRooms();
                 showToast("Tournament room deleted", "success");
             }
+        }
+
+        function openClearAllModal() {
+            document.getElementById('modal-clear-all').classList.remove('hidden');
+        }
+
+        function closeClearAllModal() {
+            document.getElementById('modal-clear-all').classList.add('hidden');
+        }
+
+        async function confirmRemoveAllData() {
+            state.slots = getInitialSlots();
+            state.tournaments = [];
+            state.leaderboardPublished = false;
+            await saveStateToFirebase();
+            closeClearAllModal();
+            renderCreatedRooms();
+            renderPublicLeaderboard();
+            renderAdminSlots();
+            renderAdminRooms();
+            showToast("All data and rooms removed successfully", "success");
         }
 
         function renderAdminSlots() {
