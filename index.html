@@ -91,7 +91,6 @@
             backdrop-filter: blur(8px);
             background-color: rgba(5, 5, 6, 0.85);
         }
-        /* Custom styling for compact date/time pickers */
         input[type="datetime-local"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             cursor: pointer;
@@ -142,7 +141,7 @@
 
                 <p class="text-brand-textMuted text-sm sm:text-base leading-relaxed max-w-xl font-medium">
                     <strong class="text-white">12 guilds. Two battlegrounds. One top spot.</strong><br>
-                    Bring your guild to Bermuda and Purgatory. Register your slot, log in, and access your created room ID & password. Hosted by Akshay AKZ.
+                    Bring your guild to Bermuda and Purgatory. Register your slot, log in, and access your created room ID & password automatically. Hosted by Akshay AKZ.
                 </p>
 
                 <div class="pt-2">
@@ -193,7 +192,7 @@
                 <div>
                     <div class="text-xs font-mono-code text-brand-orange tracking-widest uppercase">01 // TOURNAMENT ROOMS</div>
                     <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight">CREATED ROOMS.</h2>
-                    <p class="text-brand-textMuted text-sm mt-1">Active tournament rooms created by admin. Register slots to unlock credentials.</p>
+                    <p class="text-brand-textMuted text-sm mt-1">Active tournament rooms created by admin. Credentials unlock automatically at password time.</p>
                 </div>
             </div>
 
@@ -364,27 +363,21 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Registration Open</label>
-                        <div class="relative">
-                            <input type="datetime-local" id="create-reg-open" required
-                                class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
-                        </div>
+                        <input type="datetime-local" id="create-reg-open" required
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Registration Close</label>
-                        <div class="relative">
-                            <input type="datetime-local" id="create-reg-close" required
-                                class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
-                        </div>
+                        <input type="datetime-local" id="create-reg-close" required
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Password Time</label>
-                        <div class="relative">
-                            <input type="datetime-local" id="create-schedule" required
-                                class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
-                        </div>
+                        <input type="datetime-local" id="create-schedule" required
+                            class="w-full bg-brand-bg border border-brand-border rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange transition font-mono-code">
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-xs font-mono-code text-brand-textMuted">Room ID</label>
@@ -456,7 +449,7 @@
                 <div class="bg-brand-bg border border-brand-border p-4 rounded-lg space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="space-y-1">
-                            <span class="block text-xs font-mono-code text-brand-textMuted">Registration status</span>
+                            <span class="block text-xs font-mono-code text-brand-textMuted">Registration status (Manual Override)</span>
                             <div class="flex items-center gap-3 pt-1">
                                 <button type="button" onclick="toggleRegistrationStatus()" id="admin-status-toggle-btn" 
                                     class="w-12 h-6 bg-zinc-700 rounded-full p-1 transition duration-200 ease-in-out relative">
@@ -523,7 +516,7 @@
     </div>
 
 
-    <!-- FIREBASE LIVE REAL-TIME APP LOGIC -->
+    <!-- FIREBASE LIVE REAL-TIME APP LOGIC & AUTOMATION -->
     <script>
         function getInitialSlots() {
             let slots = [];
@@ -566,7 +559,43 @@
             }
 
             renderAuthNav();
+
+            // AUTOMATION TICKER: Check time every second for auto open/close and password reveals
+            setInterval(() => {
+                checkAutomatedSchedule();
+            }, 1000);
         });
+
+        // AUTOMATION CHECKER
+        function checkAutomatedSchedule() {
+            if (state.tournaments.length === 0) return;
+
+            const now = new Date().getTime();
+            let shouldBeOpen = false;
+            let slotFull = state.slots.every(s => s.claimed); // Check if 12/12 slots are full
+
+            state.tournaments.forEach(tr => {
+                if (tr.regOpen && tr.regClose) {
+                    const openTime = new Date(tr.regOpen).getTime();
+                    const closeTime = new Date(tr.regClose).getTime();
+                    if (now >= openTime && now <= closeTime) {
+                        shouldBeOpen = true;
+                    }
+                }
+            });
+
+            // If slots are full, force close registration regardless of time
+            if (slotFull) {
+                shouldBeOpen = false;
+            }
+
+            // Only update if state changes to avoid unnecessary re-renders
+            if (state.isRegistrationOpen !== shouldBeOpen) {
+                state.isRegistrationOpen = shouldBeOpen;
+                renderSlotsGrid();
+                updateUIState();
+            }
+        }
 
         function initFirebaseRealtimeSync() {
             const { onSnapshot } = window.firebaseModules;
@@ -740,12 +769,16 @@
             }
 
             const userHasRegistered = currentUser && state.slots.some(s => s.claimed && s.bookedBy === currentUser);
+            const now = new Date().getTime();
 
             state.tournaments.forEach((tr) => {
                 const card = document.createElement('div');
                 card.className = "bg-brand-card border border-brand-orange p-6 rounded-xl space-y-4 shadow-xl";
 
                 let credentialsHtml = '';
+                const revealTime = tr.schedule ? new Date(tr.schedule).getTime() : 0;
+                const isPasswordTimeReached = now >= revealTime;
+
                 if (!currentUser) {
                     credentialsHtml = `
                         <div class="bg-brand-bg p-3 rounded border border-brand-border text-center text-xs text-brand-textMuted">
@@ -756,6 +789,12 @@
                     credentialsHtml = `
                         <div class="bg-brand-bg p-3 rounded border border-brand-border text-center text-xs text-brand-textMuted">
                             You must register a slot in the Lobby below to reveal Room ID & Password.
+                        </div>
+                    `;
+                } else if (!isPasswordTimeReached) {
+                    credentialsHtml = `
+                        <div class="bg-brand-bg p-3 rounded border border-brand-border text-center text-xs text-brand-orange font-mono-code">
+                            <i class="fa-solid fa-lock"></i> Room ID & Password will auto-reveal at: <br><strong class="text-white">${escapeHtml(formatDateTime(tr.schedule))}</strong>
                         </div>
                     `;
                 } else {
